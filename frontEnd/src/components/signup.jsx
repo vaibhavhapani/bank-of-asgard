@@ -19,7 +19,7 @@ function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/signup", signupData);
+      const response = await axios.post("http://localhost:5003/signup", signupData);
       //alert(response.data.message);
       console.log(response.data.message);
       //setSignupData({ ...signupData, [e.target.name]: e.target.value });

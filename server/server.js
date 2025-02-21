@@ -30,23 +30,38 @@ const getAuthHeader = () => {
 
 app.post("/signup", async (req, res) => {
   try {
-    const { username, password, email } = req.body;
+    const { username, password, email, firstName, 
+      lastName, country, accountType, dateOfBirth, 
+      mobile 
+    } = req.body;
 
-    // const response = await axios.post(
-    //   `${ASGARDEO_BASE_URL}/Users`,
-    //   {
-    //     schemas: ["urn:ietf:params:scim:schemas:core:2.0:User"],
-    //     userName: username,
-    //     password: password,
-    //     emails: [{ value: email, primary: true }],
-    //   },
-    //   {
-    //     headers: {
-    //       Authorization: getAuthHeader(),
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // );
+    const response = await axios.post(
+      `${ASGARDEO_BASE_URL}/Users`,
+      {
+        schemas: ["urn:ietf:params:scim:schemas:core:2.0:User"],
+        userName: username,
+        password: password,
+        emailaddress: [{
+          value: email,
+          primary: true
+          }
+        ],
+        name: {
+          givenName: firstName,
+          familyName: lastName
+        },
+        country: country,
+        mobile: mobile,
+        accountType: accountType,
+        dateOfBirth: dateOfBirth
+      },
+      {
+        headers: {
+          Authorization: getAuthHeader(),
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     res.json({ message: "User registered successfully", data: {"test":"done"} });
   } catch (error) {
