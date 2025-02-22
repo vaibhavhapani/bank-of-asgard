@@ -1,9 +1,16 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const axios = require("axios");
 
-const app = express();
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import axios from 'axios';
+
+dotenv.config();
+
+const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || 'localhost';
+const ASGARDEO_BASE_URL = process.env.ASGARDEO_BASE_URL;
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 const corsOptions = {
     origin: ['http://localhost:5173'],
@@ -11,22 +18,16 @@ const corsOptions = {
     credentials: true,
     enablePreflight: true
 }
+const app = express();
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions))
-
 app.use(express.json());
-
-
-const ASGARDEO_BASE_URL = process.env.ASGARDEO_BASE_URL;
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
+app.options('*', cors(corsOptions));
 
 const getAuthHeader = () => {
   const authString = `${CLIENT_ID}:${CLIENT_SECRET}`;
   return "Basic " + Buffer.from(authString).toString("base64");
 };
-
 
 app.post("/signup", async (req, res) => {
   try {
@@ -70,5 +71,4 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🌐 Server running at: http://${HOST}:${PORT}`));
