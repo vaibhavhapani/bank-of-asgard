@@ -135,7 +135,7 @@ const getAccessToken = async () => {
   }
 };
 
-// Choreo ip geolocation request
+//IP geolocation request
 app.post("/risk", async (req, res) => {
   try {
       console.log("request receivedd");
