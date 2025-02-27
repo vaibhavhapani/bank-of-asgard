@@ -22,6 +22,7 @@ const ASGARDEO_BASE_URL_SCIM2 = process.env.ASGARDEO_BASE_URL_SCIM2;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const TOKEN_ENDPOINT=process.env.ASGARDEO_TOKEN_ENDPOINT;
+const GEO_API_KEY = process.env.GEO_API_KEY;
 
 // In-memory storage for token data
 let tokenData = {
@@ -133,6 +134,29 @@ const getAccessToken = async () => {
     throw new Error("Failed to get access token");
   }
 };
+
+// Choreo ip geolocation request
+app.post("/risk", async (req, res) => {
+  try {
+      console.log("request receivedd");
+      const { ip, country } = req.body;
+
+      if (!ip || !country) {
+          return res.status(400).json({ error: "IP address and country name are required" });
+      }
+      // Call the IP Geolocation API
+      const response=await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${GEO_API_KEY}&ip=${ip}&fields=country_name`);
+
+      const country_name = response.data.country_name;
+      // Determine risk based on country code
+      const hasRisk = country_name !== country;
+      res.json({ hasRisk });
+
+  } catch (error) {
+      console.error("Error fetching IP geolocation:", error.message);
+      res.status(500).json({ error: "Failed to process request" });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
