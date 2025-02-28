@@ -16,8 +16,7 @@
  * under the License.
  */
 
-// import { useAuthContext } from "@asgardeo/auth-react";
-// import SignUpForm from "./components/sign-up/sign-up-form";
+import { useAuthContext } from "@asgardeo/auth-react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -35,9 +34,39 @@ import "./assets/css/style.scss";
 import "./App.css";
 
 const App = () => {
-  // const { state, signIn, signOut } = useAuthContext();
+  const { state, signIn, signOut } = useAuthContext();
+
   const navActive = false;
   const navActiveClass = (navActive) ? "active" : "";
+
+
+  import Signup from './components/signup/signup'
+import UserProfile from './components/user-profile/user-profile'
+
+const App = () => {
+const { state, signIn, signOut } = useAuthContext();
+
+return (
+  <div style={{ textAlign: "center", marginTop: "50px" }}>
+  <h1>Bank of Asgard</h1>
+    {
+        state.isAuthenticated
+        ? (<>
+            <p>Welcome, {state.username}!</p>
+            <UserProfile />
+            <button onClick={() => signOut()}>Logout</button>
+        </>
+        )
+        : (
+          <>
+            <button onClick={() => signIn()}>Login</button>
+            <Signup/>
+          </>
+      )
+    }
+    </div>
+)
+};
 
   return (
     <Router>
@@ -58,18 +87,34 @@ const App = () => {
                   </span>
                 </Link>
               </span>
-              <span>
-                <Link to="/register-account" className="register_link">
-                  <span>
-                    Register
-                  </span>
-                </Link>
-                <a href="" className="login_link">
-                  <span>
-                    Login
-                  </span>
-                </a>
-              </span>
+              {
+                state.isAuthenticated ?
+                (
+                  <>
+                      <p>Welcome, {state.username}!</p>
+                      <a href="" className="login_link" onClick={() => signOut()}>
+                        <span>
+                          Logout
+                        </span>
+                      </a>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      <Link to="/register-account" className="register_link">
+                        <span>
+                          Register
+                        </span>
+                      </Link>
+                      <a href="" className="login_link" onClick={() => signIn()}>
+                        <span>
+                          Login
+                        </span>
+                      </a>
+                    </span>
+                  </>
+                )
+              }
             </div>
           </div>
         </div>

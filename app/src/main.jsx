@@ -19,7 +19,7 @@
 import { AuthProvider } from "@asgardeo/auth-react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
+import App from "./App";
 import "./index.css";
 
 createRoot(document.getElementById('root')).render(
@@ -30,7 +30,7 @@ createRoot(document.getElementById('root')).render(
         signOutRedirectURL: 'http://localhost:5173',
         clientID: 'J_wjIo0qylHQDJCWfBZuE6cp1Qwa',
         baseUrl: 'https://api.asgardeo.io/t/sampleorg1',
-        scope: ['openid', 'profile'],
+        scope: ['openid', 'address', 'email', 'phone', 'profile', 'internal_login'],
       } }
     >
       <App />
