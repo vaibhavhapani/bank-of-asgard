@@ -61,10 +61,14 @@ body {
   height: 65px;
 }
 
-.login_link {
-  background-color: var(--primary-color-2);
+.login_link, .login_link:hover, .login_link:focus {
+  background-color: $primary2;
+  outline: 1px;
+  border: none;
   margin-left: 20px;
-  padding: 0 20px;
+  padding: 4px 20px;
+  display: inline-block;
+  border-radius: 0;
 }
 
 .layout_padding {
@@ -185,6 +189,7 @@ body {
 .header_section {
   padding: 0;
   box-shadow: #dadada 0 1px 5px;
+  color: $white;
 
   .container-fluid {
     padding-right: 25px;
@@ -824,7 +829,6 @@ a:focus {
         border: none;
         color: $white;
         background: $primary2;
-        border-radius: 30px;
         margin-top: 15px;
         text-transform: uppercase;
       }

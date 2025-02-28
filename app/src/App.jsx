@@ -27,6 +27,7 @@ import HomePage from "./pages/home";
 import BusinessBankingPage from "./pages/business-banking";
 import PersonalBankingPage from "./pages/personal-banking";
 import RegisterAccountPage from "./pages/register-account";
+import UserProfilePage from "./pages/user-profile";
 import Logo from "./assets/logo.svg";
 import "./assets/css/bootstrap.css";
 import "./assets/css/responsive.css";
@@ -38,35 +39,6 @@ const App = () => {
 
   const navActive = false;
   const navActiveClass = (navActive) ? "active" : "";
-
-
-  import Signup from './components/signup/signup'
-import UserProfile from './components/user-profile/user-profile'
-
-const App = () => {
-const { state, signIn, signOut } = useAuthContext();
-
-return (
-  <div style={{ textAlign: "center", marginTop: "50px" }}>
-  <h1>Bank of Asgard</h1>
-    {
-        state.isAuthenticated
-        ? (<>
-            <p>Welcome, {state.username}!</p>
-            <UserProfile />
-            <button onClick={() => signOut()}>Logout</button>
-        </>
-        )
-        : (
-          <>
-            <button onClick={() => signIn()}>Login</button>
-            <Signup/>
-          </>
-      )
-    }
-    </div>
-)
-};
 
   return (
     <Router>
@@ -87,34 +59,30 @@ return (
                   </span>
                 </Link>
               </span>
-              {
-                state.isAuthenticated ?
-                (
-                  <>
-                      <p>Welcome, {state.username}!</p>
-                      <a href="" className="login_link" onClick={() => signOut()}>
-                        <span>
-                          Logout
-                        </span>
-                      </a>
-                  </>
-                ) : (
-                  <>
-                    <span>
+              <span>
+                {
+                  state.isAuthenticated ?
+                  (
+                    <>
+                        <p>Welcome, <Link to="/user-profile">{ state.username }</Link>!</p>
+                        <button className="login_link" onClick={ () => signOut() }>
+                            Logout
+                        </button>
+                    </>
+                  ) : (
+                    <>
                       <Link to="/register-account" className="register_link">
                         <span>
                           Register
                         </span>
                       </Link>
-                      <a href="" className="login_link" onClick={() => signIn()}>
-                        <span>
+                      <button className="login_link" onClick={ () => signIn() }>
                           Login
-                        </span>
-                      </a>
-                    </span>
-                  </>
-                )
-              }
+                      </button>
+                    </>
+                  )
+                }
+              </span>
             </div>
           </div>
         </div>
@@ -142,19 +110,19 @@ return (
                   <li className="nav-item">
                     <a className="nav-link" href="">
                       Offers & Rewards
-                      <span>Accounts & Credit Cards</span>
+                      <span>Exclusive Offers</span>
                     </a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link" href="">
                       International
-                      <span>Accounts & Credit Cards</span>
+                      <span>Global Benefits</span>
                     </a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link" href="">
                       Digital Banking
-                      <span>Accounts & Credit Cards</span>
+                      <span>Banking made easy</span>
                     </a>
                   </li>
                 </ul>
@@ -168,6 +136,7 @@ return (
         <Route path="/personal-banking" element={ <PersonalBankingPage /> } />
         <Route path="/business-banking" element={ <BusinessBankingPage /> } />
         <Route path="/register-account" element={ <RegisterAccountPage /> } />
+        <Route path="/user-profile" element={ <UserProfilePage /> } />
         <Route path="/" element={ <HomePage /> } />
       </Routes>
 
