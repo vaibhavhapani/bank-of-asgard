@@ -48,74 +48,88 @@ const SignUpForm = () => {
   };
 
   return (
-    <div>
-      <h2>Signup</h2>
-          <form onSubmit={handleSignup}>
-            <input
-              type="text"
-              placeholder="Username"
-              value={signupData.username}
-              onChange={(e) => setSignupData({ ...signupData, username: e.target.value })}
-              required
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={signupData.email}
-              onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={signupData.password}
-              onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-              required
-            />
-            <input
-              type="text"
-              placeholder="First Name"
-              value={signupData.firstName}
-              onChange={(e) => setSignupData({ ...signupData, firstName: e.target.value })}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={signupData.lastName}
-              onChange={(e) => setSignupData({ ...signupData, lastName: e.target.value })}
-              required
-            />
-            <input
-              type="date"
-              placeholder="Date of Birth"
-              value={signupData.dateOfBirth}
-              onChange={(e) => setSignupData({ ...signupData, dateOfBirth: e.target.value })}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Country"
-              value={signupData.country}
-              onChange={(e) => setSignupData({ ...signupData, country: e.target.value })}
-              required
-            />
-            
-            <input
-              type="number"
-              placeholder="Mobile"
-              value={signupData.mobile}
-              onChange={(e) => setSignupData({ ...signupData, mobile: e.target.value })}
-              required
-            />
-            <select name="accountType" value={signupData.accountType} 
-              onChange={(e) => setSignupData({ ...signupData, accountType: e.target.value })} required>
-              <option value="">Select Account Type</option>
-              <option value="personal">Personal</option>
-              <option value="business">Business</option>
-            </select>
-            <button type="submit">Signup</button>
-          </form>
+    <div className="contact_section">
+      <div className="container">
+        <div className="heading_container heading_center">
+          <h2>
+            Get In touch
+          </h2>
+        </div>
+        <div className="">
+          <div className="row">
+            <div className="col-md-7 mx-auto">
+              <form onSubmit={handleSignup} className="contact_form-container">
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={signupData.username}
+                  onChange={(e) => setSignupData({ ...signupData, username: e.target.value })}
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={signupData.email}
+                  onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={signupData.password}
+                  onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  value={signupData.firstName}
+                  onChange={(e) => setSignupData({ ...signupData, firstName: e.target.value })}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  value={signupData.lastName}
+                  onChange={(e) => setSignupData({ ...signupData, lastName: e.target.value })}
+                  required
+                />
+                <input
+                  type="date"
+                  placeholder="Date of Birth"
+                  value={signupData.dateOfBirth}
+                  onChange={(e) => setSignupData({ ...signupData, dateOfBirth: e.target.value })}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Country"
+                  value={signupData.country}
+                  onChange={(e) => setSignupData({ ...signupData, country: e.target.value })}
+                  required
+                />
+                
+                <input
+                  type="number"
+                  placeholder="Mobile"
+                  value={signupData.mobile}
+                  onChange={(e) => setSignupData({ ...signupData, mobile: e.target.value })}
+                  required
+                />
+
+                <select name="accountType" value={signupData.accountType} 
+                  onChange={(e) => setSignupData({ ...signupData, accountType: e.target.value })} required>
+                  <option value="">Select Account Type</option>
+                  <option value="personal">Personal</option>
+                  <option value="business">Business</option>
+                </select>
+
+                <button type="submit">Signup</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
