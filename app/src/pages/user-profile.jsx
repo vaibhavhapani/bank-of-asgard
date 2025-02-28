@@ -16,9 +16,12 @@
  * under the License.
  */
 
+import { useAuthContext } from "@asgardeo/auth-react";
 import UserProfile from "../components/user-profile/user-profile";
 
 const UserProfilePage = () => {
+
+  const { state, getDecodedIDToken } = useAuthContext();
 
   return (
     <>
@@ -35,20 +38,11 @@ const UserProfilePage = () => {
             <div className="col-md-4 px-0">
               <div className="detail-box">
                 <div className="heading_container ">
-                  <h2>Personal Banking</h2>
+                  <h2>{ state.username }</h2>
                 </div>
                 <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                  enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                  nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                  in reprehenderit in voluptate velit
+                  User Image
                 </p>
-                <div className="btn-box">
-                  <a href="">
-                    Read More
-                  </a>
-                </div>
               </div>
             </div>
           </div>
