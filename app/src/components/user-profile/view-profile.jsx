@@ -17,6 +17,7 @@
  */
 
 import PropTypes from "prop-types";
+import AccountSecurity from "./account-security";
 
 const ViewProfile = ({ userInfo, setShowEditForm }) => {
 
@@ -73,6 +74,16 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                   style={ { width: "100%", maxWidth: "300px", maxHeight: "300px" } } />
               }
             </p>
+          </div>
+        </div>
+      </div>
+      <div className="heading_container mt-5">
+        <h2>Account Security</h2>
+      </div>
+      <div className="detail-box user-profile">
+        <div className="row">
+          <div className="col-md-12">
+            <AccountSecurity accountType={userInfo.accountType} />
           </div>
         </div>
       </div>

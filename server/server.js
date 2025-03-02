@@ -31,9 +31,10 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const TOKEN_ENDPOINT=process.env.ASGARDEO_TOKEN_ENDPOINT;
 const GEO_API_KEY = process.env.GEO_API_KEY;
 const ASGARDEO_BASE_URL_SCIM2 = ASGARDEO_BASE_URL + "/scim2";
+const VITE_REACT_APP_CLIENT_BASE_URL = process.env.VITE_REACT_APP_CLIENT_BASE_URL;
 
 const corsOptions = {
-    origin: [ process.env.VITE_REACT_APP_CLIENT_BASE_URL ],
+    origin: [ VITE_REACT_APP_CLIENT_BASE_URL ],
     allowedHeaders: ["Content-Type", "Authorization", "Access-Control-Allow-Methods", "Access-Control-Request-Headers"],
     credentials: true,
     enablePreflight: true
@@ -41,8 +42,8 @@ const corsOptions = {
 const app = express();
 
 app.use(cors(corsOptions));
-app.use(express.json());
 app.options('*', cors(corsOptions));
+app.use(express.json());
 
 // In-memory storage for token data
 let tokenData = {
@@ -106,10 +107,12 @@ app.post("/signup", async (req, res) => {
         },
       }
     );
+  
 
     res.json({ message: "User registered successfully", data: response.data });
   } catch (error) {
-    console.error("SCIM2 API Error:", error.detail || error.message);
+    console.log("SCIM2 API Error:", error.detail || error.message);
+    console.log(error);
     res.status(400).json({ error: error.detail || "Signup failed" });
   }
 });
@@ -161,8 +164,9 @@ const getAccessToken = async () => {
 app.post("/risk", async (req, res) => {
   try {
       console.log("request receivedd");
-      const { ip, country } = req.body;
-
+      let { ip, country } = req.body;
+      console.log(ip);
+      ip = "103.87.14.173";
       if (!ip || !country) {
           return res.status(400).json({ error: "IP address and country name are required" });
       }

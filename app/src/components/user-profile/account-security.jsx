@@ -17,7 +17,7 @@ const AccountSecurity = ({ accountType }) => {
           )}
           {accountType === "Corporate" && (
             <button onClick={() => setActiveView("totp")}>
-              Setup TOTP
+              TOTP Authenticator
             </button>
           )}
         </>

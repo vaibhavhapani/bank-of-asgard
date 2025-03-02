@@ -19,7 +19,7 @@ function PasskeySetup({ onCancel }) {
     const fetchPasskeys = () => {
         request({
             method: "GET",
-            url: "https://api.asgardeo.io/t/sampleorg1/api/users/v2/me/webauthn",
+            url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn`,
             headers: { "Content-Type": "application/json" },
         })
             .then((response) => {
@@ -95,7 +95,7 @@ function PasskeySetup({ onCancel }) {
 
         request({
             method: "POST",
-            url: "https://api.asgardeo.io/t/sampleorg1/api/users/v2/me/webauthn/start-usernameless-registration",
+            url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/start-usernameless-registration`,
             headers: {
                 "accept": "application/json",
                 'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
@@ -160,7 +160,7 @@ function PasskeySetup({ onCancel }) {
                 console.log(finalPay);
                 return request({
                     method: "POST",
-                    url: "https://api.asgardeo.io/t/sampleorg1/api/users/v2/me/webauthn/finish-registration",
+                    url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/finish-registration`,
                     headers: { "Content-Type": "application/json" },
                     data: finalPay,
                 }).then(() => credential.id);
@@ -176,7 +176,7 @@ function PasskeySetup({ onCancel }) {
                 // Update passkey display name with PATCH request
                 return request({
                     method: "PATCH",
-                    url: `https://api.asgardeo.io/t/sampleorg1/api/users/v2/me/webauthn/${credentialId}`,
+                    url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/${credentialId}`,
                     headers: { "Content-Type": "application/json" },
                     data: [
                         {
@@ -201,20 +201,23 @@ function PasskeySetup({ onCancel }) {
 
             <button onClick={startPasskeyRegistration}>Register a New Passkey</button>
 
-            <h3>Registered Passkeys</h3>
             {passkeys.length === 0 ? (
-                <p>No passkeys registered.</p>
+                <></>
             ) : (
-                <ul>
-                    {passkeys.map((pk) => (
-                        <li key={pk.credential.credentialId}>
-                            <strong>{pk.displayName || "Unnamed Device"}</strong>
-                        </li>
-                    ))}
-                </ul>
+                <div>
+                    <h4>Registered Passkeys</h4>
+                    <ul>
+                        {passkeys.map((pk) => (
+                            <li key={pk.credential.credentialId}>
+                                <strong>{pk.displayName || "Unnamed Device"}</strong>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             )}
-
+            <div>
             <button onClick={onCancel} style={{ marginTop: "10px" }}>Close</button>
+            </div>
             {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
     );

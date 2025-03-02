@@ -27,11 +27,12 @@ function TotpSetup({ onCancel }) {
         try {
             const response = await request({
                 method: "GET",
-                url: "https://api.asgardeo.io/t/sampleorg1/api/users/v1/me/mfa/authenticators",
+                url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`,
                 headers: { "Content-Type": "application/json" },
             });
+            console.log(response.data);
 
-            if (response.data.enabledAuthenticators && response.data.enabledAuthenticators.includes("totp")) {
+            if (response.data["urn:scim:wso2:schema"].totpEnabled == "true") {
                 setTotpEnabled(true);
                 fetchQrCode(); // If already enabled, show QR code
             } else {
@@ -47,7 +48,7 @@ function TotpSetup({ onCancel }) {
         try {
             const response = await request({
                 method: "POST",
-                url: "https://api.asgardeo.io/t/sampleorg1/api/users/v1/me/totp",
+                url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v1/me/totp`,
                 headers: { "accept": "application/json" },
                 data: { "action": "INIT" }
             });
@@ -69,11 +70,11 @@ function TotpSetup({ onCancel }) {
         try {
             const response = await request({
                 method: "POST",
-                url: "https://api.asgardeo.io/t/sampleorg1/api/users/v1/me/totp",
+                url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v1/me/totp`,
                 headers: { "Content-Type": "application/json" },
                 data: { action: "VIEW" },
             });
-
+            console.log(response.data);
             if (response.data?.qrCodeUrl) {
                 setQrCodeUrl(response.data.qrCodeUrl);
                 setDecodedQrCodeUrl(decodeBase64(response.data.qrCodeUrl));
@@ -95,7 +96,7 @@ function TotpSetup({ onCancel }) {
 
             const response = await request({
                 method: "POST",
-                url: "https://api.asgardeo.io/t/sampleorg1/api/users/v1/me/totp",
+                url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v1/me/totp`,
                 headers: { "Content-Type": "application/json" },
                 data: { action: "VALIDATE", verificationCode: otpCode },
             });
@@ -123,7 +124,7 @@ function TotpSetup({ onCancel }) {
 
     return (
         <div style={{ border: "1px solid #ccc", padding: "20px", marginTop: "20px", maxWidth: "500px", margin: "auto" }}>
-            <h2>Setup TOTP</h2>
+            <h2>TOTP Authenticator</h2>
 
             {setupComplete ? (
                 <>
@@ -140,7 +141,10 @@ function TotpSetup({ onCancel }) {
                                 <QRCodeCanvas value={decodedQrCodeUrl}/>
                             </div>
                             }
+                            <div>
                             <button onClick={onCancel} style={{ marginTop: "10px" }}>Done</button>
+
+                            </div>
                         </>
                     ) : (
                         <>
