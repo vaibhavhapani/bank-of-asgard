@@ -19,7 +19,7 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "./edit-profile";
-import AccountSecurity from "../account-security";
+import AccountSecurity from "./account-security";
 
 const UserProfile = () => {
 

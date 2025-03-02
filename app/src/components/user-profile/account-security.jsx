@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import PasskeySetup from "./passkey-setup/passkey-setup";
-import TotpSetup from "./totp/totp-setup";
+import PasskeySetup from "../passkey-setup/passkey-setup";
+import TotpSetup from "../totp/totp-setup";
 
 const AccountSecurity = ({ accountType }) => {
   const [activeView, setActiveView] = useState("security");
