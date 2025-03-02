@@ -1,28 +1,48 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const axios = require("axios");
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
-const app = express();
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import axios from 'axios';
 
-const corsOptions = {
-    origin: ['http://localhost:5173'],
-    allowedHeaders: ["Content-Type", "Authorization", "Access-Control-Allow-Methods", "Access-Control-Request-Headers"],
-    credentials: true,
-    enablePreflight: true
-}
+dotenv.config();
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions))
-
-app.use(express.json());
-
-
-const ASGARDEO_BASE_URL_SCIM2 = process.env.ASGARDEO_BASE_URL_SCIM2;
+const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || 'localhost';
+const ASGARDEO_BASE_URL = process.env.ASGARDEO_BASE_URL;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const TOKEN_ENDPOINT=process.env.ASGARDEO_TOKEN_ENDPOINT;
 const GEO_API_KEY = process.env.GEO_API_KEY;
+const ASGARDEO_BASE_URL_SCIM2 = ASGARDEO_BASE_URL + "/scim2";
+
+const corsOptions = {
+    origin: [ process.env.VITE_REACT_APP_CLIENT_BASE_URL ],
+    allowedHeaders: ["Content-Type", "Authorization", "Access-Control-Allow-Methods", "Access-Control-Request-Headers"],
+    credentials: true,
+    enablePreflight: true
+}
+const app = express();
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.options('*', cors(corsOptions));
 
 // In-memory storage for token data
 let tokenData = {
@@ -46,8 +66,10 @@ app.post("/signup", async (req, res) => {
     } = req.body;
 
     const token = await getAccessToken();
+
     console.log(token);
     console.log(ASGARDEO_BASE_URL_SCIM2);
+
     const response = await axios.post(
       `${ASGARDEO_BASE_URL_SCIM2}/Users`,
       {
@@ -135,7 +157,7 @@ const getAccessToken = async () => {
   }
 };
 
-//IP geolocation request
+// IP geolocation request
 app.post("/risk", async (req, res) => {
   try {
       console.log("request receivedd");
@@ -145,7 +167,8 @@ app.post("/risk", async (req, res) => {
           return res.status(400).json({ error: "IP address and country name are required" });
       }
       // Call the IP Geolocation API
-      const response=await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${GEO_API_KEY}&ip=${ip}&fields=country_name`);
+      const response = 
+        await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${GEO_API_KEY}&ip=${ip}&fields=country_name`);
 
       const country_name = response.data.country_name;
       // Determine risk based on country code
@@ -158,5 +181,4 @@ app.post("/risk", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🌐 Server running at: http://${HOST}:${PORT}`));
