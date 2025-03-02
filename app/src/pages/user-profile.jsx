@@ -16,62 +16,86 @@
  * under the License.
  */
 
-import { useAuthContext } from "@asgardeo/auth-react";
 import { useEffect, useState } from "react";
-import UserProfile from "../components/user-profile/user-profile";
+import { useAuthContext } from "@asgardeo/auth-react";
+import EditProfile from "../components/user-profile/edit-profile";
+import ViewProfile from "../components/user-profile/view-profile";
 
 const UserProfilePage = () => {
 
-  const { state, getDecodedIDToken } = useAuthContext();
-  
-  const [ decodedIDTokenDetails, setDecodedIDTokenDetails ] = useState(null);
+  const [ userInfo, setUserInfo ] = useState(null);
+  const [ showEditForm, setShowEditForm ] = useState(false);
+
+  const { getDecodedIDToken, refreshAccessToken, state } = useAuthContext();
 
   useEffect(() => {
-    if (state.isAuthenticated) {
-      getDecodedIDToken()
-        .then((response) => {
-          setDecodedIDTokenDetails(response);
+    getIdToken();
+  }, []);
+
+  const handleUpdateSuccess = () => {
+    updateToken().then(() => {
+      setShowEditForm(false);
+    });  
+  };
+
+  const getIdToken = () => {
+    getDecodedIDToken().then((decodedIdToken) => {
+      console.log(decodedIdToken);
+
+      if (!decodedIdToken) {
+        return;
+      }
+
+      setUserInfo({
+        username: decodedIdToken.username || "",
+        accountType: decodedIdToken.accountType || "N/A",
+        email: decodedIdToken.email || "",
+          givenName: decodedIdToken.given_name || "",
+          familyName: decodedIdToken.family_name || "",
+          mobile: decodedIdToken.phone_number || "",
+          country: decodedIdToken.address?.country || "",
+          birthdate: decodedIdToken.birthdate || "",
+          picture: decodedIdToken.picture || ""
       });
+    });
+  }
+
+  const updateToken = async () => {
+    const refresh = await refreshAccessToken();
+
+    if(refresh) {
+      getIdToken();
     }
-  }, [ state, getDecodedIDToken ]);
+  }
+
+  const handleCancelEdit = () => {
+    setShowEditForm(false);
+  };
+
+  if (!state.isAuthenticated) { 
+    return <p>Please log in to view your profile.</p>;
+  }
+
+  // load userinfo before rendering profile details**
+  if (!userInfo) {
+    return <p>Loading user profile...</p>;
+  }
 
   return (
     <>
       <section className="about_section layout_padding">
         <div className="container-fluid">
-          <div className="heading_container ">
-            <h2>User Profile</h2>
-          </div>
-          <div className="detail-box user-profile">
-            <div className="row">
-              <div className="col-md-8 px-0">
-                <div className="img_container">
-                  <div className="img-box">
-                    <UserProfile />
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4 px-0">
-                {/* <div className="heading_container">
-                  { (decodedIDTokenDetails?.given_name && decodedIDTokenDetails?.family_name) ?
-                    (
-                      <h2>{ decodedIDTokenDetails.given_name } { decodedIDTokenDetails.family_name }</h2>
-                    ) : (
-                      <h2>{ state.username }</h2>
-                    )
-                  }
-                </div> */}
-                <p style={ { textAlign: "center" } }>
-                  { decodedIDTokenDetails?.picture &&
-                    <img
-                      src={ decodedIDTokenDetails.picture }
-                      alt="User Image"
-                      style={ { width: "100%", maxWidth: "300px", maxHeight: "300px" } } />
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
+          { showEditForm && userInfo ? (
+            <>
+              <EditProfile
+                userInfo={userInfo}
+                onUpdateSuccess={handleUpdateSuccess}
+                onCancel={handleCancelEdit}
+              />
+            </>
+          ) : (
+            <ViewProfile userInfo={ userInfo } setShowEditForm={ setShowEditForm } />
+          )}
         </div>
       </section>
     </>
