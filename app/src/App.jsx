@@ -21,24 +21,26 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
+  Link,
+  NavLink,
+  Navigate
 } from "react-router-dom";
 import HomePage from "./pages/home";
 import BusinessBankingPage from "./pages/business-banking";
-import PersonalBankingPage from "./pages/personal-banking";
 import RegisterAccountPage from "./pages/register-account";
 import UserProfilePage from "./pages/user-profile";
 import Logo from "./assets/logo.svg";
 import "./assets/css/bootstrap.css";
 import "./assets/css/responsive.css";
 import "./assets/css/style.scss";
-import "./App.css";
+
+const PERSONAL_BANKING_PATH = "/personal-banking";
+const BUSINESS_BANKING_PATH = "/business-banking";
+const USER_PROFILE_PATH = "/user-profile";
+const REGISTER_ACCOUNT_PATH = "/register-account";
 
 const App = () => {
   const { state, signIn, signOut } = useAuthContext();
-
-  const navActive = false;
-  const navActiveClass = (navActive) ? "active" : "";
 
   return (
     <Router>
@@ -47,31 +49,36 @@ const App = () => {
           <div className="container-fluid">
             <div className="contact_link-container">
               <span>
-                <Link to="/personal-banking" className="contact_link1">
+                <NavLink to={ PERSONAL_BANKING_PATH } className={({ isActive }) => isActive ? "contact_link1 active" : "contact_link1"}>
                   <span>
                     Personal
                   </span>
-                </Link>
+                </NavLink>
                 <span className="divider">|</span>
-                <Link to="/business-banking" className="contact_link1">
+                <NavLink to={ BUSINESS_BANKING_PATH } className={({ isActive }) => isActive ? "contact_link1 active" : "contact_link1"}>
                   <span>
                     Business
                   </span>
-                </Link>
+                </NavLink>
               </span>
               <span>
                 {
                   state.isAuthenticated ?
                   (
                     <>
-                        <p>Welcome, <Link to="/user-profile">{ state.username }</Link>!</p>
+                        <span className="login_details">Welcome, { state.username }!</span>
+                        <Link to={ USER_PROFILE_PATH }>
+                          <span>
+                            My Banking
+                          </span>
+                        </Link>
                         <button className="login_link" onClick={ () => signOut() }>
                             Logout
                         </button>
                     </>
                   ) : (
                     <>
-                      <Link to="/register-account" className="register_link">
+                      <Link to={ REGISTER_ACCOUNT_PATH } className="register_link">
                         <span>
                           Register
                         </span>
@@ -100,12 +107,11 @@ const App = () => {
 
               <div className="collapse navbar-collapse ml-auto" id="navbarSupportedContent">
                 <ul className="navbar-nav">
-                  <li className={ `nav-item ${navActiveClass}` }>
-                    <a className="nav-link" href="">
+                  <li className="nav-item">
+                    <NavLink to={ PERSONAL_BANKING_PATH } className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                       Everyday Banking
                       <span>Accounts & Credit Cards</span>
-                      { navActive && <span className="sr-only">(current)</span> }
-                    </a>
+                    </NavLink>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link" href="">
@@ -133,11 +139,11 @@ const App = () => {
       </header>
 
       <Routes>
-        <Route path="/personal-banking" element={ <PersonalBankingPage /> } />
-        <Route path="/business-banking" element={ <BusinessBankingPage /> } />
-        <Route path="/register-account" element={ <RegisterAccountPage /> } />
-        <Route path="/user-profile" element={ <UserProfilePage /> } />
-        <Route path="/" element={ <HomePage /> } />
+        <Route path={ PERSONAL_BANKING_PATH } element={ <HomePage /> } />
+        <Route path={ BUSINESS_BANKING_PATH } element={ <BusinessBankingPage /> } />
+        <Route path={ REGISTER_ACCOUNT_PATH } element={ <RegisterAccountPage /> } />
+        <Route path={ USER_PROFILE_PATH } element={ <UserProfilePage /> } />
+        <Route path="/" element={ <Navigate to={ PERSONAL_BANKING_PATH } /> } />
       </Routes>
 
       <section className="info_section ">

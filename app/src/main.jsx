@@ -20,18 +20,18 @@ import { AuthProvider } from "@asgardeo/auth-react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import "./index.css";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider
-      config={ {
-        signInRedirectURL: 'http://localhost:5173',
-        signOutRedirectURL: 'http://localhost:5173',
-        clientID: 'J_wjIo0qylHQDJCWfBZuE6cp1Qwa',
-        baseUrl: 'https://api.asgardeo.io/t/sampleorg1',
+      config={{
+        signInRedirectURL: `${import.meta.env.VITE_REACT_APP_CLIENT_BASE_URL}`,
+        signOutRedirectURL: `${import.meta.env.VITE_REACT_APP_CLIENT_BASE_URL}`,
+        clientID: `${import.meta.env.VITE_REACT_APP_CLIENT_ID}`,
+        baseUrl: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}`,
+        resourceServerURLs: [`${import.meta.env.VITE_REACT_APP_API_ENDPOINT}`],
         scope: ['openid', 'address', 'email', 'phone', 'profile', 'internal_login'],
-      } }
+      }}
     >
       <App />
     </AuthProvider>

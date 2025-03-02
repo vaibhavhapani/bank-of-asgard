@@ -38,6 +38,9 @@ importers:
       axios:
         specifier: ^0.24.0
         version: 0.24.0
+      prop-types:
+        specifier: ^15.8.1
+        version: 15.8.1
       react:
         specifier: ^19.0.0
         version: 19.0.0

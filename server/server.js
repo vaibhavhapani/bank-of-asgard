@@ -28,12 +28,12 @@ const HOST = process.env.HOST || 'localhost';
 const ASGARDEO_BASE_URL = process.env.ASGARDEO_BASE_URL;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const ASGARDEO_BASE_URL_SCIM2 = process.env.ASGARDEO_BASE_URL_SCIM2;
 const TOKEN_ENDPOINT=process.env.ASGARDEO_TOKEN_ENDPOINT;
 const GEO_API_KEY = process.env.GEO_API_KEY;
+const ASGARDEO_BASE_URL_SCIM2 = ASGARDEO_BASE_URL + "/scim2";
 
 const corsOptions = {
-    origin: ['http://localhost:5173'],
+    origin: [ process.env.VITE_REACT_APP_CLIENT_BASE_URL ],
     allowedHeaders: ["Content-Type", "Authorization", "Access-Control-Allow-Methods", "Access-Control-Request-Headers"],
     credentials: true,
     enablePreflight: true
@@ -66,8 +66,10 @@ app.post("/signup", async (req, res) => {
     } = req.body;
 
     const token = await getAccessToken();
+
     console.log(token);
     console.log(ASGARDEO_BASE_URL_SCIM2);
+
     const response = await axios.post(
       `${ASGARDEO_BASE_URL_SCIM2}/Users`,
       {

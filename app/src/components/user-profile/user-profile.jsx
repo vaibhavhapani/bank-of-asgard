@@ -16,52 +16,55 @@
  * under the License.
  */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "./edit-profile";
 
 const UserProfile = () => {
 
-  const { getDecodedIDToken } = useAuthContext();
+  const [ userInfo, setUserInfo ] = useState(null);
+  const [ showEditForm, setShowEditForm ] = useState(false);
+  const [ error, setError ] = useState(null);
 
-  const [userInfo, setUserInfo] = useState(null);
-  const [showEditForm, setShowEditForm] = useState(false);
-  const [error, setError] = useState(null);
+  const { httpRequest, state } = useAuthContext();
 
-  const { httpRequest } = useAuthContext();
-
-  const request = requestConfig =>
-    httpRequest(requestConfig)
-      .then(response => response)
-      .catch(error => error);
+  const requestConfig = {
+    headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/scim+json"
+    },
+    method: "GET",
+    url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`
+  };
 
   useEffect(() => {
-    async function fetchUserProfile() {
-      try {
-        const response = await request({
-        method: "GET",
-        url: "https://api.asgardeo.io/t/sampleorg1/scim2/Me",
-        headers: { "Content-Type": "application/json" },
-      });
-
-        setUserInfo({
-          username: response.data.userName.split('/').pop() || "N/A",
-          accountType:
-            response.data["urn:scim:schemas:extension:custom:User"]
-              .accountType || "N/A",
-          email: response.data.emails[0] || "N/A",
-          givenName: response.data.name.givenName || "N/A",
-          familyName: response.data.name.familyName || "N/A",
-          mobile: response.data.phoneNumbers[0].value || "N/A",
-          country: response.data["urn:scim:wso2:schema"].country || "N/A",
-          birthdate: response.data["urn:scim:wso2:schema"].dateOfBirth || "N/A",
-        });
-      } catch (err) {
-        setError("Failed to retrieve user profile.");
-      }
+    if (!state.isAuthenticated) {
+      return;
     }
-    fetchUserProfile();
-  }, []);
+
+    httpRequest(requestConfig)
+        .then((response) => {
+          const responseData = response.data;
+
+          console.log(responseData);
+
+          setUserInfo({
+            username: responseData?.userName.split('/').pop() || "N/A",
+            accountType: responseData["urn:scim:schemas:extension:custom:User"]?.accountType || "N/A",
+            email: (responseData?.emails && responseData?.emails.length > 0) ? responseData?.emails[0] : "N/A",
+            givenName: responseData?.name?.givenName || "N/A",
+            familyName: responseData?.name?.familyName || "N/A",
+            mobile:(responseData?.phoneNumbers && responseData?.phoneNumbers.length > 0) ?
+              responseData?.phoneNumbers[0]?.value : "N/A",
+            country: responseData["urn:scim:wso2:schema"]?.country || "N/A",
+            birthdate: responseData["urn:scim:wso2:schema"]?.dateOfBirth || "N/A",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          setError("Failed to retrieve user profile.");
+        });
+  }, [ state ]);
 
   const handleUpdateSuccess = () => {
     setShowEditForm(false);
@@ -74,50 +77,56 @@ const UserProfile = () => {
 
   if (error) return <p>{error}</p>;
 
+  if (!state.isAuthenticated) { 
+    return <p>Please log in to view your profile.</p>;
+  }
+
   // load userinfo before rendering profile details**
   if (!userInfo) {
     return <p>Loading user profile...</p>;
   }
 
   return (
-    <div
-      style={{ border: "1px solid #ccc", padding: "20px", marginTop: "20px" }}
-    >
-      {showEditForm && userInfo ? (
+    <div>
+      { showEditForm && userInfo ? (
         <EditProfile
           userInfo={userInfo}
           onUpdateSuccess={handleUpdateSuccess}
           onCancel={handleCancelEdit}
         />
       ) : (
-        <>
-          <h2>User Profile</h2>
-          <ul style={{ listStyleType: "none", padding: 0 }}>
-            <li>
-              <strong>User Name:</strong> {userInfo.username || "N/A"}
-            </li>
-            <li>
-              <strong>Account Type:</strong> {userInfo.accountType || "N/A"}
-            </li>
-            <li>
-              <strong>Full Name:</strong> {userInfo.givenName || "N/A"}{" "}
-              {userInfo.familyName}
-            </li>
-            <li>
-              <strong>Email:</strong> {userInfo.email || "N/A"}
-            </li>
-            <li>
-              <strong>Country:</strong> {userInfo.country || "N/A"}
-            </li>
-            <li>
-              <strong>Birth date</strong> {userInfo.birthdate || "N/A"}
-            </li>
-            <li>
-              <strong>Mobile:</strong> {userInfo.mobile || "N/A"}
-            </li>
-          </ul>
-          <button onClick={() => setShowEditForm(true)}>Edit Profile</button>
-        </>
+        <div className="contact_section">
+          <div className="contact_form-container profile-edit">
+            <ul className="details-list">
+              <li>
+                <strong>User Name:</strong> {userInfo.username || "N/A"}
+              </li>
+              <li>
+                <strong>Account Type:</strong> {userInfo.accountType || "N/A"}
+              </li>
+              <li>
+                <strong>Full Name:</strong> {userInfo.givenName || "N/A"}{" "}
+                {userInfo.familyName}
+              </li>
+              <li>
+                <strong>Email:</strong> {userInfo.email || "N/A"}
+              </li>
+              <li>
+                <strong>Country:</strong> {userInfo.country || "N/A"}
+              </li>
+              <li>
+                <strong>Birth date</strong> {userInfo.birthdate || "N/A"}
+              </li>
+              <li>
+                <strong>Mobile:</strong> {userInfo.mobile || "N/A"}
+              </li>
+            </ul>
+
+            <div className="form-buttons">
+              <button className="edit-button" onClick={() => setShowEditForm(true)}>Edit Profile</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

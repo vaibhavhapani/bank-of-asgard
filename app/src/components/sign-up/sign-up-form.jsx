@@ -52,7 +52,7 @@ const SignUpForm = () => {
       <div className="container">
         <div className="heading_container heading_center">
           <h2>
-            Get In touch
+            Create an account
           </h2>
         </div>
         <div className="">
