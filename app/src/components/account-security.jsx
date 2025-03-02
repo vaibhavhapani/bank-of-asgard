@@ -2,16 +2,11 @@ import React, { useState } from "react";
 import PasskeySetup from "./passkey-setup/passkey-setup";
 import TotpSetup from "./totp/totp-setup";
 
-function AccountSecurity({ accountType }) {
+const AccountSecurity = ({ accountType }) => {
   const [activeView, setActiveView] = useState("security");
 
   return (
-    <div style={{
-      position: "absolute",
-      top: "20px",
-      right: "20px",
-      textAlign: "right",
-    }}>
+    <div>
       <h3>Account Security</h3>
 
       {activeView === "security" && (
@@ -29,8 +24,8 @@ function AccountSecurity({ accountType }) {
         </>
       )}
 
-      {activeView === "passkey" && <PasskeySetup onCancel={() => setActiveView("security")} />}
-      {activeView === "totp" && <TotpSetup onCancel={() => setActiveView("security")} />}
+      { activeView === "passkey" && <PasskeySetup onCancel={() => setActiveView("security")} /> }
+      { activeView === "totp" && <TotpSetup onCancel={() => setActiveView("security")} /> }
     </div>
   );
 }
