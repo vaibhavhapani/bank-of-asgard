@@ -1,52 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "./edit-profile";
+import AccountSecurity from "../account-security";
 
 function UserProfile() {
-  const { getDecodedIDToken } = useAuthContext();
+  const { getDecodedIDToken, refreshAccessToken } = useAuthContext();
   const [userInfo, setUserInfo] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false);
   const [error, setError] = useState(null);
 
-  const { httpRequest } = useAuthContext();
-
-  const request = requestConfig =>
-    httpRequest(requestConfig)
-      .then(response => response)
-      .catch(error => error);
-
   useEffect(() => {
-    async function fetchUserProfile() {
-      try {
-        const response = await request({
-        method: "GET",
-        url: "https://api.asgardeo.io/t/sampleorg1/scim2/Me",
-        headers: { "Content-Type": "application/json" },
-      });
-
-        setUserInfo({
-          username: response.data.userName.split('/').pop() || "N/A",
-          accountType:
-            response.data["urn:scim:schemas:extension:custom:User"]
-              .accountType || "N/A",
-          email: response.data.emails[0] || "N/A",
-          givenName: response.data.name.givenName || "N/A",
-          familyName: response.data.name.familyName || "N/A",
-          mobile: response.data.phoneNumbers[0].value || "N/A",
-          country: response.data["urn:scim:wso2:schema"].country || "N/A",
-          birthdate: response.data["urn:scim:wso2:schema"].dateOfBirth || "N/A",
-        });
-      } catch (err) {
-        setError("Failed to retrieve user profile.");
-      }
-    }
-    fetchUserProfile();
+    getIdToken();
   }, []);
 
   const handleUpdateSuccess = () => {
-    setShowEditForm(false);
-    window.location.reload();
+    updateToken().then(() => {
+      setShowEditForm(false);
+    });  
   };
+
+  const getIdToken = () => {
+    getDecodedIDToken().then((decodedIdToken) => {
+      console.log(decodedIdToken);
+      setUserInfo({
+        username: decodedIdToken.username  || "N/A",
+        accountType:decodedIdToken.accountType,
+        email: decodedIdToken.email|| "N/A",
+          givenName: decodedIdToken.given_name || "N/A",
+          familyName: decodedIdToken.family_name || "N/A",
+          mobile: decodedIdToken.phone_number || "N/A",
+          country: decodedIdToken.address.country || "N/A",
+          birthdate: decodedIdToken.birthdate || "N/A",
+      })})
+  }
+
+  const updateToken = async () => {
+    const refresh = await refreshAccessToken();
+    if(refresh) {
+      getIdToken();
+    }
+  }
 
   const handleCancelEdit = () => {
     setShowEditForm(false);
@@ -60,9 +53,9 @@ function UserProfile() {
   }
 
   return (
-    <div
-      style={{ border: "1px solid #ccc", padding: "20px", marginTop: "20px" }}
-    >
+    <div style={{ border: "1px solid #ccc", padding: "20px", marginTop: "20px"}}>
+      <AccountSecurity accountType={userInfo.accountType} />
+
       {showEditForm && userInfo ? (
         <EditProfile
           userInfo={userInfo}

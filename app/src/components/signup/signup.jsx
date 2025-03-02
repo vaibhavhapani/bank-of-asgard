@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
-//import { Button } from '@/components/ui/button';
 import axios from "axios";
+import { useAuthContext } from '@asgardeo/auth-react'
 
 function Signup() {
   const [signupData, setSignupData] = useState({
@@ -16,6 +15,8 @@ function Signup() {
     accountType: ''
   });
 
+  const { signIn } = useAuthContext();
+
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
@@ -25,6 +26,10 @@ function Signup() {
       //setSignupData({ ...signupData, [e.target.name]: e.target.value });
 
       console.log('User signed up:', signupData);
+      if(response.status == 200) {
+        signIn();
+      }
+
     } catch (error) {
       console.log(error);
       alert(error.response?.data?.error || "Signup failed");
@@ -95,8 +100,8 @@ function Signup() {
             <select name="accountType" value={signupData.accountType} 
               onChange={(e) => setSignupData({ ...signupData, accountType: e.target.value })} required>
               <option value="">Select Account Type</option>
-              <option value="personal">Personal</option>
-              <option value="business">Business</option>
+              <option value="Personal">Personal</option>
+              <option value="Corporate">Corporate</option>
             </select>
             <button type="submit">Signup</button>
           </form>
