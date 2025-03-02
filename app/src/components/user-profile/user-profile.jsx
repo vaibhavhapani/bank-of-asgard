@@ -41,20 +41,27 @@ const UserProfile = () => {
   const getIdToken = () => {
     getDecodedIDToken().then((decodedIdToken) => {
       console.log(decodedIdToken);
+
+      if (!decodedIdToken) {
+        return;
+      }
+
       setUserInfo({
-        username: decodedIdToken.username  || "N/A",
-        accountType:decodedIdToken.accountType,
-        email: decodedIdToken.email|| "N/A",
+        username: decodedIdToken.username || "N/A",
+        accountType: decodedIdToken.accountType,
+        email: decodedIdToken.email || "N/A",
           givenName: decodedIdToken.given_name || "N/A",
           familyName: decodedIdToken.family_name || "N/A",
           mobile: decodedIdToken.phone_number || "N/A",
-          country: decodedIdToken.address.country || "N/A",
+          country: decodedIdToken.address?.country || "N/A",
           birthdate: decodedIdToken.birthdate || "N/A",
-      })})
+      });
+    });
   }
 
   const updateToken = async () => {
     const refresh = await refreshAccessToken();
+
     if(refresh) {
       getIdToken();
     }
