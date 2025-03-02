@@ -40,7 +40,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
   useEffect(() => {
     if (userInfo) {
-        console.log("inside userinfo" +userInfo);
+      console.log("inside userinfo" + userInfo);
 
       setFormData({
         givenName: userInfo.givenName || "",
@@ -50,7 +50,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         mobile: userInfo.mobile || "",
         password: "",
       });
-      console.log("inside usereffect" +formData);
+      console.log("inside usereffect" + formData);
     }
   }, [ userInfo ]);
 
@@ -89,7 +89,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
       if (formData.password.trim() !== "") {
         valuePayload.password = formData.password;
       }
-  
+
       if (Object.keys(valuePayload).length > 0) {
         operations.push({ op: "replace", value: valuePayload });
       }

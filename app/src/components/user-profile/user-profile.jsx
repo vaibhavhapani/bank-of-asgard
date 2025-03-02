@@ -19,63 +19,50 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "./edit-profile";
+import AccountSecurity from "../account-security";
 
 const UserProfile = () => {
 
   const [ userInfo, setUserInfo ] = useState(null);
   const [ showEditForm, setShowEditForm ] = useState(false);
-  const [ error, setError ] = useState(null);
 
-  const { httpRequest, state } = useAuthContext();
-
-  const requestConfig = {
-    headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/scim+json"
-    },
-    method: "GET",
-    url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`
-  };
+  const { getDecodedIDToken, refreshAccessToken, state } = useAuthContext();
 
   useEffect(() => {
-    if (!state.isAuthenticated) {
-      return;
-    }
-
-    httpRequest(requestConfig)
-        .then((response) => {
-          const responseData = response.data;
-
-          console.log(responseData);
-
-          setUserInfo({
-            username: responseData?.userName.split('/').pop() || "N/A",
-            accountType: responseData["urn:scim:schemas:extension:custom:User"]?.accountType || "N/A",
-            email: (responseData?.emails && responseData?.emails.length > 0) ? responseData?.emails[0] : "N/A",
-            givenName: responseData?.name?.givenName || "N/A",
-            familyName: responseData?.name?.familyName || "N/A",
-            mobile:(responseData?.phoneNumbers && responseData?.phoneNumbers.length > 0) ?
-              responseData?.phoneNumbers[0]?.value : "N/A",
-            country: responseData["urn:scim:wso2:schema"]?.country || "N/A",
-            birthdate: responseData["urn:scim:wso2:schema"]?.dateOfBirth || "N/A",
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-          setError("Failed to retrieve user profile.");
-        });
-  }, [ state ]);
+    getIdToken();
+  }, []);
 
   const handleUpdateSuccess = () => {
-    setShowEditForm(false);
-    window.location.reload();
+    updateToken().then(() => {
+      setShowEditForm(false);
+    });  
   };
+
+  const getIdToken = () => {
+    getDecodedIDToken().then((decodedIdToken) => {
+      console.log(decodedIdToken);
+      setUserInfo({
+        username: decodedIdToken.username  || "N/A",
+        accountType:decodedIdToken.accountType,
+        email: decodedIdToken.email|| "N/A",
+          givenName: decodedIdToken.given_name || "N/A",
+          familyName: decodedIdToken.family_name || "N/A",
+          mobile: decodedIdToken.phone_number || "N/A",
+          country: decodedIdToken.address.country || "N/A",
+          birthdate: decodedIdToken.birthdate || "N/A",
+      })})
+  }
+
+  const updateToken = async () => {
+    const refresh = await refreshAccessToken();
+    if(refresh) {
+      getIdToken();
+    }
+  }
 
   const handleCancelEdit = () => {
     setShowEditForm(false);
   };
-
-  if (error) return <p>{error}</p>;
 
   if (!state.isAuthenticated) { 
     return <p>Please log in to view your profile.</p>;
@@ -88,12 +75,15 @@ const UserProfile = () => {
 
   return (
     <div>
-      { showEditForm && userInfo ? (
-        <EditProfile
-          userInfo={userInfo}
-          onUpdateSuccess={handleUpdateSuccess}
-          onCancel={handleCancelEdit}
-        />
+      {showEditForm && userInfo ? (
+        <>
+          <AccountSecurity accountType={userInfo.accountType} />
+          <EditProfile
+            userInfo={userInfo}
+            onUpdateSuccess={handleUpdateSuccess}
+            onCancel={handleCancelEdit}
+          />
+        </>
       ) : (
         <div className="contact_section">
           <div className="contact_form-container profile-edit">

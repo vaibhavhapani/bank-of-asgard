@@ -16,10 +16,14 @@
  * under the License.
  */
 
+import { useAuthContext } from "@asgardeo/auth-react";
 import { useState } from 'react';
 import axios from "axios";
 
 const SignUpForm = () => {
+
+  const { signIn } = useAuthContext();
+
   const [signupData, setSignupData] = useState({
     firstName: '',
     lastName: '',
@@ -35,11 +39,14 @@ const SignUpForm = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5003/signup", signupData);
-      //alert(response.data.message);
-      console.log(response.data.message);
-      //setSignupData({ ...signupData, [e.target.name]: e.target.value });
+      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_API_ENDPOINT}/signup`, signupData);
 
+      console.log(response.data.message);
+
+      if (response.status == 200) {
+        signIn();
+      }
+  
       console.log('User signed up:', signupData);
     } catch (error) {
       console.log(error);
@@ -120,8 +127,8 @@ const SignUpForm = () => {
                 <select name="accountType" value={signupData.accountType} 
                   onChange={(e) => setSignupData({ ...signupData, accountType: e.target.value })} required>
                   <option value="">Select Account Type</option>
-                  <option value="personal">Personal</option>
-                  <option value="business">Business</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Corporate">Corporate</option>
                 </select>
 
                 <button type="submit">Signup</button>
