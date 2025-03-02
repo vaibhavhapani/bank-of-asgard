@@ -23,10 +23,16 @@ import ViewProfile from "../components/user-profile/view-profile";
 
 const UserProfilePage = () => {
 
+  const { getDecodedIDToken, refreshAccessToken, state, signIn } = useAuthContext();
+
   const [ userInfo, setUserInfo ] = useState(null);
   const [ showEditForm, setShowEditForm ] = useState(false);
 
-  const { getDecodedIDToken, refreshAccessToken, state } = useAuthContext();
+  useEffect(() => {
+    if (!state.isAuthenticated) { 
+      signIn();
+    }
+  }, []);
 
   useEffect(() => {
     getIdToken();
@@ -63,7 +69,7 @@ const UserProfilePage = () => {
   const updateToken = async () => {
     const refresh = await refreshAccessToken();
 
-    if(refresh) {
+    if (refresh) {
       getIdToken();
     }
   }
@@ -72,13 +78,8 @@ const UserProfilePage = () => {
     setShowEditForm(false);
   };
 
-  if (!state.isAuthenticated) { 
-    return <p>Please log in to view your profile.</p>;
-  }
-
-  // load userinfo before rendering profile details**
   if (!userInfo) {
-    return <p>Loading user profile...</p>;
+    return;
   }
 
   return (

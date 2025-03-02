@@ -16,7 +16,15 @@
  * under the License.
  */
 
-const BusinessBankingPage = () => {
+import { useEffect } from "react";
+import PropTypes from "prop-types";
+import { SITE_SECTIONS } from "../constants/app-constants";
+
+const BusinessBankingPage = ({ setSiteSection }) => {
+
+  useEffect(() => {
+    setSiteSection(SITE_SECTIONS.BUSINESS);
+  }, []);
 
   return (
     <>
@@ -55,5 +63,9 @@ const BusinessBankingPage = () => {
     </>
   );
 }
+
+BusinessBankingPage.propTypes = {
+  setSiteSection: PropTypes.object.isRequired,
+};
 
 export default BusinessBankingPage;

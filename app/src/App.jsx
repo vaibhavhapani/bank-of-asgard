@@ -17,6 +17,7 @@
  */
 
 import { useAuthContext } from "@asgardeo/auth-react";
+import { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,22 +26,23 @@ import {
   NavLink,
   Navigate
 } from "react-router-dom";
-import HomePage from "./pages/home";
+import { ROUTES, SITE_SECTIONS } from "./constants/app-constants";
+import PersonalBankingPage from "./pages/personal-banking";
 import BusinessBankingPage from "./pages/business-banking";
 import RegisterAccountPage from "./pages/register-account";
 import UserProfilePage from "./pages/user-profile";
+import NotFound from "./pages/not-found";
 import Logo from "./assets/logo.svg";
 import "./assets/css/bootstrap.css";
 import "./assets/css/responsive.css";
 import "./assets/css/style.scss";
 
-const PERSONAL_BANKING_PATH = "/personal-banking";
-const BUSINESS_BANKING_PATH = "/business-banking";
-const USER_PROFILE_PATH = "/user-profile";
-const REGISTER_ACCOUNT_PATH = "/register-account";
-
 const App = () => {
   const { state, signIn, signOut } = useAuthContext();
+  const [ siteSection, setSiteSection ] = useState("");
+
+  console.log(SITE_SECTIONS.PERSONAL);
+  console.log(siteSection);
 
   return (
     <Router>
@@ -49,25 +51,24 @@ const App = () => {
           <div className="container-fluid">
             <div className="contact_link-container">
               <span>
-                <NavLink to={ PERSONAL_BANKING_PATH } className={({ isActive }) => isActive ? "contact_link1 active" : "contact_link1"}>
+                <NavLink to={ ROUTES.PERSONAL_BANKING } className={({ isActive }) => isActive ? "contact_link1 active" : "contact_link1"}>
                   <span>
                     Personal
                   </span>
                 </NavLink>
                 <span className="divider">|</span>
-                <NavLink to={ BUSINESS_BANKING_PATH } className={({ isActive }) => isActive ? "contact_link1 active" : "contact_link1"}>
+                <NavLink to={ ROUTES.BUSINESS_BANKING } className={({ isActive }) => isActive ? "contact_link1 active" : "contact_link1"}>
                   <span>
                     Business
                   </span>
                 </NavLink>
               </span>
               <span>
-                {
-                  state.isAuthenticated ?
+                { state.isAuthenticated ?
                   (
                     <>
                         <span className="login_details">Welcome, { state.username }!</span>
-                        <Link to={ USER_PROFILE_PATH }>
+                        <Link to={ ROUTES.USER_PROFILE }>
                           <span>
                             My Banking
                           </span>
@@ -78,7 +79,7 @@ const App = () => {
                     </>
                   ) : (
                     <>
-                      <Link to={ REGISTER_ACCOUNT_PATH } className="register_link">
+                      <Link to={ ROUTES.REGISTER_ACCOUNT } className="register_link">
                         <span>
                           Register
                         </span>
@@ -105,45 +106,77 @@ const App = () => {
                 <span className=""></span>
               </button>
 
-              <div className="collapse navbar-collapse ml-auto" id="navbarSupportedContent">
-                <ul className="navbar-nav">
-                  <li className="nav-item">
-                    <NavLink to={ PERSONAL_BANKING_PATH } className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                      Everyday Banking
-                      <span>Accounts & Credit Cards</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="">
-                      Offers & Rewards
-                      <span>Exclusive Offers</span>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="">
-                      International
-                      <span>Global Benefits</span>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="">
-                      Digital Banking
-                      <span>Banking made easy</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
+              { (siteSection === SITE_SECTIONS.PERSONAL) &&
+                <div className="collapse navbar-collapse ml-auto" id="navbarSupportedContent">
+                  <ul className="navbar-nav">
+                    <li className="nav-item">
+                      <NavLink to={ ROUTES.PERSONAL_BANKING } className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                        Everyday Banking
+                        <span>Accounts & Credit Cards</span>
+                      </NavLink>
+                    </li>
+                    <li className="nav-item">
+                      <a className="nav-link" href="">
+                        Offers & Rewards
+                        <span>Exclusive Offers</span>
+                      </a>
+                    </li>
+                    <li className="nav-item">
+                      <a className="nav-link" href="">
+                        International
+                        <span>Global Benefits</span>
+                      </a>
+                    </li>
+                    <li className="nav-item">
+                      <a className="nav-link" href="">
+                        Digital Banking
+                        <span>Banking made easy</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              }
+
+              { (siteSection === SITE_SECTIONS.BUSINESS) &&
+                <div className="collapse navbar-collapse ml-auto" id="navbarSupportedContent">
+                  <ul className="navbar-nav">
+                    <li className="nav-item">
+                      <NavLink to={ ROUTES.BUSINESS_BANKING } className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                        Insights
+                      </NavLink>
+                    </li>
+                    <li className="nav-item">
+                      <a className="nav-link" href="">
+                        Products & Solutions
+                      </a>
+                    </li>
+                    <li className="nav-item">
+                      <a className="nav-link" href="">
+                        Help Centre
+                      </a>
+                    </li>
+                    <li className="nav-item">
+                      <a className="nav-link" href="">
+                        Contact us
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              }
             </nav>
           </div>
         </div>
       </header>
 
       <Routes>
-        <Route path={ PERSONAL_BANKING_PATH } element={ <HomePage /> } />
-        <Route path={ BUSINESS_BANKING_PATH } element={ <BusinessBankingPage /> } />
-        <Route path={ REGISTER_ACCOUNT_PATH } element={ <RegisterAccountPage /> } />
-        <Route path={ USER_PROFILE_PATH } element={ <UserProfilePage /> } />
-        <Route path="/" element={ <Navigate to={ PERSONAL_BANKING_PATH } /> } />
+        <Route path={ ROUTES.PERSONAL_BANKING } element={ <PersonalBankingPage setSiteSection={ setSiteSection } /> } />
+        <Route path={ ROUTES.BUSINESS_BANKING } element={ <BusinessBankingPage setSiteSection={ setSiteSection } /> } />
+        <Route path={ ROUTES.REGISTER_ACCOUNT } element={ <RegisterAccountPage /> } />
+        { state.isAuthenticated &&
+          <Route path={ ROUTES.USER_PROFILE } element={ <UserProfilePage /> } />
+        }
+        <Route path="/" element={ <Navigate to={ ROUTES.PERSONAL_BANKING } setSiteSection={ setSiteSection } /> } />
+        <Route path="*" element={ <NotFound /> } />
       </Routes>
 
       <section className="info_section ">
