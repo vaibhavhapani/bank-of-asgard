@@ -21,6 +21,7 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import axios from "axios";
 import CountrySelect from "../country-select";
+import { ACCOUNT_TYPES } from "../../constants/app-constants";
 
 const SignUpForm = ({ accountType }) => {
 
@@ -60,9 +61,13 @@ const SignUpForm = ({ accountType }) => {
     <div className="contact_section">
       <div className="container">
         <div className="heading_container heading_center">
-          <h2>
-            Create an account
-          </h2>
+          { (accountType === ACCOUNT_TYPES.BUSINESS) ?
+            (
+              <h2>Create your business account</h2>
+            ) : (
+              <h2>Create your account</h2>
+            )
+          }
         </div>
         <div className="">
           <div className="row">

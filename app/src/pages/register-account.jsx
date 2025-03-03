@@ -76,11 +76,6 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                   eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                   enim ad minim veniam.
                 </p>
-                <div className="btn-box">
-                  <a href="">
-                    Read More
-                  </a>
-                </div>
               </div>
             </div>
           </div>

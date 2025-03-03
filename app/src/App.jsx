@@ -36,6 +36,7 @@ import Logo from "./assets/logo.svg";
 import "./assets/css/bootstrap.css";
 import "./assets/css/responsive.css";
 import "./assets/css/style.scss";
+import { ACCOUNT_TYPES, URL_QUERY_PARAMS } from "./constants/app-constants";
 
 const App = () => {
   const { state, signIn, signOut } = useAuthContext();
@@ -76,11 +77,21 @@ const App = () => {
                     </>
                   ) : (
                     <>
-                      <Link to={ ROUTES.REGISTER_ACCOUNT } className="register_link">
-                        <span>
-                          Register
-                        </span>
-                      </Link>
+                      { (siteSection === SITE_SECTIONS.BUSINESS) ?
+                        (
+                          <Link to={ `${ROUTES.REGISTER_ACCOUNT}?${URL_QUERY_PARAMS.ACCOUNT_TYPE}=${ACCOUNT_TYPES.BUSINESS}` } className="register_link">
+                            <span>
+                              Create Business Account
+                            </span>
+                          </Link>
+                        ) : (
+                          <Link to={ `${ROUTES.REGISTER_ACCOUNT}?${URL_QUERY_PARAMS.ACCOUNT_TYPE}=${ACCOUNT_TYPES.PERSONAL}` } className="register_link">
+                            <span>
+                              Create Personal Account
+                            </span>
+                          </Link>
+                        )
+                      }
                       <button className="login_link" onClick={ () => signIn() }>
                           Login
                       </button>
