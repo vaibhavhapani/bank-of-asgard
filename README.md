@@ -1,3 +1,5 @@
+<img src="./logo.png" width="400" alt="Bank of Asgard" />
+
 # Instructions to use the application
 
 1. Register an organisation with Asgardeo.
@@ -12,7 +14,7 @@
   * `Username and Password`, `Passkey` - Second Step
   * `Totp` and `Email OTP` - Third Step
 5. Configure the following conditional authentication script:
-```
+```js
 var onLoginRequest = function (context) {
     executeStep(1, {
         onSuccess: function (context) {
