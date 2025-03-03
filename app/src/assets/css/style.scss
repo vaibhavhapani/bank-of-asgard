@@ -395,14 +395,12 @@ a:focus {
   .image-box {
     height: 531px;
     position: relative;
-    background-image: url("../images/image-bg.jpg");
-    background-repeat: no-repeat;
-    background-size: 1200px;
-    background-position: 205px -36px;
   }
 
   .side-box {
-    padding: 0 25px;
+    padding: 40px 25px 0;
+    height: 531px;
+    background: rgba(28,28,28,1);
 
     hr {
       border: 1px solid $white;
@@ -423,7 +421,7 @@ a:focus {
       font-weight: 600;
 
       span {
-        color: $primary2;
+        color: #fdf3d6;
       }
     }
 
@@ -460,6 +458,13 @@ a:focus {
   }
 
   #carouselExampleIndicators {}
+
+  .carousel-item.active {
+    background-image: url("../images/image-bg.jpg");
+    background-repeat: no-repeat;
+    background-size: 1800px;
+    background-position: -490px -55px;
+  }
 
   .idicator_container {
     position: relative;

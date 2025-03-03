@@ -194,7 +194,7 @@ const PersonalBankingPage = ({ setSiteSection }) => {
                 </div>
                 <div className="detail-box">
                   <h5>
-                    Cashless Payment
+                    Cashless Payments
                   </h5>
                   <h6 className="">
                     Read More
