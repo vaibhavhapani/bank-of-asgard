@@ -29,3 +29,12 @@ export const SITE_SECTIONS = {
   PERSONAL: "personal",
   BUSINESS: "business"
 }
+
+export const ACCOUNT_TYPES = {
+    PERSONAL: "Personal",
+    BUSINESS: "Business"
+}
+
+export const URL_QUERY_PARAMS = {
+    ACCOUNT_TYPE: "accountType"
+}

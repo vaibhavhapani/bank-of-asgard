@@ -17,14 +17,16 @@
  */
 
 import { useAuthContext } from "@asgardeo/auth-react";
-import { useState } from 'react';
+import PropTypes from "prop-types";
+import { useState } from "react";
 import axios from "axios";
+import CountrySelect from "../country-select";
 
-const SignUpForm = () => {
+const SignUpForm = ({ accountType }) => {
 
   const { signIn } = useAuthContext();
 
-  const [signupData, setSignupData] = useState({
+  const [ signupData, setSignupData ] = useState({
     firstName: '',
     lastName: '',
     dateOfBirth: '',
@@ -33,7 +35,7 @@ const SignUpForm = () => {
     password: '',
     email: '',
     mobile: '',
-    accountType: ''
+    accountType: accountType
   });
 
   const handleSignup = async (e) => {
@@ -66,41 +68,57 @@ const SignUpForm = () => {
           <div className="row">
             <div className="col-md-7 mx-auto">
               <form onSubmit={handleSignup} className="contact_form-container">
+                <label htmlFor="username">Username</label>
                 <input
                   type="text"
-                  placeholder="Username"
+                  placeholder="Enter a username"
                   value={signupData.username}
                   onChange={(e) => setSignupData({ ...signupData, username: e.target.value })}
                   required
                 />
+
+                <label htmlFor="email">Email</label>
                 <input
                   type="email"
-                  placeholder="Email"
+                  placeholder="Enter email address"
                   value={signupData.email}
                   onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                   required
                 />
+
+                <label htmlFor="password">Password</label>
                 <input
                   type="password"
-                  placeholder="Password"
+                  placeholder="Enter a password"
                   value={signupData.password}
                   onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                   required
                 />
-                <input
-                  type="text"
-                  placeholder="First Name"
-                  value={signupData.firstName}
-                  onChange={(e) => setSignupData({ ...signupData, firstName: e.target.value })}
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  value={signupData.lastName}
-                  onChange={(e) => setSignupData({ ...signupData, lastName: e.target.value })}
-                  required
-                />
+
+                <div className="row">
+                  <div className="col-md-6">
+                    <label htmlFor="firstName">First Name</label>
+                    <input
+                      type="text"
+                      placeholder="Enter first name"
+                      value={signupData.firstName}
+                      onChange={(e) => setSignupData({ ...signupData, firstName: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="lastName">Last Name</label>
+                    <input
+                      type="text"
+                      placeholder="Enter last name"
+                      value={signupData.lastName}
+                      onChange={(e) => setSignupData({ ...signupData, lastName: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <label htmlFor="dateOfBirth">Date of Birth</label>
                 <input
                   type="date"
                   placeholder="Date of Birth"
@@ -108,28 +126,28 @@ const SignUpForm = () => {
                   onChange={(e) => setSignupData({ ...signupData, dateOfBirth: e.target.value })}
                   required
                 />
-                <input
-                  type="text"
-                  placeholder="Country"
+
+                <label htmlFor="country">Country</label>
+                <CountrySelect
                   value={signupData.country}
-                  onChange={(e) => setSignupData({ ...signupData, country: e.target.value })}
-                  required
-                />
-                
+                  onChange={(value) => setSignupData({ ...signupData, country: value?.label || "" })} />
+
+                <label htmlFor="mobile">Mobile Number</label>
                 <input
                   type="number"
-                  placeholder="Mobile"
+                  placeholder="Enter mobile"
                   value={signupData.mobile}
                   onChange={(e) => setSignupData({ ...signupData, mobile: e.target.value })}
                   required
                 />
 
+                {/* <label htmlFor="accountType">Account Type</label>
                 <select name="accountType" value={signupData.accountType} 
                   onChange={(e) => setSignupData({ ...signupData, accountType: e.target.value })} required>
                   <option value="">Select Account Type</option>
                   <option value="Personal">Personal</option>
                   <option value="Corporate">Corporate</option>
-                </select>
+                </select> */}
 
                 <button type="submit">Signup</button>
               </form>
@@ -140,5 +158,9 @@ const SignUpForm = () => {
     </div>
   );
 }
+
+SignUpForm.propTypes = {
+  accountType: PropTypes.object.isRequired
+};
 
 export default SignUpForm;

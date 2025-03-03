@@ -16,9 +16,30 @@
  * under the License.
  */
 
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import PropTypes from "prop-types";
 import SignUpForm from "../components/sign-up/sign-up-form";
+import EverydayBanking from "../assets/images/sofa-online-card-dcm-45094.jpg";
+import GoGlobal from "../assets/images/6739-mass-retail-woman-checking-phone-in-the-city-1240x400.jpg";
+import { URL_QUERY_PARAMS } from "../constants/app-constants";
+import { ACCOUNT_TYPES } from "../constants/app-constants";
+import { SITE_SECTIONS } from "../constants/app-constants";
 
-const RegisterAccountPage = () => {
+const RegisterAccountPage = ({ setSiteSection }) => {
+
+  const [ searchParams ] = useSearchParams();
+
+  const accountType = searchParams.get(URL_QUERY_PARAMS.ACCOUNT_TYPE) || ACCOUNT_TYPES.PERSONAL;
+
+  useEffect(() => {
+    if (accountType === ACCOUNT_TYPES.BUSINESS) {
+      setSiteSection(SITE_SECTIONS.BUSINESS);
+    }
+    else {
+      setSiteSection(SITE_SECTIONS.PERSONAL);
+    }
+  }, [ accountType ]);
 
   return (
     <>
@@ -28,21 +49,32 @@ const RegisterAccountPage = () => {
             <div className="col-md-8 px-0">
               <div className="img_container">
                 <div className="img-box">
-                  <SignUpForm />
+                  <SignUpForm accountType={ accountType } />
                 </div>
               </div>
             </div>
             <div className="col-md-4 px-0">
               <div className="detail-box">
                 <div className="heading_container ">
-                  <h2>Personal Banking</h2>
+                  { (accountType === ACCOUNT_TYPES.BUSINESS) ?
+                    (
+                      <h2>Business Banking</h2>
+                    ) : (
+                      <h2>Personal Banking</h2>
+                    )
+                  }
                 </div>
+                { (accountType === ACCOUNT_TYPES.BUSINESS) ?
+                  (
+                    <img src={ GoGlobal } alt="" style={ { width: "100%" } } />
+                  ) : (
+                    <img src={ EverydayBanking } alt="" style={ { width: "100%" } } />
+                  )
+                }
                 <p>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                   eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                  enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                  nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                  in reprehenderit in voluptate velit
+                  enim ad minim veniam.
                 </p>
                 <div className="btn-box">
                   <a href="">
@@ -57,5 +89,9 @@ const RegisterAccountPage = () => {
     </>
   );
 }
+
+RegisterAccountPage.propTypes = {
+  setSiteSection: PropTypes.object.isRequired,
+};
 
 export default RegisterAccountPage;

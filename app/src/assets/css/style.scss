@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $white: #ffffff;
 $black: #000000;
 $primary1: #1c1c1c;
@@ -516,7 +518,7 @@ a:focus {
   .detail-box {
     background-color: $white;
     padding: 50px;
-    box-shadow: 0 0 5px 0 rgba($color: #000000, $alpha: .05);
+    box-shadow: 0 0 5px 0 rgba($color: #000000, $alpha: .15);
     position: relative;
     margin-top: 25px;
 
@@ -692,23 +694,50 @@ a:focus {
   .contact_form-container {
     margin-top: 35px;
 
+    label {
+      text-transform: uppercase;
+    }
+
     input, select {
       border: 1px solid #1c1c1c;
       outline: none;
       color: $black;
       height: 45px;
       width: 100%;
-      margin: 15px 0;
+      margin: 0 0 20px;
       padding-left: 15px;
       background-color: $white;
 
       &::placeholder {
-        color: $black;
-        text-transform: uppercase;
+        color: color.scale($black, $lightness: 80%);
       }
 
       &.message_input {
         height: 120px;
+      }
+    }
+
+    .country-select {
+      margin-bottom: 20px;
+
+      & > div > div {
+        border: none;
+        border-radius: 0;
+      }
+
+      fieldset {
+        border: 1px solid #1c1c1c;
+      }
+
+      input {
+        border: none;
+        margin: 0;
+        height: 15px;
+
+        &::placeholder {
+          color: color.scale($black, $lightness: 80%);
+          opacity: 1;
+        }
       }
     }
 
@@ -718,7 +747,7 @@ a:focus {
       margin-top: 25px;
     }
 
-    button {
+    button:not(.MuiButtonBase-root) {
       @include hero_btn($primary2, $white, 10px, 60px);
       text-transform: uppercase;
       font-weight: bold;

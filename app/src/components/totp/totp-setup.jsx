@@ -1,8 +1,26 @@
-import React, { useState, useEffect } from "react";
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import { useState, useEffect } from "react";
 import { useAuthContext } from "@asgardeo/auth-react";
 import { QRCodeCanvas } from "qrcode.react";
 
-function TotpSetup({ onCancel }) {
+const TotpSetup = () => {
     const { httpRequest } = useAuthContext();
     const [qrCodeUrl, setQrCodeUrl] = useState(null);
     const [decodedQrCodeUrl, setDecodedQrCodeUrl] = useState(null);
@@ -20,8 +38,6 @@ function TotpSetup({ onCancel }) {
     useEffect(() => {
         checkTotpStatus();
     }, []);
-
-   
 
     const checkTotpStatus = async () => {
         try {
@@ -126,14 +142,13 @@ function TotpSetup({ onCancel }) {
         <div style={{ border: "1px solid #ccc", padding: "20px", marginTop: "20px", maxWidth: "500px", margin: "auto" }}>
             <h2>TOTP Authenticator</h2>
 
-            {setupComplete ? (
+            { setupComplete ? (
                 <>
                     <p>TOTP setup is complete. You can now use the authenticator app.</p>
-                    <button onClick={onCancel}>Done</button>
                 </>
             ) : (
                 <>
-                    {totpEnabled ? (
+                    { totpEnabled ? (
                         <>
                             <p>Scan this QR code to reconfigure your authenticator app:</p>
                             {qrCodeUrl && 
@@ -141,10 +156,6 @@ function TotpSetup({ onCancel }) {
                                 <QRCodeCanvas value={decodedQrCodeUrl}/>
                             </div>
                             }
-                            <div>
-                            <button onClick={onCancel} style={{ marginTop: "10px" }}>Done</button>
-
-                            </div>
                         </>
                     ) : (
                         <>
@@ -169,7 +180,6 @@ function TotpSetup({ onCancel }) {
                                     <button onClick={validateOtp} disabled={isValidating} style={{ marginRight: "10px" }}>
                                         {isValidating ? "Validating..." : "Validate OTP"}
                                     </button>
-                                    <button onClick={onCancel} style={{ backgroundColor: "#ccc" }}>Cancel</button>
                                 </>
                             )}
                         </>

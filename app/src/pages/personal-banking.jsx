@@ -16,16 +16,21 @@
  * under the License.
  */
 
+import { useAuthContext } from "@asgardeo/auth-react";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import CardBanking from "../assets/images/image9.jpg";
 import MobileBanking from "../assets/images/mobile-banking.jpg";
 import DigitalBanking from "../assets/images/digital-banking.jpg";
 import EverydayBanking from "../assets/images/sofa-online-card-dcm-45094.jpg";
-import RewardingLife from "../assets/images/two-woman-pick-up-dress.jpg";
+import BusinessBanking from "../assets/images/image8.jpg";
 import GoGlobal from "../assets/images/6739-mass-retail-woman-checking-phone-in-the-city-1240x400.jpg";
-import { SITE_SECTIONS } from "../constants/app-constants";
+import { ACCOUNT_TYPES, SITE_SECTIONS, ROUTES, URL_QUERY_PARAMS } from "../constants/app-constants";
 
 const PersonalBankingPage = ({ setSiteSection }) => {
+
+  const { state } = useAuthContext();
 
   useEffect(() => {
     setSiteSection(SITE_SECTIONS.PERSONAL);
@@ -84,57 +89,55 @@ const PersonalBankingPage = ({ setSiteSection }) => {
             </h2>
           </div>
           <div className="row">
-            <div className="col-md-4">
+            <div className="col-md-6">
               <div className="box ">
                 <div className="img-box">
                   <img src={ EverydayBanking } alt="" style={ { width: "100%" } } />
                 </div>
                 <div className="detail-box">
                   <h6>
-                    Everyday Banking
+                    Personal Banking
                   </h6>
                   <p>
                     Minima consequatur architecto eaque assumenda ipsam itaque quia eum in doloribus debitis impedit ut minus tenetur corrupti excepturi ullam.
                   </p>
-                  <a href="">
-                    Read More
-                  </a>
+                  { state.isAuthenticated ?
+                    (
+                      <Link to={ ROUTES.PERSONAL_BANKING }>
+                        View your account
+                      </Link>
+                    ) : (
+                      <Link to={ `${ROUTES.REGISTER_ACCOUNT}?${URL_QUERY_PARAMS.ACCOUNT_TYPE}=${ACCOUNT_TYPES.PERSONAL}` }>
+                        Create your personal account
+                      </Link>
+                    )
+                  }
                 </div>
               </div>
             </div>
-            <div className="col-md-4">
-              <div className="box ">
-                <div className="img-box">
-                  <img src={ RewardingLife } alt="" style={ { width: "100%" } } />
-                </div>
-                <div className="detail-box">
-                  <h6>
-                    A Rewarding Life!
-                  </h6>
-                  <p>
-                    Minima consequatur architecto eaque assumenda ipsam itaque quia eum in doloribus debitis impedit ut minus tenetur corrupti excepturi ullam.
-                  </p>
-                  <a href="">
-                    Read More
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
+            <div className="col-md-6">
               <div className="box ">
                 <div className="img-box">
                   <img src={ GoGlobal } alt="" style={ { width: "100%" } } />
                 </div>
                 <div className="detail-box">
                   <h6>
-                    Go Global
+                    Business Banking
                   </h6>
                   <p>
                     Minima consequatur architecto eaque assumenda ipsam itaque quia eum in doloribus debitis impedit ut minus tenetur corrupti excepturi ullam.
                   </p>
-                  <a href="">
-                    Read More
-                  </a>
+                  { state.isAuthenticated ?
+                    (
+                      <Link to={ ROUTES.PERSONAL_BANKING }>
+                        View business account
+                      </Link>
+                    ) : (
+                      <Link to={ `${ROUTES.REGISTER_ACCOUNT}?${URL_QUERY_PARAMS.ACCOUNT_TYPE}=${ACCOUNT_TYPES.BUSINESS}` }>
+                        Create a business account
+                      </Link>
+                    )
+                  }
                 </div>
               </div>
             </div>
@@ -146,7 +149,7 @@ const PersonalBankingPage = ({ setSiteSection }) => {
         <div className="container">
           <div className="heading_container heading_center">
             <h2>
-              Explore the next generation banking!
+              Go beyond regular banking!
             </h2>
             <p>
               Lorem ipsum dolor sit amet, non odio tincidunt ut ante, lorem a euismod suspendisse vel, sed quam nulla mauris
@@ -154,6 +157,21 @@ const PersonalBankingPage = ({ setSiteSection }) => {
             </p>
           </div>
           <div className="row">
+          <div className="col-md-4 col-sm-6 mx-auto ">
+              <div className="box">
+                <div className="img-box">
+                  <img src={ BusinessBanking } alt="" />
+                </div>
+                <div className="detail-box">
+                  <h5>
+                    Business Banking
+                  </h5>
+                  <h6 className="">
+                    Read More
+                  </h6>
+                </div>
+              </div>
+            </div>
             <div className="col-md-4 col-sm-6 mx-auto ">
               <div className="box">
                 <div className="img-box">
@@ -172,26 +190,11 @@ const PersonalBankingPage = ({ setSiteSection }) => {
             <div className="col-md-4 col-sm-6 mx-auto ">
               <div className="box">
                 <div className="img-box">
-                  <img src={ DigitalBanking } alt="" />
+                  <img src={ CardBanking } alt="" />
                 </div>
                 <div className="detail-box">
                   <h5>
-                    Digital Everywhere
-                  </h5>
-                  <h6 className="">
-                    Read More
-                  </h6>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4 col-sm-6 mx-auto ">
-              <div className="box">
-                <div className="img-box">
-                  <img src={ MobileBanking } alt="" />
-                </div>
-                <div className="detail-box">
-                  <h5>
-                    Business Banking
+                    Cashless Payment
                   </h5>
                   <h6 className="">
                     Read More
@@ -211,7 +214,7 @@ const PersonalBankingPage = ({ setSiteSection }) => {
       <section className="contact_section layout_padding">
         <div className="contact_bg_box">
           <div className="img-box">
-            <img src={ MobileBanking } alt="" />
+            <img src={ DigitalBanking } alt="" />
           </div>
         </div>
       </section>

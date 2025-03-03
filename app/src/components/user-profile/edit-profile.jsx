@@ -32,6 +32,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
     email: "",
     mobile: "",
     password: "",
+    picture: ""
   });
 
   const request = requestConfig =>
@@ -50,6 +51,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         email: userInfo.email || "",
         mobile: userInfo.mobile || "",
         password: "",
+        picture: userInfo.picture || ""
       });
       console.log("inside usereffect" + formData);
     }
@@ -89,6 +91,10 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
       if (formData.password.trim() !== "") {
         valuePayload.password = formData.password;
+      }
+
+      if (formData.picture.trim() !== "") {
+        valuePayload.picture = formData.picture;
       }
 
       if (Object.keys(valuePayload).length > 0) {
@@ -161,6 +167,10 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
                         <label>Password:</label>
                         <input type="password" name="password" placeholder="New Password (Optional)" value={formData.password} onChange={handleChange} />
                       </li>
+                      <li>
+                        <label>Profile Picture:</label>
+                        <input type="text" name="picture" placeholder="Profile Picture URL" value={formData.picture} onChange={handleChange} />
+                      </li>
                     </ul>
 
                     <div className="form-buttons">
@@ -188,9 +198,13 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         <h2>Account Security</h2>
       </div>
       <div className="detail-box user-profile">
-        <div className="row">
-          <div className="col-md-12">
-            <AccountSecurity accountType={userInfo.accountType} />
+        <div className="contact_section">
+          <div className="contact_form-container">
+            <div className="row">
+              <div className="col-md-12">
+                <AccountSecurity accountType={userInfo.accountType} />
+              </div>
+            </div>
           </div>
         </div>
       </div>

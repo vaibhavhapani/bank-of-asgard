@@ -41,9 +41,6 @@ const App = () => {
   const { state, signIn, signOut } = useAuthContext();
   const [ siteSection, setSiteSection ] = useState("");
 
-  console.log(SITE_SECTIONS.PERSONAL);
-  console.log(siteSection);
-
   return (
     <Router>
       <header className="header_section">
@@ -171,7 +168,7 @@ const App = () => {
       <Routes>
         <Route path={ ROUTES.PERSONAL_BANKING } element={ <PersonalBankingPage setSiteSection={ setSiteSection } /> } />
         <Route path={ ROUTES.BUSINESS_BANKING } element={ <BusinessBankingPage setSiteSection={ setSiteSection } /> } />
-        <Route path={ ROUTES.REGISTER_ACCOUNT } element={ <RegisterAccountPage /> } />
+        <Route path={ ROUTES.REGISTER_ACCOUNT } element={ <RegisterAccountPage setSiteSection={ setSiteSection } /> } />
         { state.isAuthenticated &&
           <Route path={ ROUTES.USER_PROFILE } element={ <UserProfilePage /> } />
         }

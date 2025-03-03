@@ -81,9 +81,13 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
         <h2>Account Security</h2>
       </div>
       <div className="detail-box user-profile">
-        <div className="row">
-          <div className="col-md-12">
-            <AccountSecurity accountType={userInfo.accountType} />
+        <div className="contact_section">
+          <div className="contact_form-container">
+            <div className="row">
+              <div className="col-md-12">
+                <AccountSecurity accountType={userInfo.accountType} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
