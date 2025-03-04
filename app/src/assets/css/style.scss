@@ -786,6 +786,12 @@ a:focus {
       text-transform: uppercase;
       font-weight: bold;
       outline-color: $primary2;
+
+      &.secondary {
+        background-color: $primary1;
+        outline-color: $primary1;
+        color: $white;
+      }
     }
 
     &.profile-edit {

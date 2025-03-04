@@ -169,7 +169,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
                     <div className="form-buttons">
                       <button type="submit">Update Profile</button>
-                      <button type="button" className="cancel-button" onClick={onCancel} style={{ marginLeft: "10px" }}>Cancel</button>
+                      <button type="button" className="cancel-button secondary" onClick={onCancel} style={{ marginLeft: "10px" }}>Cancel</button>
                     </div>
                   </form>
                 </div>

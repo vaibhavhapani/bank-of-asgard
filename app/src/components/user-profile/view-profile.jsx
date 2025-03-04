@@ -104,7 +104,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                 </ul>
 
                 <div className="form-buttons">
-                  <button className="edit-button" onClick={() => setShowEditForm(true)}>Edit Profile</button>
+                  <button className="edit-button secondary" onClick={() => setShowEditForm(true)}>Edit Profile</button>
                 </div>
               </div>
             </div>
