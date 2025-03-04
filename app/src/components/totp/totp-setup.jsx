@@ -48,9 +48,16 @@ const TotpSetup = () => {
             });
             console.log(response.data);
 
-            if (response.data["urn:scim:wso2:schema"].totpEnabled == "true") {
+            if (response.data["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"]?.totpEnabled
+            && response.data["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"]?.totpEnabled == "true"
+            ) {
                 setTotpEnabled(true);
                 fetchQrCode(); // If already enabled, show QR code
+            } else if(response.data["urn:scim:wso2:schema"]?.totpEnabled && 
+                response.data["urn:scim:wso2:schema"]?.totpEnabled == "true") {
+                setTotpEnabled(true);
+                fetchQrCode(); // If already enabled, show QR code
+                
             } else {
                 setTotpEnabled(false);
             }
