@@ -146,8 +146,8 @@ const TotpSetup = () => {
     };
 
     return (
-        <div style={{ border: "1px solid #ccc", padding: "20px", marginTop: "20px", maxWidth: "500px", margin: "auto" }}>
-            <h2>TOTP Authenticator</h2>
+        <div>
+            <h5>TOTP Authenticator</h5>
 
             { setupComplete ? (
                 <>

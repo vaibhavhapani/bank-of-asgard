@@ -23,12 +23,10 @@ import {
   Routes,
   Route,
   Link,
-  NavLink,
-  Navigate
+  NavLink
 } from "react-router-dom";
 import { ROUTES, SITE_SECTIONS } from "./constants/app-constants";
 import PersonalBankingPage from "./pages/personal-banking";
-import BusinessBankingPage from "./pages/business-banking";
 import RegisterAccountPage from "./pages/register-account";
 import UserProfilePage from "./pages/user-profile";
 import NotFound from "./pages/not-found";
@@ -36,7 +34,6 @@ import Logo from "./assets/logo.svg";
 import "./assets/css/bootstrap.css";
 import "./assets/css/responsive.css";
 import "./assets/css/style.scss";
-import { ACCOUNT_TYPES, URL_QUERY_PARAMS } from "./constants/app-constants";
 
 const App = () => {
   const { state, signIn, signOut } = useAuthContext();
@@ -49,7 +46,8 @@ const App = () => {
           <div className="container-fluid">
             <div className="contact_link-container">
               <span>
-                <NavLink to={ ROUTES.PERSONAL_BANKING } className={({ isActive }) => isActive ? "contact_link1 active" : "contact_link1"}>
+                {/* TODO: Uncomment the below code snippet to enable the personal and business banking links */}
+                {/* <NavLink to={ ROUTES.PERSONAL_BANKING } className={({ isActive }) => isActive ? "contact_link1 active" : "contact_link1"}>
                   <span>
                     Personal
                   </span>
@@ -59,39 +57,29 @@ const App = () => {
                   <span>
                     Business
                   </span>
-                </NavLink>
+                </NavLink> */}
               </span>
               <span>
                 { state.isAuthenticated ?
                   (
                     <>
-                        <span className="login_details">Welcome, { state.username }!</span>
-                        <Link to={ ROUTES.USER_PROFILE }>
+                        {/* <span className="login_details">Welcome, { state.username }!</span> */}
+                        {/* <Link to={ ROUTES.USER_PROFILE }>
                           <span>
                             My Banking
                           </span>
-                        </Link>
+                        </Link> */}
                         <button className="login_link" onClick={ () => signOut() }>
                             Logout
                         </button>
                     </>
                   ) : (
                     <>
-                      { (siteSection === SITE_SECTIONS.BUSINESS) ?
-                        (
-                          <Link to={ `${ROUTES.REGISTER_ACCOUNT}?${URL_QUERY_PARAMS.ACCOUNT_TYPE}=${ACCOUNT_TYPES.BUSINESS}` } className="register_link">
-                            <span>
-                              Create Business Account
-                            </span>
-                          </Link>
-                        ) : (
-                          <Link to={ `${ROUTES.REGISTER_ACCOUNT}?${URL_QUERY_PARAMS.ACCOUNT_TYPE}=${ACCOUNT_TYPES.PERSONAL}` } className="register_link">
-                            <span>
-                              Create Personal Account
-                            </span>
-                          </Link>
-                        )
-                      }
+                      <Link to={ ROUTES.REGISTER_ACCOUNT } className="register_link">
+                        <span>
+                          Register
+                        </span>
+                      </Link>
                       <button className="login_link" onClick={ () => signIn() }>
                           Login
                       </button>
@@ -177,13 +165,20 @@ const App = () => {
       </header>
 
       <Routes>
-        <Route path={ ROUTES.PERSONAL_BANKING } element={ <PersonalBankingPage setSiteSection={ setSiteSection } /> } />
-        <Route path={ ROUTES.BUSINESS_BANKING } element={ <BusinessBankingPage setSiteSection={ setSiteSection } /> } />
+        {/* <Route path={ ROUTES.BUSINESS_BANKING } element={ <BusinessBankingPage setSiteSection={ setSiteSection } /> } /> */}
         <Route path={ ROUTES.REGISTER_ACCOUNT } element={ <RegisterAccountPage setSiteSection={ setSiteSection } /> } />
         { state.isAuthenticated &&
           <Route path={ ROUTES.USER_PROFILE } element={ <UserProfilePage /> } />
         }
-        <Route path="/" element={ <Navigate to={ ROUTES.PERSONAL_BANKING } setSiteSection={ setSiteSection } /> } />
+        {/* <Route path="/" element={ <Navigate to={ ROUTES.PERSONAL_BANKING } setSiteSection={ setSiteSection } /> } /> */}
+        <Route path="/" element={
+          state.isAuthenticated ?
+            (
+              <UserProfilePage setSiteSection={ setSiteSection } />
+            ) : (
+              <PersonalBankingPage setSiteSection={ setSiteSection } />
+            )
+        } />
         <Route path="*" element={ <NotFound /> } />
       </Routes>
 

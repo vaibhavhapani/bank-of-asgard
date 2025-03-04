@@ -17,11 +17,13 @@
  */
 
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "../components/user-profile/edit-profile";
 import ViewProfile from "../components/user-profile/view-profile";
+import { ACCOUNT_TYPES, SITE_SECTIONS } from "../constants/app-constants";
 
-const UserProfilePage = () => {
+const UserProfilePage = ({ setSiteSection }) => {
 
   const { getDecodedIDToken, refreshAccessToken, state, signIn } = useAuthContext();
 
@@ -48,9 +50,17 @@ const UserProfilePage = () => {
     getDecodedIDToken().then((decodedIdToken) => {
       console.log(decodedIdToken);
 
+      if (decodedIdToken?.accountType === ACCOUNT_TYPES.BUSINESS) {
+        setSiteSection(SITE_SECTIONS.BUSINESS);
+      } else {
+        setSiteSection(SITE_SECTIONS.PERSONAL);
+      }
+
       if (!decodedIdToken) {
         return;
       }
+
+      console.log(decodedIdToken);
 
       setUserInfo({
         username: decodedIdToken.username || "",
@@ -102,5 +112,9 @@ const UserProfilePage = () => {
     </>
   );
 }
+
+UserProfilePage.propTypes = {
+  setSiteSection: PropTypes.object.isRequired,
+};
 
 export default UserProfilePage;

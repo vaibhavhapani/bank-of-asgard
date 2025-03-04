@@ -24,68 +24,98 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
   return (
     <>
       <div className="heading_container ">
-        <h2>User Profile</h2>
+        <h2>Welcome, { userInfo.givenName }{" "}{ userInfo.familyName }!</h2>
       </div>
-      <div className="detail-box user-profile">
-        <div className="row">
-          <div className="col-md-8 px-0">
-            <div className="img_container">
-              <div className="img-box">
-                <div className="contact_section">
-                  <div className="contact_form-container profile-edit">
-                    <ul className="details-list">
-                      <li>
-                        <strong>User Name:</strong> { userInfo.username }
-                      </li>
-                      <li>
-                        <strong>Account Type:</strong> { userInfo.accountType }
-                      </li>
-                      <li>
-                        <strong>Full Name:</strong> { userInfo.givenName }{" "}{ userInfo.familyName }
-                      </li>
-                      <li>
-                        <strong>Email:</strong> {userInfo.email }
-                      </li>
-                      <li>
-                        <strong>Country:</strong> {userInfo.country }
-                      </li>
-                      <li>
-                        <strong>Birth date</strong> {userInfo.birthdate }
-                      </li>
-                      <li>
-                        <strong>Mobile:</strong> {userInfo.mobile }
-                      </li>
-                    </ul>
-
-                    <div className="form-buttons">
-                      <button className="edit-button" onClick={() => setShowEditForm(true)}>Edit Profile</button>
+      
+      <div className="row">
+        <div className="col-md-7">
+          <div className="detail-box user-profile">
+            <div className="contact_section">
+            <div className="contact_form-container profile-edit">
+                <h5>Account Details</h5>
+                <ul className="accounts-list">
+                  <li>
+                    <div className="row">
+                      <div className="col-md-8">
+                        <h6>Savings Account</h6>
+                        <span>083434342982340</span>
+                      </div>
+                      <div className="col-md-4">
+                        $ 13,565.45
+                      </div>
                     </div>
-                  </div>
+                  </li>
+                  <li>
+                    <div className="row">
+                      <div className="col-md-8">
+                        <h6>Live+ Credit Card</h6>
+                        <span>4574-3434-2984-2365</span>
+                      </div>
+                      <div className="col-md-4">
+                        - $ 4,5600.67
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+
+                <div className="form-buttons">
+                  <button className="edit-button">Make a transfer</button>
                 </div>
               </div>
             </div>
           </div>
-          <div className="col-md-4 px-0">
-            <p style={ { textAlign: "center" } }>
-              { (userInfo?.picture && userInfo.picture !== "") &&
-                <img
-                  src={ userInfo.picture }
-                  alt="User Image"
-                  style={ { width: "100%", maxWidth: "300px", maxHeight: "300px" } } />
-              }
-            </p>
-          </div>
         </div>
-      </div>
-      <div className="heading_container mt-5">
-        <h2>Account Security</h2>
-      </div>
-      <div className="detail-box user-profile">
-        <div className="contact_section">
-          <div className="contact_form-container">
-            <div className="row">
-              <div className="col-md-12">
-                <AccountSecurity accountType={userInfo.accountType} />
+        <div className="col-md-5">
+          <div className="detail-box user-profile">
+            <div className="contact_section">
+              <div className="contact_form-container profile-edit">
+                <ul className="details-list">
+                  {/* TODO: Uncomment the following code block after implementing the profile picture upload feature */}
+                  {/* <li>
+                    { (userInfo?.picture && userInfo.picture !== "") &&
+                      <img
+                        src={ userInfo.picture }
+                        alt="User Image"
+                        style={ { width: "100%", maxWidth: "300px", maxHeight: "300px" } } />
+                    }
+                  </li> */}
+                  <li>
+                    <strong>User Name:</strong> { userInfo.username }
+                  </li>
+                  <li>
+                    <strong>Account Type:</strong> { userInfo.accountType }
+                  </li>
+                  <li>
+                    <strong>Full Name:</strong> { userInfo.givenName }{" "}{ userInfo.familyName }
+                  </li>
+                  <li>
+                    <strong>Email:</strong> {userInfo.email }
+                  </li>
+                  <li>
+                    <strong>Country:</strong> {userInfo.country }
+                  </li>
+                  <li>
+                    <strong>Birth date</strong> {userInfo.birthdate }
+                  </li>
+                  <li>
+                    <strong>Mobile:</strong> {userInfo.mobile }
+                  </li>
+                </ul>
+
+                <div className="form-buttons">
+                  <button className="edit-button" onClick={() => setShowEditForm(true)}>Edit Profile</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="detail-box user-profile">
+            <div className="contact_section">
+              <div className="contact_form-container profile-edit">
+                <div className="row">
+                  <div className="col-md-12">
+                    <AccountSecurity accountType={userInfo.accountType} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

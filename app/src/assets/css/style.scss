@@ -501,13 +501,30 @@ a:focus {
     padding: 0 25px;
   }
 
-  .row {
-    align-items: center;
-  }
-
   .user-profile {
     .row {
       align-items: flex-start;
+    }
+
+    ul.accounts-list {
+      list-style: none;
+      margin: 30px 0 0;
+      padding: 0;
+
+      & > li {
+        margin-bottom: 20px;
+
+        & > .row > .col-md-4:last-child {
+          text-align: right;
+        }
+
+        span {
+          font-weight: normal;
+          font-style: normal;
+          font-size: 14px;
+          color: color.scale($black, $lightness: 60%);
+        }
+      }
     }
   }
 
@@ -534,6 +551,12 @@ a:focus {
     a {
       @include hero_btn($primary2, $white, 10px, 35px);
       text-transform: uppercase;
+    }
+
+    h5 {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 20px;
     }
   }
 
@@ -591,6 +614,12 @@ a:focus {
 
       h6 {
         font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+
+      h5 {
         font-weight: bold;
         text-transform: uppercase;
         margin-bottom: 20px;
@@ -756,6 +785,7 @@ a:focus {
       @include hero_btn($primary2, $white, 10px, 60px);
       text-transform: uppercase;
       font-weight: bold;
+      outline-color: $primary2;
     }
 
     &.profile-edit {

@@ -19,7 +19,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
-import AccountSecurity from "./account-security";
+import CountrySelect from "../country-select";
 
 const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
@@ -31,8 +31,8 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
     dob: "",
     email: "",
     mobile: "",
-    password: "",
-    picture: ""
+    country: "",
+    password: ""
   });
 
   const request = requestConfig =>
@@ -50,16 +50,12 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         dob: userInfo.birthdate || "",
         email: userInfo.email || "",
         mobile: userInfo.mobile || "",
-        password: "",
-        picture: userInfo.picture || ""
+        country: userInfo.country || "",
+        password: ""
       });
       console.log("inside usereffect" + formData);
     }
   }, [ userInfo ]);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
 
@@ -93,8 +89,8 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         valuePayload.password = formData.password;
       }
 
-      if (formData.picture.trim() !== "") {
-        valuePayload.picture = formData.picture;
+      if (formData.country.trim() !== "") {
+        valuePayload.country = formData.country;
       }
 
       if (Object.keys(valuePayload).length > 0) {
@@ -137,7 +133,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
       </div>
       <div className="detail-box user-profile">
         <div className="row">
-          <div className="col-md-8 px-0">
+          <div className="col-md-6 px-0">
             <div className="img_container">
               <div className="img-box">
                 <div className="contact_section">
@@ -145,31 +141,33 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
                     <ul className="details-list">
                       <li>
                         <label>First Name:</label>
-                        <input type="text" name="givenName" placeholder="First Name" value={formData.givenName} onChange={handleChange} />
+                        <input type="text" name="givenName" placeholder="First Name" value={formData.givenName} onChange={(e) => setFormData({ ...formData, givenName: e.target.value })} />
                       </li>
                       <li>
                         <label>Last Name:</label>
-                        <input type="text" name="familyName" placeholder="Last Name" value={formData.familyName} onChange={handleChange} />
+                        <input type="text" name="familyName" placeholder="Last Name" value={formData.familyName} onChange={(e) => setFormData({ ...formData, familyName: e.target.value })} />
                       </li>
                       <li>
                         <label>Date of Birth:</label>
-                        <input type="date" name="dob" placeholder="Date of Birth" value={formData.dob} onChange={handleChange} />
+                        <input type="date" name="dob" placeholder="Date of Birth" value={formData.dob} onChange={(e) => setFormData({ ...formData, dob: e.target.value })} />
                       </li>
                       <li>
                         <label>Email:</label>
-                        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
+                        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                       </li>
                       <li>
                         <label>Mobile:</label>
-                        <input type="tel" name="mobile" placeholder="Phone Number" value={formData.mobile} onChange={handleChange} />
+                        <input type="tel" name="mobile" placeholder="Phone Number" value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value })} />
+                      </li>
+                      <li>
+                        <label>Country</label>
+                        <CountrySelect
+                          value={formData.country}
+                          onChange={(value) => setFormData({ ...formData, country: value })} />
                       </li>
                       <li>
                         <label>Password:</label>
-                        <input type="password" name="password" placeholder="New Password (Optional)" value={formData.password} onChange={handleChange} />
-                      </li>
-                      <li>
-                        <label>Profile Picture:</label>
-                        <input type="text" name="picture" placeholder="Profile Picture URL" value={formData.picture} onChange={handleChange} />
+                        <input type="password" name="password" placeholder="New Password (Optional)" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
                       </li>
                     </ul>
 
@@ -179,30 +177,6 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
                     </div>
                   </form>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 px-0">
-            <p style={ { textAlign: "center" } }>
-              { (userInfo?.picture && userInfo.picture !== "") &&
-                <img
-                  src={ userInfo.picture }
-                  alt="User Image"
-                  style={ { width: "100%", maxWidth: "300px", maxHeight: "300px" } } />
-              }
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="heading_container mt-5">
-        <h2>Account Security</h2>
-      </div>
-      <div className="detail-box user-profile">
-        <div className="contact_section">
-          <div className="contact_form-container">
-            <div className="row">
-              <div className="col-md-12">
-                <AccountSecurity accountType={userInfo.accountType} />
               </div>
             </div>
           </div>

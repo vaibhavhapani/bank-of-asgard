@@ -214,8 +214,8 @@ const PasskeySetup = () => {
     };
 
     return (
-        <div style={{ border: "1px solid #ccc", padding: "20px", marginTop: "20px", maxWidth: "500px", margin: "auto" }}>
-            <h2>Manage Passkeys</h2>
+        <div>
+            <h5>Manage Passkeys</h5>
 
             <button onClick={startPasskeyRegistration}>Register a New Passkey</button>
 

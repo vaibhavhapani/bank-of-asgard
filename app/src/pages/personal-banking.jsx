@@ -95,11 +95,12 @@ const PersonalBankingPage = ({ setSiteSection }) => {
                   <img src={ EverydayBanking } alt="" style={ { width: "100%" } } />
                 </div>
                 <div className="detail-box">
-                  <h6>
+                  <h5>
                     Personal Banking
-                  </h6>
+                  </h5>
                   <p>
-                    Minima consequatur architecto eaque assumenda ipsam itaque quia eum in doloribus debitis impedit ut minus tenetur corrupti excepturi ullam.
+                    Step into a world of endless opportunity when shopping and banking online.
+                    We&apos;re here to help you with smart and safe banking.
                   </p>
                   { state.isAuthenticated ?
                     (
@@ -121,11 +122,12 @@ const PersonalBankingPage = ({ setSiteSection }) => {
                   <img src={ GoGlobal } alt="" style={ { width: "100%" } } />
                 </div>
                 <div className="detail-box">
-                  <h6>
+                  <h5>
                     Business Banking
-                  </h6>
+                  </h5>
                   <p>
-                    Minima consequatur architecto eaque assumenda ipsam itaque quia eum in doloribus debitis impedit ut minus tenetur corrupti excepturi ullam.
+                    We&apos;re supporting smarter business by building future focused insights, 
+                    and easier to use products and services that facilitate new ways to grow
                   </p>
                   { state.isAuthenticated ?
                     (
