@@ -32,6 +32,7 @@ const TOKEN_ENDPOINT=process.env.ASGARDEO_TOKEN_ENDPOINT;
 const GEO_API_KEY = process.env.GEO_API_KEY;
 const ASGARDEO_BASE_URL_SCIM2 = ASGARDEO_BASE_URL + "/scim2";
 const VITE_REACT_APP_CLIENT_BASE_URL = process.env.VITE_REACT_APP_CLIENT_BASE_URL;
+const MY_IP = process.env.MY_IP;
 
 const corsOptions = {
     origin: [ VITE_REACT_APP_CLIENT_BASE_URL ],
@@ -172,7 +173,7 @@ app.post("/risk", async (req, res) => {
       }
       // Call the IP Geolocation API
       const response = 
-        await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${GEO_API_KEY}&ip=${ip}&fields=country_name`);
+        await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${GEO_API_KEY}&ip=${MY_IP}&fields=country_name`);
 
       const country_name = response.data.country_name;
       // Determine risk based on country code
