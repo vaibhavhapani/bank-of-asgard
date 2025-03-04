@@ -790,6 +790,8 @@ a:focus {
       text-transform: uppercase;
       font-weight: bold;
       outline-color: $primary2;
+      width: 100%;
+      margin-bottom: 20px;
 
       &.secondary {
         background-color: $primary1;
@@ -991,10 +993,22 @@ a:focus {
 
 // end info section
 
+.close-account-button {
+  background-color: red !important; 
+  color: white !important; 
+  padding: 12px 20px !important; 
+  font-size: 16px !important; 
+  font-weight: bold !important; 
+  border: none !important; 
+  text-align: center !important; 
+  display: block !important; 
+  width: 100% !important; 
+  margin-top: 50px; 
+}
 
-
-
-
+.close-account-button:hover {
+  background-color: darkred !important; /* Override hover color */
+}
 /* footer section*/
 
 .footer_section {
