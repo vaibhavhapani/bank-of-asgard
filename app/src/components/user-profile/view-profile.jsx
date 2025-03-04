@@ -49,7 +49,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                     <div className="row">
                       <div className="col-md-8">
                         <h6>Live+ Credit Card</h6>
-                        <span>4574-3434-2984-2365</span>
+                        <span><i className="fa fa-credit-card" aria-hidden="true"></i> 4574-3434-2984-2365</span>
                       </div>
                       <div className="col-md-4">
                         - $ 4,5600.67

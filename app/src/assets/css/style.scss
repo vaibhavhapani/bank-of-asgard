@@ -523,6 +523,10 @@ a:focus {
           font-style: normal;
           font-size: 14px;
           color: color.scale($black, $lightness: 60%);
+
+          i.fa {
+            margin-right: 10px;
+          }
         }
       }
     }
