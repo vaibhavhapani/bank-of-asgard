@@ -215,7 +215,7 @@ const PasskeySetup = () => {
 
     return (
         <div>
-            <h5>Manage Passkeys</h5>
+            <p>Manage Passkeys</p>
 
             <button onClick={startPasskeyRegistration}>Register a New Passkey</button>
 

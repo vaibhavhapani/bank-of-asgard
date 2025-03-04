@@ -60,8 +60,6 @@ const UserProfilePage = ({ setSiteSection }) => {
         return;
       }
 
-      console.log(decodedIdToken);
-
       setUserInfo({
         username: decodedIdToken.username || "",
         accountType: decodedIdToken.accountType || "N/A",

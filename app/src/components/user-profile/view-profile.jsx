@@ -27,9 +27,9 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
         <h2>Welcome, { userInfo.givenName }{" "}{ userInfo.familyName }!</h2>
       </div>
       
-      <div className="row">
+      <div className="row" style={ { marginTop: "25px" } }>
         <div className="col-md-7">
-          <div className="detail-box user-profile">
+          <div className="detail-box user-profile" style={ { marginTop: "0", height: "100%" } }>
             <div className="contact_section">
             <div className="contact_form-container profile-edit">
                 <h5>Account Details</h5>
@@ -66,9 +66,10 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
           </div>
         </div>
         <div className="col-md-5">
-          <div className="detail-box user-profile">
+          <div className="detail-box user-profile" style={ { marginTop: "0" } }>
             <div className="contact_section">
               <div className="contact_form-container profile-edit">
+                <h5>Profile</h5>
                 <ul className="details-list">
                   {/* TODO: Uncomment the following code block after implementing the profile picture upload feature */}
                   {/* <li>
@@ -113,6 +114,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
               <div className="contact_form-container profile-edit">
                 <div className="row">
                   <div className="col-md-12">
+                    <h5>Account Security</h5>
                     <AccountSecurity accountType={userInfo.accountType} />
                   </div>
                 </div>

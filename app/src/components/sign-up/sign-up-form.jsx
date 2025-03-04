@@ -146,14 +146,6 @@ const SignUpForm = ({ accountType }) => {
                   required
                 />
 
-                {/* <label htmlFor="accountType">Account Type</label>
-                <select name="accountType" value={signupData.accountType} 
-                  onChange={(e) => setSignupData({ ...signupData, accountType: e.target.value })} required>
-                  <option value="">Select Account Type</option>
-                  <option value="Personal">Personal</option>
-                  <option value="Corporate">Corporate</option>
-                </select> */}
-
                 <button type="submit">Signup</button>
               </form>
             </div>

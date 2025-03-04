@@ -147,7 +147,7 @@ const TotpSetup = () => {
 
     return (
         <div>
-            <h5>TOTP Authenticator</h5>
+            <p>TOTP Authenticator</p>
 
             { setupComplete ? (
                 <>

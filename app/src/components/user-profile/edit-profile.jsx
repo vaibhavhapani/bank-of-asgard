@@ -42,8 +42,6 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
   useEffect(() => {
     if (userInfo) {
-      console.log("inside userinfo" + userInfo);
-
       setFormData({
         givenName: userInfo.givenName || "",
         familyName: userInfo.familyName || "",
@@ -53,14 +51,12 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         country: userInfo.country || "",
         password: ""
       });
-      console.log("inside usereffect" + formData);
     }
   }, [ userInfo ]);
 
   const handleSubmit = async (e) => {
 
     e.preventDefault();
-    console.log(formData);
 
     try {
       const operations = [];
@@ -90,7 +86,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
       }
 
       if (formData.country.trim() !== "") {
-        valuePayload.country = formData.country;
+        valuePayload["urn:scim:wso2:schema"] = { country: formData.country };
       }
 
       if (Object.keys(valuePayload).length > 0) {
