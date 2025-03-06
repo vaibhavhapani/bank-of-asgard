@@ -136,12 +136,16 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
                   <form onSubmit={handleSubmit} className="contact_form-container profile-edit">
                     <ul className="details-list">
                       <li>
-                        <label>First Name:</label>
-                        <input type="text" name="givenName" placeholder="First Name" value={formData.givenName} onChange={(e) => setFormData({ ...formData, givenName: e.target.value })} />
-                      </li>
-                      <li>
-                        <label>Last Name:</label>
-                        <input type="text" name="familyName" placeholder="Last Name" value={formData.familyName} onChange={(e) => setFormData({ ...formData, familyName: e.target.value })} />
+                        <div className="row">
+                          <div className="col-md-6">
+                            <label>First Name:</label>
+                            <input type="text" name="givenName" placeholder="First Name" value={formData.givenName} onChange={(e) => setFormData({ ...formData, givenName: e.target.value })} />
+                          </div>
+                          <div className="col-md-6">
+                            <label>Last Name:</label>
+                            <input type="text" name="familyName" placeholder="Last Name" value={formData.familyName} onChange={(e) => setFormData({ ...formData, familyName: e.target.value })} />
+                          </div>
+                        </div>
                       </li>
                       <li>
                         <label>Date of Birth:</label>

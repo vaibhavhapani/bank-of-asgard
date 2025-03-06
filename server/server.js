@@ -26,9 +26,9 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || 'localhost';
 const ASGARDEO_BASE_URL = process.env.ASGARDEO_BASE_URL;
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const TOKEN_ENDPOINT=process.env.ASGARDEO_TOKEN_ENDPOINT;
+const CLIENT_ID = process.env.SERVER_APP_CLIENT_ID;
+const CLIENT_SECRET = process.env.SERVER_APP_CLIENT_SECRET;
+const TOKEN_ENDPOINT= process.env.ASGARDEO_TOKEN_ENDPOINT;
 const GEO_API_KEY = process.env.GEO_API_KEY;
 const ASGARDEO_BASE_URL_SCIM2 = ASGARDEO_BASE_URL + "/scim2";
 const VITE_REACT_APP_CLIENT_BASE_URL = process.env.VITE_REACT_APP_CLIENT_BASE_URL;
@@ -40,6 +40,7 @@ const corsOptions = {
     credentials: true,
     enablePreflight: true
 }
+
 const app = express();
 
 app.use(cors(corsOptions));
@@ -127,7 +128,7 @@ const getAccessToken = async () => {
     return tokenData.access_token;
   }
 
-  console.log("Fetching new access token...");
+  console.log("Fetching new access token... ");
 
   try {
     const response = await axios.post(
@@ -155,7 +156,7 @@ const getAccessToken = async () => {
 
     console.log(`New access token received. Expires at ${new Date(tokenData.expires_at * 1000).toISOString()}`);
     return tokenData.access_token;
-  } catch (error) {
+  } catch (error) {    
     console.error("Error fetching token:", error.response?.data || error.message);
     throw new Error("Failed to get access token");
   }
