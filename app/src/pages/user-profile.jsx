@@ -61,15 +61,16 @@ const UserProfilePage = ({ setSiteSection }) => {
       }
 
       setUserInfo({
+        userId: decodedIdToken.sub || "",
         username: decodedIdToken.username || "",
         accountType: decodedIdToken.accountType || "N/A",
         email: decodedIdToken.email || "",
-          givenName: decodedIdToken.given_name || "",
-          familyName: decodedIdToken.family_name || "",
-          mobile: decodedIdToken.phone_number || "",
-          country: decodedIdToken.address?.country || "",
-          birthdate: decodedIdToken.birthdate || "",
-          picture: decodedIdToken.picture || ""
+        givenName: decodedIdToken.given_name || "",
+        familyName: decodedIdToken.family_name || "",
+        mobile: decodedIdToken.phone_number || "",
+        country: decodedIdToken.address?.country || "",
+        birthdate: decodedIdToken.birthdate || "",
+        picture: decodedIdToken.picture || "",
       });
     });
   }

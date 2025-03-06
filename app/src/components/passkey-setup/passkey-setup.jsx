@@ -223,11 +223,11 @@ const PasskeySetup = () => {
                 <></>
             ) : (
                 <div>
-                    <h4>Registered Passkeys</h4>
+                    <p>Registered Passkeys</p>
                     <ul>
                         {passkeys.map((pk) => (
                             <li key={pk.credential.credentialId}>
-                                <strong>{pk.displayName || "Unnamed Device"}</strong>
+                                {pk.displayName || "Unnamed Device"}
                             </li>
                         ))}
                     </ul>

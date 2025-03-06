@@ -115,7 +115,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                 <div className="row">
                   <div className="col-md-12">
                     <h5>Account Security</h5>
-                    <AccountSecurity accountType={userInfo.accountType} />
+                    <AccountSecurity accountType={userInfo.accountType} userId={userInfo.userId} />
                   </div>
                 </div>
               </div>

@@ -472,7 +472,7 @@ const CountrySelect = ({ value, onChange }) => {
             value={selectedCountry || null}
             onChange={(event, newValue) => {
                 setSelectedCountry(newValue);
-                onChange(newValue ? newValue.label : "");
+                onChange(newValue ? newValue : "");
             }}
             renderOption={(props, option) => {
                 const { key, ...optionProps } = props;

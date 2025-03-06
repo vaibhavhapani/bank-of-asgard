@@ -20,6 +20,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
+import https from 'https';
 
 dotenv.config();
 
@@ -34,6 +35,10 @@ const ASGARDEO_BASE_URL_SCIM2 = ASGARDEO_BASE_URL + "/scim2";
 const VITE_REACT_APP_CLIENT_BASE_URL = process.env.VITE_REACT_APP_CLIENT_BASE_URL;
 const MY_IP = process.env.MY_IP;
 
+// Added to compress self signed cert validation
+const agent = new https.Agent({
+  rejectUnauthorized: false, // Disable SSL certificate validation
+});
 const corsOptions = {
     origin: [ VITE_REACT_APP_CLIENT_BASE_URL ],
     allowedHeaders: ["Content-Type", "Authorization", "Access-Control-Allow-Methods", "Access-Control-Request-Headers"],
@@ -77,44 +82,43 @@ app.post("/signup", async (req, res) => {
       `${ASGARDEO_BASE_URL_SCIM2}/Users`,
       {
         schemas: [],
-        userName: `DEFAULT/${username}`,
+        userName: username,
         password: password,
-        emails: [{
-          value: email,
-          primary: true
-          }
+        emails: [
+          {
+            value: email,
+            primary: true,
+          },
         ],
         name: {
           givenName: firstName,
-          familyName: lastName
+          familyName: lastName,
         },
-        "urn:scim:wso2:schema": {
-          "country": country,
-          "dateOfBirth": dateOfBirth,
+        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": {
+          country: country,
+          dateOfBirth: dateOfBirth,
         },
-        "phoneNumbers": [
+        phoneNumbers: [
           {
-              "type": "mobile",
-              "value": mobile
-          }
+            type: "mobile",
+            value: mobile,
+          },
         ],
-        "urn:scim:schemas:extension:custom:User": {
-          "accountType": accountType
-        }
+        "urn:scim:wso2:schema": {
+          accountType: accountType,
+        },
       },
       {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        httpsAgent: agent, // Attach the custom agents
       }
     );
-  
-
     res.json({ message: "User registered successfully", data: response.data });
   } catch (error) {
     console.log("SCIM2 API Error:", error.detail || error.message);
-    console.log(error);
     res.status(400).json({ error: error.detail || "Signup failed" });
   }
 });
@@ -133,12 +137,13 @@ const getAccessToken = async () => {
   try {
     const response = await axios.post(
       TOKEN_ENDPOINT,
-      "grant_type=client_credentials&scope=internal_user_mgt_create internal_user_mgt_view",
+      "grant_type=client_credentials&scope=internal_user_mgt_create internal_user_mgt_delete internal_user_mgt_update internal_user_mgt_view",
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: getAuthHeader(),
         },
+        httpsAgent: agent, // Attach the custom agent
       }
     );
 
@@ -156,8 +161,8 @@ const getAccessToken = async () => {
 
     console.log(`New access token received. Expires at ${new Date(tokenData.expires_at * 1000).toISOString()}`);
     return tokenData.access_token;
-  } catch (error) {    
-    console.error("Error fetching token:", error.response?.data || error.message);
+  } catch (error) {
+    console.log("Error fetching token:", error);
     throw new Error("Failed to get access token");
   }
 };
@@ -167,7 +172,7 @@ app.post("/risk", async (req, res) => {
   try {
       console.log("request receivedd");
       let { ip, country } = req.body;
-      console.log(ip);
+      console.log(ip + country);
       ip = "103.87.14.173";
       if (!ip || !country) {
           return res.status(400).json({ error: "IP address and country name are required" });
@@ -179,12 +184,42 @@ app.post("/risk", async (req, res) => {
       const country_name = response.data.country_name;
       // Determine risk based on country code
       const hasRisk = country_name !== country;
+      console.log("This country shows risk: " + hasRisk);
       res.json({ hasRisk });
 
   } catch (error) {
-      console.error("Error fetching IP geolocation:", error.message);
-      res.status(500).json({ error: "Failed to process request" });
+    console.error("Error fetching IP geolocation:", error.message);
+    res.status(500).json({ error: "Failed to process request" });
   }
 });
 
-app.listen(PORT, () => console.log(`🌐 Server running at: http://${HOST}:${PORT}`));
+app.delete("/close-account", async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    const token = await getAccessToken();
+
+    const response = await axios.delete(
+      `${ASGARDEO_BASE_URL_SCIM2}/Users/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "*/*",
+        },
+        httpsAgent: agent, // Attach the custom agent
+      }
+    );
+    if (response.status == 204) {
+      res.json({
+        message: "Account removed successfully",
+        data: response.data,
+      });
+    }
+  } catch (error) {
+    console.log("SCIM2 API Error:", error.detail || error.message);
+    res.status(400).json({ error: error.detail || "An error occurred while deleting user" });
+  }
+});
+
+app.listen(PORT, () =>
+  console.log(`🌐 Server running at: http://${HOST}:${PORT}`)
+);
