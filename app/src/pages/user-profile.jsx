@@ -79,9 +79,9 @@ const UserProfilePage = ({ setSiteSection }) => {
           email: response.data.emails[0] || "",
           givenName: response.data.name.givenName || "",
           familyName: response.data.name.familyName || "",
-          mobile: response.data.phoneNumbers.value || "",
+          mobile: response.data.phoneNumbers[0].value || "",
           country: response.data["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].country || "",
-          birthdate: response.data["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].birthdate || "",
+          birthdate: response.data["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].dateOfBirth || "",
           picture: response.data.picture || "",
         });
       }

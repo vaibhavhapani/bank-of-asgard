@@ -105,7 +105,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         Operations: operations,
       };
 
-      await request({
+      const response = await request({
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/scim+json"
