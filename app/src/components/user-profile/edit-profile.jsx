@@ -20,6 +20,7 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
 import CountrySelect from "../country-select";
+import PasswordValidation from "../password-validation";
 
 const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
@@ -104,7 +105,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         Operations: operations,
       };
 
-      const response = await request({
+      await request({
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/scim+json"
@@ -168,6 +169,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
                       <li>
                         <label>Password:</label>
                         <input type="password" name="password" placeholder="New Password (Optional)" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
+                        <PasswordValidation password={formData.password} />
                       </li>
                     </ul>
 

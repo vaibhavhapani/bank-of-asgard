@@ -5,6 +5,7 @@ $black: #000000;
 $primary1: #1c1c1c;
 $primary2: #997029;
 $verybuttoncololr: #5654BF;
+$dangerolor: #6b0606;
 
 // import fonts
 
@@ -806,7 +807,7 @@ a:focus {
     }
 
     input, select {
-      border: 1px solid #1c1c1c;
+      border: 1px solid color.scale($black, $lightness: 80%);
       outline: none;
       color: $black;
       height: 45px;
@@ -822,6 +823,10 @@ a:focus {
       &.message_input {
         height: 120px;
       }
+
+      &:focus {
+        border-color: color.scale($black, $lightness: 5%);
+      }
     }
 
     .country-select {
@@ -833,7 +838,13 @@ a:focus {
       }
 
       fieldset {
-        border: 1px solid #1c1c1c;
+        border: 1px solid color.scale($black, $lightness: 80%);
+      }
+
+      &.Mui-expanded {
+        fieldset {
+          border-color: color.scale($black, $lightness: 5%);
+        }
       }
 
       input {
@@ -875,6 +886,10 @@ a:focus {
 
       input, select {
         margin: 0;
+      }
+
+      .password-validation {
+        margin-top: 20px;
       }
 
       label {
@@ -1090,22 +1105,52 @@ a:focus {
   }
 }
 
-.close-account-button {
-  background-color: #6b0606 !important; 
-  color: white !important; 
-  padding: 12px 20px !important; 
-  font-size: 16px !important; 
-  font-weight: bold !important; 
-  border: none !important; 
-  text-align: center !important; 
-  display: block !important; 
-  width: 100% !important; 
-  margin-top: 50px; 
+.danger-zone {
+  margin-top: 50px;
+  border: 1px solid $dangerolor;
+  padding: 30px;
+
+  h5 {
+    color: $dangerolor;
+  }
 }
 
-.close-account-button:hover {
-  background-color: darkred !important; /* Override hover color */
+input[type="password"]:focus ~ .password-validation {
+  display: block;
 }
+
+.password-validation {
+  list-style: none;
+  padding: 0;
+  color: color.scale($black, $lightness: 60%);
+  margin-bottom: 30px;
+  transition: all 0.3s;
+  display: none;
+  
+  li {
+    margin: 0 !important;
+
+    i {
+      margin-right: 10px;
+    }
+  }
+}
+
+.close-account-button {
+  background: $dangerolor !important; 
+  color: $white; 
+  padding: 12px 20px; 
+  font-size: 16px;
+  border: none; 
+  text-align: center;
+  margin-top: 20px;
+
+  &:hover {
+    background-color: color.scale($dangerolor, $lightness: 40%);
+    color: $white !important;
+  }
+}
+
 /* footer section*/
 
 .footer_section {

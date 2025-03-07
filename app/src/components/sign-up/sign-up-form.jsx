@@ -20,6 +20,7 @@ import { useAuthContext } from "@asgardeo/auth-react";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import axios from "axios";
+import PasswordValidation from "../password-validation";
 import CountrySelect from "../country-select";
 
 const SignUpForm = ({ accountType }) => {
@@ -84,6 +85,7 @@ const SignUpForm = ({ accountType }) => {
         onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
         required
       />
+      <PasswordValidation password={signupData.password} />
 
       <div className="row">
         <div className="col-md-6">

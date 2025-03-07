@@ -478,21 +478,21 @@ const CountrySelect = ({ value, onChange }) => {
                 const { key, ...optionProps } = props;
 
                 return (
-                <Box
-                    key={key}
-                    component="li"
-                    sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
-                    {...optionProps}
-                >
-                    <img
-                    loading="lazy"
-                    width="20"
-                    srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                    src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                    alt=""
-                    />
-                    {option.label} ({option.code}) +{option.phone}
-                </Box>
+                    <Box
+                        key={key}
+                        component="li"
+                        sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+                        {...optionProps}
+                    >
+                        <img
+                        loading="lazy"
+                        width="20"
+                        srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                        src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                        alt=""
+                        />
+                        {option.label} ({option.code}) +{option.phone}
+                    </Box>
                 );
             }}
             renderInput={(params) => (
@@ -513,7 +513,8 @@ const CountrySelect = ({ value, onChange }) => {
 
 CountrySelect.propTypes = {
     onChange: PropTypes.object.isRequired,
-    value: PropTypes.object.isOptional
+    value: PropTypes.object.isOptional,
+    key: PropTypes.object.isRequired
 };
 
 export default CountrySelect;

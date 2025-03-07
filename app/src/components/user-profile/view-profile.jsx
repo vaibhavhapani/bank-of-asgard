@@ -16,14 +16,51 @@
  * under the License.
  */
 
+import { useState } from "react";
+import axios from "axios";
 import PropTypes from "prop-types";
+import { useAuthContext } from "@asgardeo/auth-react";
 import AccountSecurity from "./account-security";
 
 const ViewProfile = ({ userInfo, setShowEditForm }) => {
 
+  const { signOut } = useAuthContext();
+  const [ error, setError ] = useState(null);
+
+  const closeAccount = async () => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to close your account? This action cannot be undone."
+    );
+
+    if (!isConfirmed) {
+      return; // Exit if user cancels
+    }
+
+    const userId = userInfo.userId;
+
+    try {
+      console.log("User requires to close the account!!");
+      const response = await axios.delete(
+        `${import.meta.env.VITE_REACT_APP_API_ENDPOINT}/close-account`,
+        { params: { userId } }
+      );
+
+      if (response.status == 200) {
+        alert("Account closed successfully");
+        signOut();
+      }
+    } catch (err) {
+      console.error("Error Closing Account:", err);
+      setError(
+        "Error Closing Account: " + (err.response?.data?.detail || err.message)
+      );
+      console.log(error);
+    }
+  };
+
   return (
     <>
-      <div className="heading_container ">
+      <div className="heading_container">
         <h2>Welcome, { userInfo.givenName }{" "}{ userInfo.familyName }!</h2>
       </div>
       
@@ -82,11 +119,19 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                     <span>Credit Limit Increase</span>
                   </li>
                 </ul>
+
+                <div className="danger-zone">
+                  <h5>Close Account</h5>
+                  <p>Once you close the account, you cannot recover it again. Please visit the nearest branch in case of a mistake.</p>
+                  <div>
+                    <button onClick={ closeAccount } className="close-account-button">Close</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-md-5">
+        <div className="col-md-5" style={ { display: "flex", flexDirection: "column" } }>
           <div className="detail-box user-profile" style={ { marginTop: "0" } }>
             <div className="contact_section">
               <div className="contact_form-container profile-edit">
@@ -130,13 +175,13 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
               </div>
             </div>
           </div>
-          <div className="detail-box user-profile">
+          <div className="detail-box user-profile" style={ { flex: "1" } }>
             <div className="contact_section">
               <div className="contact_form-container profile-edit">
                 <div className="row">
                   <div className="col-md-12">
                     <h5>Account Security</h5>
-                    <AccountSecurity accountType={userInfo.accountType} userId={userInfo.userId} />
+                    <AccountSecurity accountType={userInfo.accountType} />
                   </div>
                 </div>
               </div>
