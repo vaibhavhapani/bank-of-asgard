@@ -77,7 +77,7 @@ const App = () => {
                     <>
                       <Link to={ ROUTES.REGISTER_ACCOUNT } className="register_link">
                         <span>
-                          Register
+                          Open an account
                         </span>
                       </Link>
                       <button className="login_link" onClick={ () => signIn() }>
@@ -206,22 +206,23 @@ const App = () => {
                 <ul>
                   <li>
                     <a href="">
-                      dolor sit amet, consectetur
+                      Open an everyday account
+                    
                     </a>
                   </li>
                   <li>
                     <a href="">
-                      magna aliqua. Ut enim ad
+                      Open a savings account
                     </a>
                   </li>
                   <li>
                     <a href="">
-                      minim veniam,
+                      Apply for a home loan
                     </a>
                   </li>
                   <li>
                     <a href="">
-                      quisdotempor incididunt r
+                      Apply for a credit card
                     </a>
                   </li>
                 </ul>
@@ -237,7 +238,7 @@ const App = () => {
                 <a href="" className="">
                   <i className="fa fa-map-marker" aria-hidden="true"></i>
                   <span>
-                    Lorem ipsum dolor sit amet,
+                    Campelle St, 24-28 Paris
                   </span>
                 </a>
                 <a href="" className="">

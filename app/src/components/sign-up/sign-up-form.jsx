@@ -21,7 +21,6 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import axios from "axios";
 import CountrySelect from "../country-select";
-import { ACCOUNT_TYPES } from "../../constants/app-constants";
 
 const SignUpForm = ({ accountType }) => {
 
@@ -58,101 +57,82 @@ const SignUpForm = ({ accountType }) => {
   };
 
   return (
-    <div className="contact_section">
-      <div className="container">
-        <div className="heading_container heading_center">
-          { (accountType === ACCOUNT_TYPES.BUSINESS) ?
-            (
-              <h2>Create your business account</h2>
-            ) : (
-              <h2>Create your account</h2>
-            )
-          }
+    <form onSubmit={handleSignup} className="contact_form-container">
+      <label htmlFor="username">Username</label>
+      <input
+        type="text"
+        placeholder="Enter a username"
+        value={signupData.username}
+        onChange={(e) => setSignupData({ ...signupData, username: e.target.value })}
+        required
+      />
+
+      <label htmlFor="email">Email</label>
+      <input
+        type="email"
+        placeholder="Enter email address"
+        value={signupData.email}
+        onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+        required
+      />
+
+      <label htmlFor="password">Password</label>
+      <input
+        type="password"
+        placeholder="Enter a password"
+        value={signupData.password}
+        onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+        required
+      />
+
+      <div className="row">
+        <div className="col-md-6">
+          <label htmlFor="firstName">First Name</label>
+          <input
+            type="text"
+            placeholder="Enter first name"
+            value={signupData.firstName}
+            onChange={(e) => setSignupData({ ...signupData, firstName: e.target.value })}
+            required
+          />
         </div>
-        <div className="">
-          <div className="row">
-            <div className="col-md-7 mx-auto">
-              <form onSubmit={handleSignup} className="contact_form-container">
-                <label htmlFor="username">Username</label>
-                <input
-                  type="text"
-                  placeholder="Enter a username"
-                  value={signupData.username}
-                  onChange={(e) => setSignupData({ ...signupData, username: e.target.value })}
-                  required
-                />
-
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  placeholder="Enter email address"
-                  value={signupData.email}
-                  onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                  required
-                />
-
-                <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  placeholder="Enter a password"
-                  value={signupData.password}
-                  onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                  required
-                />
-
-                <div className="row">
-                  <div className="col-md-6">
-                    <label htmlFor="firstName">First Name</label>
-                    <input
-                      type="text"
-                      placeholder="Enter first name"
-                      value={signupData.firstName}
-                      onChange={(e) => setSignupData({ ...signupData, firstName: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="lastName">Last Name</label>
-                    <input
-                      type="text"
-                      placeholder="Enter last name"
-                      value={signupData.lastName}
-                      onChange={(e) => setSignupData({ ...signupData, lastName: e.target.value })}
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <label htmlFor="dateOfBirth">Date of Birth</label>
-                <input
-                  type="date"
-                  placeholder="Date of Birth"
-                  value={signupData.dateOfBirth}
-                  onChange={(e) => setSignupData({ ...signupData, dateOfBirth: e.target.value })}
-                  required
-                />
-
-                <label htmlFor="country">Country</label>
-                <CountrySelect
-                  value={signupData.country}
-                  onChange={(value) => setSignupData({ ...signupData, country: value?.label || "" })} />
-
-                <label htmlFor="mobile">Mobile Number</label>
-                <input
-                  type="number"
-                  placeholder="Enter mobile"
-                  value={signupData.mobile}
-                  onChange={(e) => setSignupData({ ...signupData, mobile: e.target.value })}
-                  required
-                />
-
-                <button type="submit">Signup</button>
-              </form>
-            </div>
-          </div>
+        <div className="col-md-6">
+          <label htmlFor="lastName">Last Name</label>
+          <input
+            type="text"
+            placeholder="Enter last name"
+            value={signupData.lastName}
+            onChange={(e) => setSignupData({ ...signupData, lastName: e.target.value })}
+            required
+          />
         </div>
       </div>
-    </div>
+      
+      <label htmlFor="dateOfBirth">Date of Birth</label>
+      <input
+        type="date"
+        placeholder="Date of Birth"
+        value={signupData.dateOfBirth}
+        onChange={(e) => setSignupData({ ...signupData, dateOfBirth: e.target.value })}
+        required
+      />
+
+      <label htmlFor="country">Country</label>
+      <CountrySelect
+        value={signupData.country}
+        onChange={(value) => setSignupData({ ...signupData, country: value?.label || "" })} />
+
+      <label htmlFor="mobile">Mobile Number</label>
+      <input
+        type="number"
+        placeholder="Enter mobile"
+        value={signupData.mobile}
+        onChange={(e) => setSignupData({ ...signupData, mobile: e.target.value })}
+        required
+      />
+
+      <button type="submit">Signup</button>
+    </form>        
   );
 }
 

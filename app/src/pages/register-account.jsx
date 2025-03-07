@@ -16,17 +16,19 @@
  * under the License.
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import SignUpForm from "../components/sign-up/sign-up-form";
 import EverydayBanking from "../assets/images/sofa-online-card-dcm-45094.jpg";
+import GatacaImage from "../assets/images/gataca.png";
 import GoGlobal from "../assets/images/6739-mass-retail-woman-checking-phone-in-the-city-1240x400.jpg";
 import { ACCOUNT_TYPES, ROUTES, SITE_SECTIONS, URL_QUERY_PARAMS } from "../constants/app-constants";
 
 const RegisterAccountPage = ({ setSiteSection }) => {
 
   const [ searchParams ] = useSearchParams();
+  const [ showModal, setShowModal ] = useState(false);
 
   const accountType = searchParams.get(URL_QUERY_PARAMS.ACCOUNT_TYPE) || "";
 
@@ -42,6 +44,19 @@ const RegisterAccountPage = ({ setSiteSection }) => {
     }
   }, [ accountType ]);
 
+  useEffect(() => {
+    if (showModal) {
+      document.body.classList.add("modal-open");
+    } else {
+      document.body.classList.remove("modal-open");
+    }
+
+    // Cleanup when component unmounts
+    return () => {
+      document.body.classList.remove("modal-open");
+    };
+  }, [ showModal ]);
+
   return (
     <>
       <section className="about_section layout_padding">
@@ -49,44 +64,70 @@ const RegisterAccountPage = ({ setSiteSection }) => {
 
           { (accountType !== "") ?
             (
-              <div className="row">
-                <div className="col-md-8 px-0">
-                  <div className="img_container">
-                    <div className="img-box">
-                      <SignUpForm accountType={ accountType } />
+              <>
+                { (accountType === ACCOUNT_TYPES.BUSINESS) ?
+                  (
+                    <>
+                      <div className="heading_container">
+                        <h2>Open your business account</h2>
+                      </div>
+                      <div className="register-page-banner">
+                        <img src={ GoGlobal } alt="" style={ { width: "100%" } } />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="heading_container">
+                        <h2>Open your account</h2>
+                      </div>
+                      <div className="register-page-banner">
+                        <img src={ EverydayBanking } alt="" style={ { width: "100%" } } />
+                      </div>
+                    </>
+                  )
+                }
+                <div className="row">
+                  <div className="col-md-8 px-0">
+                    <div className="contact_section">
+                      <div className="container">
+                        <div className="row">
+                          <div className="col-md-7">
+                            <SignUpForm accountType={ accountType } />
+                          </div>
+                          { (accountType === ACCOUNT_TYPES.PERSONAL) &&
+                            <div className="col-md-2 mx-auto" style={ { textAlign: "center" } }>
+                              <h4>OR</h4>
+                            </div>
+                          }
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  { (accountType === ACCOUNT_TYPES.PERSONAL) && (
+                    <div className="col-md-4 px-0">
+                      <div className="detail-box" style={ { marginTop: "200px" } }>
+                        <div className="heading_container ">
+                          <h2>Open instantly</h2>
+                        </div>
+
+                        <button type="button" className="btn btn-primary verify-button" onClick={ () => setShowModal(true) }>
+                          <span className="icon">
+                            <i className="fa fa-id-badge"></i>
+                          </span>
+                          <span className="text">
+                            <h4>Veriry your Self</h4>
+                            with Gataca
+                          </span>
+                        </button>
+
+                        <p>
+                          You can use your Gataca Wallet to open an account instantly.
+                        </p>
+                      </div>
+                    </div>
+                  ) }
                 </div>
-                <div className="col-md-4 px-0">
-                  <div className="detail-box" style={ { marginTop: "120px" } }>
-                    { (accountType === ACCOUNT_TYPES.BUSINESS) ?
-                      (
-                        <>
-                          <div className="heading_container ">
-                            <h2>Business Banking</h2>
-                          </div>
-                          <img src={ GoGlobal } alt="" style={ { width: "100%" } } />
-                          <p>
-                            We&apos;re supporting smarter business by building future focused insights, 
-                            and easier to use products and services that facilitate new ways to grow
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <div className="heading_container ">
-                            <h2>Personal Banking</h2>
-                          </div>
-                          <img src={ EverydayBanking } alt="" style={ { width: "100%" } } />
-                          <p>
-                            Step into a world of endless opportunity when shopping and banking online.
-                            We&apos;re here to help you with smart and safe banking.
-                          </p>
-                        </>
-                      )
-                    }
-                  </div>
-                </div>
-              </div>
+              </>
             ) : (
               <div className="row">
                 <div className="col-md-6">
@@ -130,9 +171,33 @@ const RegisterAccountPage = ({ setSiteSection }) => {
               </div>
             )
           }
-
         </div>
       </section>
+
+      <div id="exampleModalLive" className="modal fade show" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLiveLabel" style={{ display: showModal ? "block" : "none", zIndex: showModal ? "100000" : "-1" }}>
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: showModal ? "block" : "none" }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={ () => setShowModal(false) }>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p><img src={ GatacaImage } style={ { maxWidth: "100%" }} /></p>
+                <p style={ { padding: "0 25px" } }>
+                  Please scan the QR code with your Gataca Wallet for us to verify your identity.
+                </p>
+              </div>
+              {/* <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={ () => setShowModal(false) }>Close</button>
+              </div> */}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={ `modal-backdrop fade ${showModal ? "show" : ""} `}  style={{ zIndex: showModal ? "1" : "-1" }}></div>
     </>
   );
 }

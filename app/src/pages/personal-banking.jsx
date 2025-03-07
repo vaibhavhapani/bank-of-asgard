@@ -109,7 +109,7 @@ const PersonalBankingPage = ({ setSiteSection }) => {
                       </Link>
                     ) : (
                       <Link to={ `${ROUTES.REGISTER_ACCOUNT}?${URL_QUERY_PARAMS.ACCOUNT_TYPE}=${ACCOUNT_TYPES.PERSONAL}` }>
-                        Create your personal account
+                        Open a personal account
                       </Link>
                     )
                   }
@@ -132,11 +132,11 @@ const PersonalBankingPage = ({ setSiteSection }) => {
                   { state.isAuthenticated ?
                     (
                       <Link to={ ROUTES.PERSONAL_BANKING }>
-                        View business account
+                        View your business account
                       </Link>
                     ) : (
                       <Link to={ `${ROUTES.REGISTER_ACCOUNT}?${URL_QUERY_PARAMS.ACCOUNT_TYPE}=${ACCOUNT_TYPES.BUSINESS}` }>
-                        Create a business account
+                        Open a business account
                       </Link>
                     )
                   }
