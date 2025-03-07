@@ -181,7 +181,7 @@ const TotpSetup = () => {
                                         value={otpCode}
                                         onChange={(e) => setOtpCode(e.target.value)}
                                     />
-                                    <button onClick={validateOtp} disabled={isValidating} style={{ marginRight: "10px" }}>
+                                    <button onClick={validateOtp} disabled={isValidating} style={ { marginTop: "10px" } }>
                                         { isValidating ? "Validating..." : "Validate OTP" }
                                     </button>
                                 </>

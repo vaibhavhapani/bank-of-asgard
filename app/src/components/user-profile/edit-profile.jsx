@@ -86,7 +86,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
       }
 
       if (formData.country.trim() !== "") {
-        valuePayload["urn:scim:wso2:schema"] = { country: formData.country };
+        valuePayload["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"] = { country: formData.country };
       }
 
       if (Object.keys(valuePayload).length > 0) {
@@ -163,7 +163,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
                         <label>Country</label>
                         <CountrySelect
                           value={formData.country}
-                          onChange={(value) => setFormData({ ...formData, country: value })} />
+                          onChange={(value) => setFormData({ ...formData, country: value.label })} />
                       </li>
                       <li>
                         <label>Password:</label>
