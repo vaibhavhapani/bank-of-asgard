@@ -215,19 +215,17 @@ const PasskeySetup = () => {
 
     return (
         <div>
-            <p>Manage Passkeys</p>
-
             <button onClick={startPasskeyRegistration} className="secondary">Register a New Passkey</button>
 
             {passkeys.length === 0 ? (
                 <></>
             ) : (
                 <div>
-                    <p>Registered Passkeys</p>
-                    <ul>
+                    <h6>Registered Passkeys</h6>
+                    <ul className="accounts-list">
                         {passkeys.map((pk) => (
                             <li key={pk.credential.credentialId}>
-                                {pk.displayName || "Unnamed Device"}
+                                <i className="fa fa-address-card" aria-hidden="true" style={ { marginRight: "10px" }}></i> { pk.displayName || "Unnamed Device" }
                             </li>
                         ))}
                     </ul>

@@ -38,7 +38,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                     <div className="row">
                       <div className="col-md-8">
                         <h6>Savings Account</h6>
-                        <span>083434342982340</span>
+                        <span><i className="fa fa-money" aria-hidden="true"></i>083434342982340</span>
                       </div>
                       <div className="col-md-4">
                         $ 13,565.45
@@ -61,6 +61,27 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                 <div className="form-buttons">
                   <button className="edit-button">Make a transfer</button>
                 </div>
+
+                <hr />
+
+                <ul className="account-options-list">
+                  <li>
+                    <i className="fa fa-file-text" aria-hidden="true"></i>
+                    <span>Balance Statement</span>
+                  </li>
+                  <li>
+                    <i className="fa fa-credit-card" aria-hidden="true"></i>
+                    <span>Request Credit Card</span>
+                  </li>
+                  <li>
+                    <i className="fa fa-exchange" aria-hidden="true"></i>
+                    <span>Request a Loan</span>
+                  </li>
+                  <li>
+                    <i className="fa fa-heart" aria-hidden="true"></i>
+                    <span>Credit Limit Increase</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>

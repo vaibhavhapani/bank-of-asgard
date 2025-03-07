@@ -642,6 +642,7 @@ a:focus {
 
   .form-buttons {
     margin-top: 40px;
+    display: flex;
 
     .cancel-button {
       background-color: $primary1;
@@ -1061,8 +1062,36 @@ a:focus {
 
 // end info section
 
+.account-options-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  margin-top: 30px;
+  gap: 20px;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    flex: 1;
+    gap: 10px;
+    border: 1px solid color.scale($black, $lightness: 90%);
+    padding: 15px;
+    cursor: pointer;
+
+    i.fa {
+      font-size: 35px;
+      color: color.scale($black, $lightness: 50%);
+    }
+
+    &:hover {
+      background-color: color.scale($black, $lightness: 98%);
+    }
+  }
+}
+
 .close-account-button {
-  background-color: red !important; 
+  background-color: #6b0606 !important; 
   color: white !important; 
   padding: 12px 20px !important; 
   font-size: 16px !important; 
