@@ -115,8 +115,10 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`
       });
     
-      alert("Profile updated successfully");
-      onUpdateSuccess();
+      if (response.status == 200) {
+        alert("Profile updated successfully");
+        onUpdateSuccess();
+      }
     } catch (error) {
       alert("Profile update failed: " + (error.detail || error));
       console.log(error);
