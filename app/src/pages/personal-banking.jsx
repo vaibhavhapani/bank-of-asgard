@@ -43,7 +43,7 @@ const PersonalBankingPage = ({ setSiteSection }) => {
           <div className="carousel-inner">
             <div className="carousel-item active">
               <div className="container-fluid">
-                <div className="row">
+                <div className="row banner">
                   <div className="col-md-9 image-box">
                     <div className="detail-box">
                       <h1>
