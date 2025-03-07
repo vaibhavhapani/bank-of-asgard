@@ -20,9 +20,9 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import SignUpForm from "../components/sign-up/sign-up-form";
-import EverydayBanking from "../assets/images/sofa-online-card-dcm-45094.jpg";
+import EverydayBanking from "../assets/images/A_women_laying_on_a_soft_with_a_headset_and_holdin_028d291b-58ee-4de5-8c57-2a84033209ac.png";
+import GoGlobal from "../assets/images/A_business_women_in_a_city_walking_portrait_lookin_5e59fd5e-a8dd-43e0-b4ea-5a926d089913.png";
 import GatacaImage from "../assets/images/gataca.png";
-import GoGlobal from "../assets/images/6739-mass-retail-woman-checking-phone-in-the-city-1240x400.jpg";
 import { ACCOUNT_TYPES, ROUTES, SITE_SECTIONS, URL_QUERY_PARAMS } from "../constants/app-constants";
 
 const RegisterAccountPage = ({ setSiteSection }) => {
@@ -72,7 +72,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                         <h2>Open your business account</h2>
                       </div>
                       <div className="register-page-banner">
-                        <img src={ GoGlobal } alt="" style={ { width: "100%" } } />
+                        <img src={ GoGlobal } alt="" style={ { width: "100%", marginTop: "-120px" } } />
                       </div>
                     </>
                   ) : (
@@ -81,7 +81,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                         <h2>Open your account</h2>
                       </div>
                       <div className="register-page-banner">
-                        <img src={ EverydayBanking } alt="" style={ { width: "100%" } } />
+                        <img src={ EverydayBanking } alt="" style={ { width: "100%", marginTop: "-95px" } } />
                       </div>
                     </>
                   )
