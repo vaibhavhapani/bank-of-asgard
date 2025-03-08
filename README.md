@@ -131,7 +131,7 @@ internal_user_mgt_create internal_user_mgt_list internal_user_mgt_view internal_
 ```
 9. Navigate to Connections -> Passkey Setup -> Add the Trusted Origins: `http://localhost:5173` and enable `Allow Passkey usernameless authentication` option. 
 
- 10. Navigate to root directory and run `pnpm i`.
- 11. Navigate to `App_home/app` and execute `pnpm dev` to run the application.
+ 10. Navigate to root directory and run `npm i`.
+ 11. Navigate to `App_home/app` and execute `npm start` to run the application.
  12. Navigate to `App_home/server` and execute `nodemon server.js` to run the server.
  13. Test the application from registration of a personal and corporate account types.
