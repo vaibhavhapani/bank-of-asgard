@@ -879,6 +879,12 @@ a:focus {
         background-color: $primary1;
         outline-color: $primary1;
         color: $white;
+
+        &:hover {
+          background-color: transparent;
+          border-color: $primary1;
+          color: $primary1;
+        }
       }
     }
 
@@ -1146,12 +1152,12 @@ input[type="password"]:focus ~ .password-validation {
   border: none; 
   text-align: center;
   margin-top: 20px;
-
-  &:hover {
-    background-color: color.scale($dangerolor, $lightness: 40%);
-    color: $white !important;
-  }
 }
+.close-account-button:hover {
+  border-color: $dangerolor !important;
+  background-color: rgba(107, 6, 6, 0.7) !important; 
+  color: $white !important;
+}  
 
 /* footer section*/
 
