@@ -7,8 +7,9 @@
 3. Create a SPA application.
   * Enable the `Code` and `Refresh Grant` types
   * Add authorise redirect URL: `http://localhost:5173` and allowed origin: `http://localhost:5173`
+  * Add the `country` and `accountType` to Profile scope navigating to `User Attributes & Stores` -> `Attributes` -> `OpenId Connect` -> `Scopes` -> `Profile` -> `New Attribute`.
   * Enable the following scopes and attributes within the client application created.  
-    * `Profile - Country, First Name, Last Name, Username, Birth Date, AccountType; Email;  Phone.`
+    * `Profile - Country, First Name, Last Name, Username, Birth Date, AccountType; Email - email;  Phone - telephone; Address - country.`
 4. Enable the following authenticators within the client application:
   * `Identifier First` - First Step
   * `Username and Password`, `Passkey` - Second Step
@@ -23,18 +24,17 @@ var onLoginRequest = function (context) {
             var country = user.localClaims["http://wso2.org/claims/country"];
 
             var requestPayload = {
-                ip: "112.87.14.181",  // Cannot retrieve the correct IP from the context. Therefore hardcode your ip address here for testing
+                ip: "112.87.14.181",  // Cannot retrieve the correct IP from the context. Therefore hardcode your ip address here for testing until the fix is available
                 country: country,
             };
             if (accountType === "Personal") {
-                httpGet(`https://api.ipgeolocation.io/ipgeo?apiKey=248c11c007ce4c7db07127c0a043288c&ip=${requestPayload.ip}&fields=country_name`,
+                httpPost("http://localhost:5003/risk", requestPayload, { "Accept": "application/json"},
                     {
                         onSuccess: function (context, data) {
                             Log.info("Successfully invoked the external API.");
-                            Log.info("Logging data: " + data.country_name);
-                            var country = context.steps[1].subject.localClaims["http://wso2.org/claims/country"];
+                            Log.info("Logging data for country risk: " + data.hasRisk);
 
-                            if(data.country_name === country) {
+                            if(data.hasRisk === false) {
                                 executeStep(2, {
                                 authenticationOptions: [{ authenticator: 'FIDOAuthenticator' }, { authenticator: 'BasicAuthenticator' }]
                                 }, {
@@ -64,8 +64,8 @@ var onLoginRequest = function (context) {
                         },
                     }
                 );
-            } else if (accountType === "Corporate") {
-                Log.info("In second step for Corporate");
+            } else if (accountType === "Business") {
+                Log.info("In second step for Business");
 
                 executeStep(2, {
                     authenticationOptions: [{
@@ -89,21 +89,36 @@ var onLoginRequest = function (context) {
                         authenticationOptions: [{ authenticator: 'totp' }, { authenticator: 'email-otp-authenticator' }]  
                     }, {
                         onSuccess: function (context) {
-                            Log.info("3rd step successful");
                             var preferredClaimURI = "http://wso2.org/claims/identity/preferredMFAOption";
-                            var authenticatorName = context.steps[3].authenticator;
-                            var preferredMFA = {
-                                authenticationOption: authenticatorName
-                            };
-                            context.steps[3].subject.localClaims[preferredClaimURI] = JSON.stringify(preferredMFA);
-                            Log.info(context.steps[3].subject.localClaims[preferredClaimURI]);
+                            Log.info("3rd step successful");
+                            var user = context.steps[3].subject;
+                            var isFirstLogin = user.localClaims["http://wso2.org/claims/isFirstLogin"];
+                            Log.info("User isFirstLogin claim:" + isFirstLogin);
+                            if (isFirstLogin === "false") {
+                                var authenticatorName = context.steps[3].authenticator;
+                                var preferredMFA = {
+                                    authenticationOption: authenticatorName
+                                };
+                                user.localClaims[preferredClaimURI] = JSON.stringify(preferredMFA);
+                                Log.info("Preferred MFA set from second login for user" + user.username + " as " + user.localClaims[preferredClaimURI]);
+                            } else {
+                                user.localClaims["http://wso2.org/claims/isFirstLogin"] = false;
+                                Log.info("User logged in for the first time. Setting isFirstLogin to false");
+                            }
                         }
                     });
                 }
             }
         },
+        onFail: function(context) {
+            Log.info('User not found');
+            var parameterMap = {'errorCode': 'login_failed', 'errorMessage': 'login could not be completed', "errorURI":'https://localhost:9443/authenticationendpoint/login.jsp'};
+            fail(parameterMap);
+                    
+        }
     });
 };
+
 ```
 6. Create a standard web application and enable the following grant types:
   `Code`, `Client Credentials`
