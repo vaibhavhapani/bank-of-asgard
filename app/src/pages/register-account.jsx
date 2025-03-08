@@ -115,7 +115,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                             <i className="fa fa-id-badge"></i>
                           </span>
                           <span className="text">
-                            <h4>Veriry your Self</h4>
+                            <h4>Verify your Self</h4>
                             with Odin
                           </span>
                         </button>
