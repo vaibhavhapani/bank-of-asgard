@@ -4,7 +4,8 @@ $white: #ffffff;
 $black: #000000;
 $primary1: #1c1c1c;
 $primary2: #997029;
-$verybuttoncololr: #5654BF;
+$verifyButtonBgCololr: #063b60;
+$verifyButtonTextColor: $white;
 $dangerolor: #6b0606;
 
 // import fonts
@@ -76,8 +77,9 @@ button {
 }
 
 .verify-button {
-  background-color: $verybuttoncololr;
-  border-color: $verybuttoncololr;
+  background-color: $verifyButtonBgCololr;
+  border-color: $verifyButtonBgCololr;
+  color: $verifyButtonTextColor;
   padding: 15px 30px;
   display: flex;
   text-align: left;
@@ -98,8 +100,8 @@ button {
   }
 
   &:hover {
-    background-color: color.scale($verybuttoncololr, $lightness: 10%);
-    border-color: color.scale($verybuttoncololr, $lightness: 10%);
+    background-color: color.scale($verifyButtonBgCololr, $lightness: 10%);
+    border-color: color.scale($verifyButtonBgCololr, $lightness: 10%);
   }
 }
 

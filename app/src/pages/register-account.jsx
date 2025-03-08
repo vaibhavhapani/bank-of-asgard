@@ -22,7 +22,7 @@ import PropTypes from "prop-types";
 import SignUpForm from "../components/sign-up/sign-up-form";
 import EverydayBanking from "../assets/images/A_women_laying_on_a_soft_with_a_headset_and_holdin_028d291b-58ee-4de5-8c57-2a84033209ac.png";
 import GoGlobal from "../assets/images/A_business_women_in_a_city_walking_portrait_lookin_5e59fd5e-a8dd-43e0-b4ea-5a926d089913.png";
-import GatacaImage from "../assets/images/gataca.png";
+import GatacaImage from "../assets/images/asgard_wallet_custom_qr.png";
 import { ACCOUNT_TYPES, ROUTES, SITE_SECTIONS, URL_QUERY_PARAMS } from "../constants/app-constants";
 
 const RegisterAccountPage = ({ setSiteSection }) => {
@@ -116,12 +116,12 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                           </span>
                           <span className="text">
                             <h4>Veriry your Self</h4>
-                            with Gataca
+                            with Odin
                           </span>
                         </button>
 
                         <p>
-                          You can use your Gataca Wallet to open an account instantly.
+                          You can use your Odin Wallet to open an account instantly.
                         </p>
                       </div>
                     </div>
@@ -186,7 +186,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
               <div className="modal-body">
                 <p><img src={ GatacaImage } style={ { maxWidth: "100%" }} /></p>
                 <p style={ { padding: "0 25px" } }>
-                  Please scan the QR code with your Gataca Wallet for us to verify your identity.
+                  Please scan the QR code with your Odin Wallet for us to verify your identity.
                 </p>
               </div>
               {/* <div className="modal-footer">
