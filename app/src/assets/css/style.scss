@@ -1123,7 +1123,8 @@ a:focus {
   }
 }
 
-input[type="password"]:focus ~ .password-validation {
+input[type="password"]:focus ~ .password-validation,
+input.password-field:focus ~ .password-validation {
   display: block;
 }
 
