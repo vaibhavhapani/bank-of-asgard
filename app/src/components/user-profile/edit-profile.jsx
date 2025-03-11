@@ -26,6 +26,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
   const { httpRequest } = useAuthContext();
 
+  const [ passwordVisible, setPasswordVisible ] = useState(false);
   const [ formData, setFormData ] = useState({
     givenName: "",
     familyName: "",
@@ -170,8 +171,18 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
                       </li>
                       <li>
                         <label>Password:</label>
-                        <input type="password" name="password" placeholder="New Password (Optional)" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
-                        <PasswordValidation password={formData.password} />
+                        <div className="password-field-wrapper with-icon">
+                          <i className={ `icon fa ${ passwordVisible ? "fa-eye" : "fa-eye-slash" }` } onClick={() => setPasswordVisible(!passwordVisible)}></i>
+                          <input
+                            type={ passwordVisible ? "text" : "password" }
+                            className="password-field"
+                            name="password"
+                            placeholder="New Password (Optional)"
+                            value={formData.password}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                          />
+                          <PasswordValidation password={formData.password} />
+                        </div>
                       </li>
                     </ul>
 

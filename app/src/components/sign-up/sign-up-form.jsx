@@ -27,6 +27,7 @@ const SignUpForm = ({ accountType }) => {
 
   const { signIn } = useAuthContext();
 
+  const [ passwordVisible, setPasswordVisible ] = useState(false);
   const [ signupData, setSignupData ] = useState({
     firstName: '',
     lastName: '',
@@ -78,14 +79,18 @@ const SignUpForm = ({ accountType }) => {
       />
 
       <label htmlFor="password">Password</label>
-      <input
-        type="password"
-        placeholder="Enter a password"
-        value={signupData.password}
-        onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-        required
-      />
-      <PasswordValidation password={signupData.password} />
+      <div className="password-field-wrapper with-icon">
+        <i className={ `icon fa ${ passwordVisible ? "fa-eye" : "fa-eye-slash" }` } onClick={() => setPasswordVisible(!passwordVisible)}></i>
+        <input
+          type={ passwordVisible ? "text" : "password" }
+          className="password-field"
+          placeholder="Enter a password"
+          value={signupData.password}
+          onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+          required
+        />
+        <PasswordValidation password={signupData.password} />
+      </div>
 
       <div className="row">
         <div className="col-md-6">

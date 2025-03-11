@@ -1127,6 +1127,28 @@ input[type="password"]:focus ~ .password-validation {
   display: block;
 }
 
+.password-field-wrapper {
+  position: relative;
+
+  &.with-icon {
+    input[type="password"] {
+      padding-right: 40px;
+    }
+
+    .icon {
+      position: absolute;
+      right: 10px;
+      top: 22px;
+      transform: translateY(-50%);
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
 .password-validation {
   list-style: none;
   padding: 0;
