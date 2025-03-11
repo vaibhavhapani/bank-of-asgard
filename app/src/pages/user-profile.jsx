@@ -67,7 +67,7 @@ const UserProfilePage = ({ setSiteSection }) => {
 
       if (response.data) {
 
-        if (response.data["urn:scim:wso2:schema"]?.accountType === ACCOUNT_TYPES.BUSINESS) {
+        if (response.data["urn:scim:schemas:extension:custom:User"]?.accountType === ACCOUNT_TYPES.BUSINESS) {
           setSiteSection(SITE_SECTIONS.BUSINESS);
         } else {
           setSiteSection(SITE_SECTIONS.PERSONAL);
@@ -75,13 +75,12 @@ const UserProfilePage = ({ setSiteSection }) => {
         setUserInfo({
           userId: response.data.id || "",
           username: response.data.userName || "",
-          accountType: response.data["urn:scim:wso2:schema"].accountType || "N/A",
-          email: response.data.emails[0] || "",
+          accountType: response.data["urn:scim:schemas:extension:custom:User"].accountType || "N/A",          email: response.data.emails[0] || "",
           givenName: response.data.name.givenName || "",
           familyName: response.data.name.familyName || "",
           mobile: response.data.phoneNumbers[0].value || "",
-          country: response.data["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].country || "",
-          birthdate: response.data["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].dateOfBirth || "",
+          country: response.data["urn:scim:wso2:schema"].country || "",
+          birthdate: response.data["urn:scim:wso2:schema"].dateOfBirth || "",
           picture: response.data.picture || "",
         });
       }

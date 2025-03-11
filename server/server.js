@@ -94,7 +94,7 @@ app.post("/signup", async (req, res) => {
           givenName: firstName,
           familyName: lastName,
         },
-        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": {
+        "urn:scim:wso2:schema": {
           country: country,
           dateOfBirth: dateOfBirth,
         },
@@ -104,7 +104,7 @@ app.post("/signup", async (req, res) => {
             value: mobile,
           },
         ],
-        "urn:scim:wso2:schema": {
+        "urn:scim:schemas:extension:custom:User": {
           accountType: accountType,
         },
       },

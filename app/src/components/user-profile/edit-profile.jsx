@@ -87,7 +87,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
       }
 
       if (formData.country.trim() !== "") {
-        valuePayload["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"] = { country: formData.country };
+        valuePayload["urn:scim:wso2:schema"] = { country: formData.country };      
       }
 
       if (Object.keys(valuePayload).length > 0) {
