@@ -30,7 +30,7 @@ createRoot(document.getElementById('root')).render(
         signOutRedirectURL: `${environmentConfig.VITE_REACT_APP_CLIENT_BASE_URL}`,
         clientID: `${environmentConfig.VITE_REACT_APP_CLIENT_ID}`,
         baseUrl: `${environmentConfig.VITE_REACT_APP_ASGARDEO_BASE_URL}`,
-        resourceServerURLs: [`${environmentConfig.VITE_REACT_APP_API_ENDPOINT}`],
+        resourceServerURLs: [`${environmentConfig.SERVER_HOST}`],
         scope: ['openid', 'address', 'email', 'phone', 'profile', 'internal_login'],
       }}
     >
