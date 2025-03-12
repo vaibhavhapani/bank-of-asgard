@@ -21,6 +21,7 @@ import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
 import CountrySelect from "../country-select";
 import PasswordValidation from "../password-validation";
+import { environmentConfig } from "../../util/util";
 
 const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
@@ -113,7 +114,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         },
         method: "PATCH",
         data: payload,
-        url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`
+        url: `${environmentConfig.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`
       });
     
       if (response.status == 200) {

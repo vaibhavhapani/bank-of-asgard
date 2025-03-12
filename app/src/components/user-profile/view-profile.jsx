@@ -21,6 +21,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
 import AccountSecurity from "./account-security";
+import { environmentConfig } from "../../util/util";
 
 const ViewProfile = ({ userInfo, setShowEditForm }) => {
 
@@ -41,7 +42,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
     try {
       console.log("User requires to close the account!!");
       const response = await axios.delete(
-        `${import.meta.env.VITE_REACT_APP_API_ENDPOINT}/close-account`,
+        `${environmentConfig.VITE_REACT_APP_API_ENDPOINT}/close-account`,
         { params: { userId } }
       );
 

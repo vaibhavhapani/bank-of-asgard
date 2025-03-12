@@ -22,6 +22,7 @@ import { useState } from "react";
 import axios from "axios";
 import PasswordValidation from "../password-validation";
 import CountrySelect from "../country-select";
+import { environmentConfig } from "../../util/util";
 
 const SignUpForm = ({ accountType }) => {
 
@@ -43,7 +44,7 @@ const SignUpForm = ({ accountType }) => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_API_ENDPOINT}/signup`, signupData);
+      const response = await axios.post(`${environmentConfig.VITE_REACT_APP_API_ENDPOINT}/signup`, signupData);
 
       console.log(response.data.message);
 

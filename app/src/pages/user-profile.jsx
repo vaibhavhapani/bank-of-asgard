@@ -22,6 +22,7 @@ import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "../components/user-profile/edit-profile";
 import ViewProfile from "../components/user-profile/view-profile";
 import { ACCOUNT_TYPES, SITE_SECTIONS } from "../constants/app-constants";
+import { environmentConfig } from "../util/util";
 
 const UserProfilePage = ({ setSiteSection }) => {
   const { getDecodedIDToken, refreshAccessToken, state, signIn, httpRequest } = useAuthContext();
@@ -61,7 +62,7 @@ const UserProfilePage = ({ setSiteSection }) => {
         "Content-Type": "application/scim+json",
       },
       method: "GET",
-      url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`,
+      url: `${environmentConfig.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`,
     }).then((response) => {
       console.log(response.data);
 
