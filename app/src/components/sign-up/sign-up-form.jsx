@@ -44,6 +44,8 @@ const SignUpForm = ({ accountType }) => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
+      console.log(environmentConfig.VITE_REACT_APP_API_ENDPOINT);
+      
       const response = await axios.post(`${environmentConfig.VITE_REACT_APP_API_ENDPOINT}/signup`, signupData);
 
       console.log(response.data.message);
