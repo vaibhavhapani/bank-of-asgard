@@ -16,41 +16,63 @@
  * under the License.
  */
 
-import dotenv from 'dotenv';
-import express from 'express';
-import cors from 'cors';
-import axios from 'axios';
-import https from 'https';
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
+import axios from "axios";
+import https from "https";
+import pino from "pino";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || "localhost";
 const ASGARDEO_BASE_URL = process.env.ASGARDEO_BASE_URL;
 const CLIENT_ID = process.env.SERVER_APP_CLIENT_ID;
 const CLIENT_SECRET = process.env.SERVER_APP_CLIENT_SECRET;
-const TOKEN_ENDPOINT= process.env.ASGARDEO_TOKEN_ENDPOINT;
+const TOKEN_ENDPOINT = process.env.ASGARDEO_TOKEN_ENDPOINT;
 const GEO_API_KEY = process.env.GEO_API_KEY;
 const ASGARDEO_BASE_URL_SCIM2 = ASGARDEO_BASE_URL + "/scim2";
-const VITE_REACT_APP_CLIENT_BASE_URL = process.env.VITE_REACT_APP_CLIENT_BASE_URL;
-const MY_IP = process.env.MY_IP;
+const VITE_REACT_APP_CLIENT_BASE_URL =
+  process.env.VITE_REACT_APP_CLIENT_BASE_URL;
+const userStoreName = process.env.USER_STORE_NAME || "PRIMARY";
 
 // Added to compress self signed cert validation
 const agent = new https.Agent({
   rejectUnauthorized: false, // Disable SSL certificate validation
 });
 const corsOptions = {
-    origin: [ VITE_REACT_APP_CLIENT_BASE_URL ],
-    allowedHeaders: ["Content-Type", "Authorization", "Access-Control-Allow-Methods", "Access-Control-Request-Headers"],
-    credentials: true,
-    enablePreflight: true
-}
+  origin: [VITE_REACT_APP_CLIENT_BASE_URL],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Access-Control-Allow-Methods",
+    "Access-Control-Request-Headers",
+  ],
+  credentials: true,
+  enablePreflight: true,
+};
 
 const app = express();
 
+const logger = pino({
+  level: process.env.LOG_LEVEL || "debug",
+});
+
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
+
+// logger middleware.
+app.use((req, res, next) => {
+  logger.debug({
+    method: req.method,
+    path: req.path,
+    query: req.query,
+    body: req.body,
+  });
+  next();
+});
 
 // In-memory storage for token data
 let tokenData = {
@@ -66,23 +88,31 @@ const getAuthHeader = () => {
   return "Basic " + Buffer.from(authString).toString("base64");
 };
 
+app.get("/health", (req, res) => {
+  res.json({ status: "OK" });
+});
+
 app.post("/signup", async (req, res) => {
   try {
-    const { username, password, email, firstName, 
-      lastName, country, accountType, dateOfBirth, 
-      mobile 
+    const {
+      username,
+      password,
+      email,
+      firstName,
+      lastName,
+      country,
+      accountType,
+      dateOfBirth,
+      mobile,
     } = req.body;
 
     const token = await getAccessToken();
-
-    console.log(token);
-    console.log(ASGARDEO_BASE_URL_SCIM2);
 
     const response = await axios.post(
       `${ASGARDEO_BASE_URL_SCIM2}/Users`,
       {
         schemas: [],
-        userName: username,
+        userName: `${userStoreName}/${username}`,
         password: password,
         emails: [
           {
@@ -127,8 +157,16 @@ app.post("/signup", async (req, res) => {
 const getAccessToken = async () => {
   const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
 
-  if (tokenData.access_token && tokenData.expires_at && currentTime < tokenData.expires_at) {
-    console.log(`Using cached access token. Expires in ${tokenData.expires_at - currentTime} seconds.`);
+  if (
+    tokenData.access_token &&
+    tokenData.expires_at &&
+    currentTime < tokenData.expires_at
+  ) {
+    console.log(
+      `Using cached access token. Expires in ${
+        tokenData.expires_at - currentTime
+      } seconds.`
+    );
     return tokenData.access_token;
   }
 
@@ -159,7 +197,11 @@ const getAccessToken = async () => {
       expires_at: issuedAt + expiresIn, // Exact expiration timestamp
     };
 
-    console.log(`New access token received. Expires at ${new Date(tokenData.expires_at * 1000).toISOString()}`);
+    console.log(
+      `New access token received. Expires at ${new Date(
+        tokenData.expires_at * 1000
+      ).toISOString()}`
+    );
     return tokenData.access_token;
   } catch (error) {
     console.log("Error fetching token:", error);
@@ -170,23 +212,24 @@ const getAccessToken = async () => {
 // IP geolocation request
 app.post("/risk", async (req, res) => {
   try {
-      console.log("request receivedd");
-      let { ip, country } = req.body;
-      console.log(ip + country);
-      ip = "103.87.14.173";
-      if (!ip || !country) {
-          return res.status(400).json({ error: "IP address and country name are required" });
-      }
-      // Call the IP Geolocation API
-      const response = 
-        await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${GEO_API_KEY}&ip=${MY_IP}&fields=country_name`);
+    let { ip, country } = req.body;
 
-      const country_name = response.data.country_name;
-      // Determine risk based on country code
-      const hasRisk = country_name !== country;
-      console.log("This country shows risk: " + hasRisk);
-      res.json({ hasRisk });
+    if (!ip || !country) {
+      return res
+        .status(400)
+        .json({ error: "IP address and country name are required" });
+    }
+    
+    // Call the IP Geolocation API
+    const response = await axios.get(
+      `https://api.ipgeolocation.io/ipgeo?apiKey=${GEO_API_KEY}&ip=${ip}&fields=country_name`
+    );
 
+    const country_name = response.data.country_name;
+    // Determine risk based on country code
+    const hasRisk = country_name !== country;
+    console.log("This country shows risk: " + hasRisk);
+    res.json({ hasRisk });
   } catch (error) {
     console.error("Error fetching IP geolocation:", error.message);
     res.status(500).json({ error: "Failed to process request" });
@@ -216,7 +259,9 @@ app.delete("/close-account", async (req, res) => {
     }
   } catch (error) {
     console.log("SCIM2 API Error:", error.detail || error.message);
-    res.status(400).json({ error: error.detail || "An error occurred while deleting user" });
+    res
+      .status(400)
+      .json({ error: error.detail || "An error occurred while deleting user" });
   }
 });
 
