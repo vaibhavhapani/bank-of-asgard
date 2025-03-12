@@ -1,0 +1,8 @@
+schemaVersion: 1.1 
+endpoints:
+  - name: asgard-bank-server
+    service:
+      port: /api
+      port: 5003
+    type: REST
+    schemaFilePath: openapi.yaml
