@@ -14,56 +14,73 @@
   * `Identifier First` - First Step
   * `Username and Password`, `Passkey` - Second Step
   * `Totp` and `Email OTP` - Third Step
-5. Configure the following conditional authentication script:
+5. Configure the following conditional authentication script (Replace the `<NODE_SERVER_BASE_PATH>` with server URL):
 ```js
-var onLoginRequest = function (context) {
+var onLoginRequest = function(context) {
     executeStep(1, {
-        onSuccess: function (context) {
+        onSuccess: function(context) {
             var user = context.steps[1].subject;
             var accountType = user.localClaims["http://wso2.org/claims/accountType"];
             var country = user.localClaims["http://wso2.org/claims/country"];
-
+            Log.info("Account Type: " + accountType);
+            Log.info("Country: " + country);
+            var ipAddress = context.request.ip;
+            Log.info("IP Address: " + ipAddress);
             var requestPayload = {
-                ip: "112.87.14.181",  // Cannot retrieve the correct IP from the context. Therefore hardcode your ip address here for testing until the fix is available
+                ip: ipAddress,
                 country: country,
             };
             if (accountType === "Personal") {
-                httpPost("http://localhost:5003/risk", requestPayload, { "Accept": "application/json"},
-                    {
-                        onSuccess: function (context, data) {
-                            Log.info("Successfully invoked the external API.");
-                            Log.info("Logging data for country risk: " + data.hasRisk);
+                httpPost("<NODE_SERVER_BASE_PATH>/risk", requestPayload, {
+                    "Accept": "application/json"
+                }, {
+                    onSuccess: function(context, data) {
+                        Log.info("Successfully invoked the external API.");
+                        Log.info("Logging data for country risk: " + data.hasRisk);
 
-                            if(data.hasRisk === false) {
-                                executeStep(2, {
-                                authenticationOptions: [{ authenticator: 'FIDOAuthenticator' }, { authenticator: 'BasicAuthenticator' }]
+                        if (data.hasRisk === false) {
+                            executeStep(2, {
+                                authenticationOptions: [{
+                                    authenticator: 'FIDOAuthenticator'
                                 }, {
-                                    onSuccess: function (context) {
-                                        var user = context.currentKnownSubject;
-                                        var sessions = getUserSessions(user);
-                                        Log.info(sessions);
-                                        if (sessions.length > 0) {
-                                            executeStep(3, {
-                                                authenticationOptions:[{
-                                                    authenticator: 'email-otp-authenticator'
-                                                }]}, {}
-                                            );                                          
-                                        }
+                                    authenticator: 'BasicAuthenticator'
+                                }]
+                            }, {
+                                onSuccess: function(context) {
+                                    var user = context.currentKnownSubject;
+                                    var sessions = getUserSessions(user);
+                                    Log.info(sessions);
+                                    if (sessions.length > 0) {
+                                        executeStep(3, {
+                                            authenticationOptions: [{
+                                                authenticator: 'email-otp-authenticator'
+                                            }]
+                                        }, {});
                                     }
-                                });                           
-                            } else {
-                                executeStep(2, { authenticationOptions: [{ authenticator: 'FIDOAuthenticator' }, { authenticator: 'BasicAuthenticator' }], }, {});
-                                Log.info("In 2nd step for Personal Accounts");
+                                }
+                            });
+                        } else {
+                            executeStep(2, {
+                                authenticationOptions: [{
+                                    authenticator: 'FIDOAuthenticator'
+                                }, {
+                                    authenticator: 'BasicAuthenticator'
+                                }],
+                            }, {});
+                            Log.info("In 2nd step for Personal Accounts");
 
-                                executeStep(3, {
-                                    authenticationOptions:[{
-                                        authenticator: 'email-otp-authenticator'
-                                    }]}, {}
-                                );                            
-                            }
-                        },
+                            executeStep(3, {
+                                authenticationOptions: [{
+                                    authenticator: 'email-otp-authenticator'
+                                }]
+                            }, {});
+                        }
+                    },
+                    onFail: function(context, data) {
+                        Log.error("Failed to invoke risk API");
+                        fail();
                     }
-                );
+                });
             } else if (accountType === "Business") {
                 Log.info("In second step for Business");
 
@@ -71,24 +88,31 @@ var onLoginRequest = function (context) {
                     authenticationOptions: [{
                         authenticator: 'BasicAuthenticator'
                     }]
-                }, {}
-                );
+                }, {});
                 var preferredClaimURI = "http://wso2.org/claims/identity/preferredMFAOption";
                 var preferredClaim = user.localClaims[preferredClaimURI];
-                
+
                 if (preferredClaim != null) {
                     Log.info("Preferred Claim Available");
 
                     var jsonObj = JSON.parse(preferredClaim);
                     var authenticationOption = jsonObj.authenticationOption;
                     Log.info("preferredClaim authenticationOption " + authenticationOption);
-                    executeStep(3, { authenticationOptions: [{ authenticator: authenticationOption }], }, {});
+                    executeStep(3, {
+                        authenticationOptions: [{
+                            authenticator: authenticationOption
+                        }],
+                    }, {});
                 } else {
                     Log.info("Preferred claim not available and in 3rd step");
                     executeStep(3, {
-                        authenticationOptions: [{ authenticator: 'totp' }, { authenticator: 'email-otp-authenticator' }]  
+                        authenticationOptions: [{
+                            authenticator: 'totp'
+                        }, {
+                            authenticator: 'email-otp-authenticator'
+                        }]
                     }, {
-                        onSuccess: function (context) {
+                        onSuccess: function(context) {
                             var preferredClaimURI = "http://wso2.org/claims/identity/preferredMFAOption";
                             Log.info("3rd step successful");
                             var user = context.steps[3].subject;
@@ -112,9 +136,13 @@ var onLoginRequest = function (context) {
         },
         onFail: function(context) {
             Log.info('User not found');
-            var parameterMap = {'errorCode': 'login_failed', 'errorMessage': 'login could not be completed', "errorURI":'https://localhost:9443/authenticationendpoint/login.jsp'};
+            var parameterMap = {
+                'errorCode': 'login_failed',
+                'errorMessage': 'login could not be completed',
+                "errorURI": 'https://localhost:9443/authenticationendpoint/login.jsp'
+            };
             fail(parameterMap);
-                    
+
         }
     });
 };
