@@ -16,47 +16,12 @@
  * under the License.
  */
 
-import { useState } from "react";
-import axios from "axios";
 import PropTypes from "prop-types";
-import { useAuthContext } from "@asgardeo/auth-react";
 import AccountSecurity from "./account-security";
-import { environmentConfig } from "../../util/environment-util";
 import ProfileCard from "./view/profile-card";
+import CloseAccountCard from "./close-account-card";
 
 const ViewProfile = ({ userInfo, setShowEditForm }) => {
-
-  const { signOut } = useAuthContext();
-  const [ error, setError ] = useState(null);
-
-  const closeAccount = async () => {
-    const isConfirmed = window.confirm(
-      "Are you sure you want to close your account? This action cannot be undone."
-    );
-
-    if (!isConfirmed) {
-      return; // Exit if user cancels
-    }
-
-    const userId = userInfo.userId;
-
-    try {
-      const response = await axios.delete(
-        `${environmentConfig.API_SERVICE_URL}/close-account`,
-        { params: { userId } }
-      );
-
-      if (response.status == 200) {
-        alert("Account closed successfully");
-        signOut();
-      }
-    } catch (err) {
-      console.error("Error Closing Account:", err);
-      setError(
-        "Error Closing Account: " + (err.response?.data?.detail || err.message)
-      );
-    }
-  };
 
   return (
     <>
@@ -120,13 +85,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                   </li>
                 </ul>
 
-                <div className="danger-zone">
-                  <h5>Close Account</h5>
-                  <p>Once you close the account, you cannot recover it again. Please visit the nearest branch in case of a mistake.</p>
-                  <div>
-                    <button onClick={ closeAccount } className="close-account-button">Close</button>
-                  </div>
-                </div>
+                <CloseAccountCard userId={ userInfo.userId }/>
               </div>
             </div>
           </div>

@@ -25,6 +25,7 @@ import {
   Link,
   NavLink
 } from "react-router-dom";
+import { SnackbarProvider } from "notistack";
 import { ROUTES, SITE_SECTIONS } from "./constants/app-constants";
 import PersonalBankingPage from "./pages/personal-banking";
 import RegisterAccountPage from "./pages/register-account";
@@ -40,6 +41,7 @@ const App = () => {
   const [ siteSection, setSiteSection ] = useState("");
 
   return (
+    <SnackbarProvider maxSnack={ 3 }>
     <Router>
       <header className="header_section">
         <div className="header_top">
@@ -280,6 +282,7 @@ const App = () => {
         </div>
       </section>
     </Router>
+    </SnackbarProvider>
   );
 };
 

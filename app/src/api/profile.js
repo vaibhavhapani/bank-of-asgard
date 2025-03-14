@@ -16,9 +16,8 @@
  * under the License.
  */
 
-import axios from "axios";
-import { environmentConfig } from "../util/environment-util";
+import { axiosClient } from "./axios-client";
 
-export const axiosClient = axios.create({
-  baseURL: environmentConfig.API_SERVICE_URL,
-});
+export const closeAccount = (userId) => {
+  return axiosClient.delete(`/close-account?userId=${userId}`);
+};
