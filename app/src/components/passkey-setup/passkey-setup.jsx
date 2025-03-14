@@ -18,7 +18,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthContext } from "@asgardeo/auth-react";
-import { environmentConfig } from "../../util/util";
+import { environmentConfig } from "../../util/environment-util";
 
 const PasskeySetup = () => {
     const { httpRequest } = useAuthContext();
@@ -38,7 +38,7 @@ const PasskeySetup = () => {
     const fetchPasskeys = () => {
         request({
             method: "GET",
-            url: `${environmentConfig.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn`,
+            url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v2/me/webauthn`,
             headers: { "Content-Type": "application/json" },
         })
             .then((response) => {
@@ -113,7 +113,7 @@ const PasskeySetup = () => {
 
         request({
             method: "POST",
-            url: `${environmentConfig.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/start-usernameless-registration`,
+            url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/start-usernameless-registration`,
             headers: {
                 "accept": "application/json",
                 'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
@@ -178,7 +178,7 @@ const PasskeySetup = () => {
                 console.log(finalPay);
                 return request({
                     method: "POST",
-                    url: `${environmentConfig.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/finish-registration`,
+                    url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/finish-registration`,
                     headers: { "Content-Type": "application/json" },
                     data: finalPay,
                 }).then(() => credential.id);
@@ -194,7 +194,7 @@ const PasskeySetup = () => {
                 // Update passkey display name with PATCH request
                 return request({
                     method: "PATCH",
-                    url: `${environmentConfig.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/${credentialId}`,
+                    url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/${credentialId}`,
                     headers: { "Content-Type": "application/json" },
                     data: [
                         {

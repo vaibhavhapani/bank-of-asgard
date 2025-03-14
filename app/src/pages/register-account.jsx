@@ -24,7 +24,7 @@ import EverydayBanking from "../assets/images/A_women_laying_on_a_soft_with_a_he
 import GoGlobal from "../assets/images/A_business_women_in_a_city_walking_portrait_lookin_5e59fd5e-a8dd-43e0-b4ea-5a926d089913.png";
 import GatacaImage from "../assets/images/asgard_wallet_custom_qr.png";
 import { ACCOUNT_TYPES, ROUTES, SITE_SECTIONS, URL_QUERY_PARAMS } from "../constants/app-constants";
-import { isFeatureEnabled } from "../util/util";
+import { isFeatureEnabled } from "../util/environment-util";
 import { FEATURE_MAP } from "../constants/feature-constants";
 
 const RegisterAccountPage = ({ setSiteSection }) => {

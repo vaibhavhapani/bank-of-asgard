@@ -1,6 +1,8 @@
 window.config = {
-    VITE_REACT_APP_API_ENDPOINT: "http://localhost:6000",
-    VITE_REACT_APP_CLIENT_BASE_URL: "http://localhost:5173",
-    VITE_REACT_APP_ASGARDEO_BASE_URL: "",
-    VITE_REACT_APP_CLIENT_ID: ""
+    API_BASE_URL: "http://localhost:6000",
+    API_SERVICE_URL: "http://localhost:6000",
+    APP_BASE_URL: "http://localhost:5173",
+    ASGARDEO_BASE_URL: "",
+    APP_CLIENT_ID: "",
+    DISABLED_FEATURES: []
 }
