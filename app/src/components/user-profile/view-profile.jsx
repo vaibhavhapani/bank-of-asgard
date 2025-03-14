@@ -22,6 +22,7 @@ import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
 import AccountSecurity from "./account-security";
 import { environmentConfig } from "../../util/environment-util";
+import ProfileCard from "./view/profile-card";
 
 const ViewProfile = ({ userInfo, setShowEditForm }) => {
 
@@ -40,7 +41,6 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
     const userId = userInfo.userId;
 
     try {
-      console.log("User requires to close the account!!");
       const response = await axios.delete(
         `${environmentConfig.API_SERVICE_URL}/close-account`,
         { params: { userId } }
@@ -55,7 +55,6 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
       setError(
         "Error Closing Account: " + (err.response?.data?.detail || err.message)
       );
-      console.log(error);
     }
   };
 
@@ -64,7 +63,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
       <div className="heading_container">
         <h2>Welcome, { userInfo.givenName }{" "}{ userInfo.familyName }!</h2>
       </div>
-      
+
       <div className="row" style={ { marginTop: "25px" } }>
         <div className="col-md-7">
           <div className="detail-box user-profile" style={ { marginTop: "0", height: "100%" } }>
@@ -133,49 +132,8 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
           </div>
         </div>
         <div className="col-md-5" style={ { display: "flex", flexDirection: "column" } }>
-          <div className="detail-box user-profile" style={ { marginTop: "0" } }>
-            <div className="contact_section">
-              <div className="contact_form-container profile-edit">
-                <h5>Profile</h5>
-                <ul className="details-list">
-                  {/* TODO: Uncomment the following code block after implementing the profile picture upload feature */}
-                  {/* <li>
-                    { (userInfo?.picture && userInfo.picture !== "") &&
-                      <img
-                        src={ userInfo.picture }
-                        alt="User Image"
-                        style={ { width: "100%", maxWidth: "300px", maxHeight: "300px" } } />
-                    }
-                  </li> */}
-                  <li>
-                    <strong>User Name:</strong> { userInfo.username }
-                  </li>
-                  <li>
-                    <strong>Account Type:</strong> { userInfo.accountType }
-                  </li>
-                  <li>
-                    <strong>Full Name:</strong> { userInfo.givenName }{" "}{ userInfo.familyName }
-                  </li>
-                  <li>
-                    <strong>Email:</strong> {userInfo.email }
-                  </li>
-                  <li>
-                    <strong>Country:</strong> {userInfo.country }
-                  </li>
-                  <li>
-                    <strong>Birth date</strong> {userInfo.birthdate }
-                  </li>
-                  <li>
-                    <strong>Mobile:</strong> {userInfo.mobile }
-                  </li>
-                </ul>
+          <ProfileCard userInfo={ userInfo } setShowEditForm={ setShowEditForm } />
 
-                <div className="form-buttons">
-                  <button className="edit-button secondary" onClick={() => setShowEditForm(true)}>Edit Profile</button>
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="detail-box user-profile" style={ { flex: "1" } }>
             <div className="contact_section">
               <div className="contact_form-container profile-edit">
