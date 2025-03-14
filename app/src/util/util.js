@@ -16,8 +16,6 @@ export const environmentConfig = {
  * @param {string} feature 
  * @returns A boolean indicating whether the feature is enabled or not.
  */
-export const isFeatureEnabled = (feature) => {
-    console.log(environmentConfig.DISABLED_FEATURES, feature);
-    
+export const isFeatureEnabled = (feature) => {    
     return !(environmentConfig.DISABLED_FEATURES || []).includes(feature);
 }
