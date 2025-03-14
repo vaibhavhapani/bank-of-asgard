@@ -103,19 +103,19 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                 <hr />
 
                 <ul className="account-options-list">
-                  <li>
+                  <li className="disabled">
                     <i className="fa fa-file-text" aria-hidden="true"></i>
                     <span>Balance Statement</span>
                   </li>
-                  <li>
+                  <li className="disabled">
                     <i className="fa fa-credit-card" aria-hidden="true"></i>
                     <span>Request Credit Card</span>
                   </li>
-                  <li>
+                  <li className="disabled">
                     <i className="fa fa-exchange" aria-hidden="true"></i>
                     <span>Request a Loan</span>
                   </li>
-                  <li>
+                  <li className="disabled">
                     <i className="fa fa-heart" aria-hidden="true"></i>
                     <span>Credit Limit Increase</span>
                   </li>
