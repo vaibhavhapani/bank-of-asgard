@@ -24,6 +24,8 @@ import EverydayBanking from "../assets/images/A_women_laying_on_a_soft_with_a_he
 import GoGlobal from "../assets/images/A_business_women_in_a_city_walking_portrait_lookin_5e59fd5e-a8dd-43e0-b4ea-5a926d089913.png";
 import GatacaImage from "../assets/images/asgard_wallet_custom_qr.png";
 import { ACCOUNT_TYPES, ROUTES, SITE_SECTIONS, URL_QUERY_PARAMS } from "../constants/app-constants";
+import { isFeatureEnabled } from "../util/util";
+import { FEATURE_MAP } from "../constants/feature-constants";
 
 const RegisterAccountPage = ({ setSiteSection }) => {
 
@@ -31,6 +33,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
   const [ showModal, setShowModal ] = useState(false);
 
   const accountType = searchParams.get(URL_QUERY_PARAMS.ACCOUNT_TYPE) || "";
+  const isIdentityVerificationEnabled = isFeatureEnabled(FEATURE_MAP.IDENTITY_VERIFICATION);
 
   useEffect(() => {
     if (accountType === ACCOUNT_TYPES.BUSINESS) {
@@ -94,7 +97,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                           <div className="col-md-7">
                             <SignUpForm accountType={ accountType } />
                           </div>
-                          { (accountType === ACCOUNT_TYPES.PERSONAL) &&
+                          { (isIdentityVerificationEnabled && accountType === ACCOUNT_TYPES.PERSONAL) &&
                             <div className="col-md-2 mx-auto" style={ { textAlign: "center" } }>
                               <h4>OR</h4>
                             </div>
@@ -103,7 +106,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                       </div>
                     </div>
                   </div>
-                  { (accountType === ACCOUNT_TYPES.PERSONAL) && (
+                  { (isIdentityVerificationEnabled && accountType === ACCOUNT_TYPES.PERSONAL) && (
                     <div className="col-md-4 px-0">
                       <div className="detail-box" style={ { marginTop: "200px" } }>
                         <div className="heading_container ">
