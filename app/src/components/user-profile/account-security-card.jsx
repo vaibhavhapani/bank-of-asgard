@@ -21,7 +21,7 @@ import PasskeySetup from "../passkey-setup/passkey-setup";
 import TotpSetup from "../totp/totp-setup";
 import { ACCOUNT_TYPES } from "../../constants/app-constants";
 
-const AccountSecurity = ({ accountType }) => {
+const AccountSecurityCard = ({ accountType }) => {
 
   return (
     <>
@@ -34,8 +34,8 @@ const AccountSecurity = ({ accountType }) => {
   );
 }
 
-AccountSecurity.propTypes = {
+AccountSecurityCard.propTypes = {
   accountType: PropTypes.object.isRequired
 };
 
-export default AccountSecurity;
+export default AccountSecurityCard;

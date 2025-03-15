@@ -17,7 +17,7 @@
  */
 
 import PropTypes from "prop-types";
-import AccountSecurity from "./account-security";
+import AccountSecurityCard from "./account-security-card";
 import ProfileCard from "./view/profile-card";
 import CloseAccountCard from "./close-account-card";
 
@@ -99,7 +99,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
                 <div className="row">
                   <div className="col-md-12">
                     <h5>Account Security</h5>
-                    <AccountSecurity accountType={userInfo.accountType} />
+                    <AccountSecurityCard accountType={userInfo.accountType} />
                   </div>
                 </div>
               </div>
