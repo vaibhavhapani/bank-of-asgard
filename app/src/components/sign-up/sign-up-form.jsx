@@ -24,9 +24,11 @@ import CountrySelect from "../country-select";
 import { environmentConfig } from "../../util/environment-util";
 import { getPasswordPolicy } from "../../api/server-configurations";
 import PasswordField from "../common/password-field";
+import { useSnackbar } from "notistack";
 
 const SignUpForm = ({ accountType }) => {
   const { signIn } = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [signupData, setSignupData] = useState({
     firstName: "",
@@ -65,7 +67,9 @@ const SignUpForm = ({ accountType }) => {
       }
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.error || "Signup failed");
+      enqueueSnackbar("Something went wrong while creating account", {
+        variant: "error",
+      });
     }
   };
 

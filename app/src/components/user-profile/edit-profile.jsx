@@ -92,7 +92,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
       // If no fields were updated, return early
       if (operations.length === 0) {
-        alert("No changes made.");
+        enqueueSnackbar("No fields were updated", { variant: "info" });
         return;
       }
 
