@@ -20,22 +20,19 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
 import CountrySelect from "../country-select";
-import PasswordValidation from "../password-validation";
 import { environmentConfig } from "../../util/environment-util";
 
 const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
   const { httpRequest } = useAuthContext();
 
-  const [ passwordVisible, setPasswordVisible ] = useState(false);
   const [ formData, setFormData ] = useState({
     givenName: "",
     familyName: "",
     dob: "",
     email: "",
     mobile: "",
-    country: "",
-    password: ""
+    country: ""
   });
 
   const request = requestConfig =>
@@ -51,8 +48,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         dob: userInfo.birthdate || "",
         email: userInfo.email || "",
         mobile: userInfo.mobile || "",
-        country: userInfo.country || "",
-        password: ""
+        country: userInfo.country || ""
       });
     }
   }, [ userInfo ]);
@@ -79,17 +75,13 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
       if (formData.mobile.trim() !== "") {
         valuePayload.phoneNumbers = [{ type: "mobile", value: formData.mobile }];
       }
-    
+
       if (formData.dob.trim() !== "") {
         valuePayload["urn:scim:wso2:schema"] = { dateOfBirth: formData.dob };
       }
 
-      if (formData.password.trim() !== "") {
-        valuePayload.password = formData.password;
-      }
-
       if (formData.country.trim() !== "") {
-        valuePayload["urn:scim:wso2:schema"] = { country: formData.country };      
+        valuePayload["urn:scim:wso2:schema"] = { country: formData.country };
       }
 
       if (Object.keys(valuePayload).length > 0) {
@@ -116,7 +108,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         data: payload,
         url: `${environmentConfig.ASGARDEO_BASE_URL}/scim2/Me`
       });
-    
+
       if (response.status == 200) {
         alert("Profile updated successfully");
         onUpdateSuccess();
@@ -169,21 +161,6 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
                         <CountrySelect
                           value={formData.country}
                           onChange={(value) => setFormData({ ...formData, country: value.label })} />
-                      </li>
-                      <li>
-                        <label>Password:</label>
-                        <div className="password-field-wrapper with-icon">
-                          <i className={ `icon fa ${ passwordVisible ? "fa-eye" : "fa-eye-slash" }` } onClick={() => setPasswordVisible(!passwordVisible)}></i>
-                          <input
-                            type={ passwordVisible ? "text" : "password" }
-                            className="password-field"
-                            name="password"
-                            placeholder="New Password (Optional)"
-                            value={formData.password}
-                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                          />
-                          <PasswordValidation password={formData.password} />
-                        </div>
                       </li>
                     </ul>
 

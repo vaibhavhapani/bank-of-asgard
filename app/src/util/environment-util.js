@@ -20,20 +20,20 @@
  * A global object to store environment configuration variables.
  */
 export const environmentConfig = {
-    API_BASE_URL: window.config && window.config.API_BASE_URL,
-    API_SERVICE_URL: window.config && window.config.API_SERVICE_URL,
-    APP_BASE_URL: window.config && window.config.APP_BASE_URL,
-    ASGARDEO_BASE_URL: window.config && window.config.ASGARDEO_BASE_URL,
-    APP_CLIENT_ID: window.config && window.config.APP_CLIENT_ID,
-    DISABLED_FEATURES: window.config && window.config.DISABLED_FEATURES
-}
+  API_BASE_URL: window.config && window.config.API_BASE_URL,
+  API_SERVICE_URL: window.config && window.config.API_SERVICE_URL,
+  APP_BASE_URL: window.config && window.config.APP_BASE_URL,
+  ASGARDEO_BASE_URL: window.config && window.config.ASGARDEO_BASE_URL,
+  APP_CLIENT_ID: window.config && window.config.APP_CLIENT_ID,
+  DISABLED_FEATURES: window.config && window.config.DISABLED_FEATURES,
+};
 
 /**
  * Checks if a feature is enabled or not based on the DISABLED_FEATURES array.
- * 
- * @param {string} feature 
+ *
+ * @param {string} feature
  * @returns A boolean indicating whether the feature is enabled or not.
  */
-export const isFeatureEnabled = (feature) => {    
-    return !(environmentConfig.DISABLED_FEATURES || []).includes(feature);
-}
+export const isFeatureEnabled = (feature) => {
+  return !(environmentConfig.DISABLED_FEATURES || []).includes(feature);
+};

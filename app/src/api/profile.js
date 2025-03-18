@@ -16,8 +16,58 @@
  * under the License.
  */
 
+import { environmentConfig } from "../util/environment-util";
 import { axiosClient } from "./axios-client";
 
 export const closeAccount = (userId) => {
   return axiosClient.delete(`/close-account?userId=${userId}`);
+};
+
+export const resetPassword = (username, currentPassword, newPassword) => {
+  // In case the password contains non-ascii characters, converting to valid ascii format.
+  const encoder = new TextEncoder();
+  const encodedPassword = String.fromCharCode(
+    ...encoder.encode(currentPassword)
+  );
+  const tenantDomain =
+    environmentConfig.ASGARDEO_BASE_URL.split("/").slice(-1)[0];
+  const usernameWithDomain = [username, "@", tenantDomain].join("");
+
+  const requestConfig = {
+    data: {
+      Operations: [
+        {
+          op: "add",
+          value: {
+            password: newPassword,
+          },
+        },
+      ],
+      schemas: ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
+    },
+    headers: {
+      Authorization: `Basic ${btoa(
+        usernameWithDomain + ":" + encodedPassword
+      )}`,
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "http://localhost:5173",
+    },
+    method: "PATCH",
+    baseURL: environmentConfig.ASGARDEO_BASE_URL,
+    url: "scim2/Me",
+    withCredentials: true,
+  };
+
+  return axiosClient
+    .request(requestConfig)
+    .then((response) => {
+      if (response.status !== 200) {
+        throw new Error("Failed to reset password");
+      }
+
+      return Promise.resolve(response);
+    })
+    .catch((error) => {
+      throw error;
+    });
 };

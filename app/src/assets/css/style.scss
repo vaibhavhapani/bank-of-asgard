@@ -7,6 +7,7 @@ $primary2: #997029;
 $verifyButtonBgCololr: #063b60;
 $verifyButtonTextColor: $white;
 $dangerolor: #6b0606;
+$successColor: #1e7e34;
 
 // import fonts
 
@@ -632,6 +633,12 @@ a:focus {
       text-transform: uppercase;
       margin-bottom: 20px;
     }
+
+    h6 {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
   }
 
   .details-list {
@@ -1161,7 +1168,7 @@ input.password-field:focus ~ .password-validation {
   color: color.scale($black, $lightness: 60%);
   margin-bottom: 30px;
   transition: all 0.3s;
-  display: none;
+  display: block;
   
   li {
     margin: 0 !important;
@@ -1239,3 +1246,30 @@ input.password-field:focus ~ .password-validation {
 }
 
 /* end Dialog box */
+
+/* Password Policy Indicator */
+
+ul.password-policy-indicator {
+  list-style: none;
+  padding: 0px;
+  margin-top: 4px;
+
+  li[class*="password-policy-description"] {
+    margin: 0 !important;
+    color: color.scale($black, $lightness: 60%);
+
+    i {
+      margin-right: 10px;
+    }
+
+    &.error {
+      color: $dangerolor !important;
+    }
+
+    &.success {
+      color: $successColor !important;
+    }
+  }
+}
+
+/* end Password Policy Indicator */

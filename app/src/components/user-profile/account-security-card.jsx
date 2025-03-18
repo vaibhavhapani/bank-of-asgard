@@ -16,26 +16,56 @@
  * under the License.
  */
 
+import { useState } from "react";
 import PropTypes from "prop-types";
 import PasskeySetup from "../passkey-setup/passkey-setup";
 import TotpSetup from "../totp/totp-setup";
 import { ACCOUNT_TYPES } from "../../constants/app-constants";
+import ResetPasswordForm from "./reset-password-form";
 
-const AccountSecurityCard = ({ accountType }) => {
+const AccountSecurityCard = ({ username, accountType }) => {
+  const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false);
 
   return (
-    <>
-      { accountType === ACCOUNT_TYPES.BUSINESS ? (
-        <TotpSetup />
-      ) : (
-        <PasskeySetup />
-      ) }
-    </>
+    <div className="detail-box user-profile" style={{ flex: "1" }}>
+      <div className="contact_section">
+        <div className="contact_form-container profile-edit">
+          <div className="row">
+            <div className="col-md-12">
+              <h5>Account Security</h5>
+              <hr />
+
+              <div>
+                <h6>Change Password</h6>
+                {isPasswordFormOpen ? (
+                  <ResetPasswordForm
+                    username={username}
+                    onFormClosed={() => setIsPasswordFormOpen(false)}
+                  />
+                ) : (
+                  <button onClick={() => setIsPasswordFormOpen(true)}>
+                    Change Password
+                  </button>
+                )}
+              </div>
+              <hr />
+
+              {accountType === ACCOUNT_TYPES.BUSINESS ? (
+                <TotpSetup />
+              ) : (
+                <PasskeySetup />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+};
 
 AccountSecurityCard.propTypes = {
-  accountType: PropTypes.object.isRequired
+  accountType: PropTypes.object.isRequired,
+  username: PropTypes.string.isRequired
 };
 
 export default AccountSecurityCard;

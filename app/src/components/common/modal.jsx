@@ -23,7 +23,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
 
 const Modal = ({
-  isOpen,
+  isOpen = false,
   handleClose,
   primaryActionText,
   primaryActionHandler,
@@ -31,7 +31,7 @@ const Modal = ({
   secondaryActionHandler,
   title,
   message,
-  disableEscapeKeyDown,
+  disableEscapeKeyDown = true,
 }) => {
   return (
     <Dialog
@@ -68,11 +68,6 @@ Modal.propTypes = {
   title: PropTypes.string.isRequired,
   message: PropTypes.string.isRequired,
   disableEscapeKeyDown: PropTypes.bool,
-};
-
-Modal.defaultProps = {
-  isOpen: false,
-  disableEscapeKeyDown: true,
 };
 
 export default Modal;

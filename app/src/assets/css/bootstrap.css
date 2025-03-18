@@ -2412,6 +2412,7 @@ textarea.form-control {
 
 .btn.disabled, .btn:disabled {
   opacity: 0.65;
+  pointer-events: none;
 }
 
 a.btn.disabled,

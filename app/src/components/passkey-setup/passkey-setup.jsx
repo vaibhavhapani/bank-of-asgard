@@ -215,6 +215,7 @@ const PasskeySetup = () => {
 
     return (
         <div>
+            <h6>Passkeys</h6>
             <button onClick={startPasskeyRegistration} className="secondary">Register a New Passkey</button>
 
             {passkeys.length === 0 ? (

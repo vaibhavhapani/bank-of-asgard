@@ -93,18 +93,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
         <div className="col-md-5" style={ { display: "flex", flexDirection: "column" } }>
           <ProfileCard userInfo={ userInfo } setShowEditForm={ setShowEditForm } />
 
-          <div className="detail-box user-profile" style={ { flex: "1" } }>
-            <div className="contact_section">
-              <div className="contact_form-container profile-edit">
-                <div className="row">
-                  <div className="col-md-12">
-                    <h5>Account Security</h5>
-                    <AccountSecurityCard accountType={userInfo.accountType} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <AccountSecurityCard username={ userInfo.username } accountType={ userInfo.accountType }/>
         </div>
       </div>
     </>
