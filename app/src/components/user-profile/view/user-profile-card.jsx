@@ -18,7 +18,7 @@
 
 import PropTypes from "prop-types";
 
-const ProfileCard = ({
+const UserProfileCard = ({
   userInfo,
   setShowEditForm
 }) => {
@@ -88,9 +88,9 @@ const ProfileCard = ({
   );
 };
 
-ProfileCard.propTypes = {
+UserProfileCard.propTypes = {
   userInfo: PropTypes.object.isRequired,
   setShowEditForm: PropTypes.func.isRequired
 };
 
-export default ProfileCard;
+export default UserProfileCard;

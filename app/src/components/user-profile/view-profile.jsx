@@ -18,8 +18,8 @@
 
 import PropTypes from "prop-types";
 import AccountSecurityCard from "./account-security-card";
-import ProfileCard from "./view/profile-card";
-import CloseAccountCard from "./close-account-card";
+import UserProfileCard from "./view/user-profile-card";
+import BankAccountCard from "./view/bank-account-card";
 
 const ViewProfile = ({ userInfo, setShowEditForm }) => {
 
@@ -31,67 +31,10 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
 
       <div className="row" style={ { marginTop: "25px" } }>
         <div className="col-md-7">
-          <div className="detail-box user-profile" style={ { marginTop: "0", height: "100%" } }>
-            <div className="contact_section">
-            <div className="contact_form-container profile-edit">
-                <h5>Account Details</h5>
-                <ul className="accounts-list">
-                  <li>
-                    <div className="row">
-                      <div className="col-md-8">
-                        <h6>Savings Account</h6>
-                        <span><i className="fa fa-money" aria-hidden="true"></i>083434342982340</span>
-                      </div>
-                      <div className="col-md-4">
-                        $ 13,565.45
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="row">
-                      <div className="col-md-8">
-                        <h6>Live+ Credit Card</h6>
-                        <span><i className="fa fa-credit-card" aria-hidden="true"></i> 4574-3434-2984-2365</span>
-                      </div>
-                      <div className="col-md-4">
-                        - $ 4,5600.67
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-
-                <div className="form-buttons">
-                  <button className="edit-button">Make a transfer</button>
-                </div>
-
-                <hr />
-
-                <ul className="account-options-list">
-                  <li className="disabled">
-                    <i className="fa fa-file-text" aria-hidden="true"></i>
-                    <span>Balance Statement</span>
-                  </li>
-                  <li className="disabled">
-                    <i className="fa fa-credit-card" aria-hidden="true"></i>
-                    <span>Request Credit Card</span>
-                  </li>
-                  <li className="disabled">
-                    <i className="fa fa-exchange" aria-hidden="true"></i>
-                    <span>Request a Loan</span>
-                  </li>
-                  <li className="disabled">
-                    <i className="fa fa-heart" aria-hidden="true"></i>
-                    <span>Credit Limit Increase</span>
-                  </li>
-                </ul>
-
-                <CloseAccountCard userId={ userInfo.userId }/>
-              </div>
-            </div>
-          </div>
+          <BankAccountCard userId={ userInfo.userId } />
         </div>
         <div className="col-md-5" style={ { display: "flex", flexDirection: "column" } }>
-          <ProfileCard userInfo={ userInfo } setShowEditForm={ setShowEditForm } />
+          <UserProfileCard userInfo={ userInfo } setShowEditForm={ setShowEditForm } />
 
           <AccountSecurityCard username={ userInfo.username } accountType={ userInfo.accountType }/>
         </div>
