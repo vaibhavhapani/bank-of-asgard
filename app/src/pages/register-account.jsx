@@ -17,7 +17,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router";
 import PropTypes from "prop-types";
 import SignUpForm from "../components/sign-up/sign-up-form";
 import EverydayBanking from "../assets/images/A_women_laying_on_a_soft_with_a_headset_and_holdin_028d291b-58ee-4de5-8c57-2a84033209ac.png";
@@ -177,8 +177,8 @@ const RegisterAccountPage = ({ setSiteSection }) => {
         </div>
       </section>
 
-      <div id="exampleModalLive" className="modal fade show" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLiveLabel" style={{ display: showModal ? "block" : "none", zIndex: showModal ? "100000" : "-1" }}>
-        <div className="modal" tabIndex="-1" role="dialog" style={{ display: showModal ? "block" : "none" }}>
+      <div id="exampleModalLive" className="modal fade show" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLiveLabel" style={{ display: showModal ? "block" : "none", zIndex: showModal ? "100000" : "-1" }}>
+        <div className="modal" tabIndex={-1} role="dialog" style={{ display: showModal ? "block" : "none" }}>
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">

@@ -18,8 +18,21 @@
 
 import PropTypes from "prop-types";
 import CloseAccountCard from "../close-account-card";
+import { formatCurrency } from "../../../util/string-util";
+import { useNavigate } from "react-router";
+import { ROUTES } from "../../../constants/app-constants";
+import { useContext } from "react";
+import { BankAccountContext } from "../../../context/bank-account-provider";
 
 const BankAccountCard = ({ userId }) => {
+  const initialCreditCardState = {
+    cardNumber: "4574-3434-2984-2365",
+    balance: -45600.67,
+  };
+
+  const navigate = useNavigate();
+  const { bankAccountData } = useContext(BankAccountContext);
+
   return (
     <div
       className="detail-box user-profile"
@@ -35,10 +48,12 @@ const BankAccountCard = ({ userId }) => {
                   <h6>Savings Account</h6>
                   <span>
                     <i className="fa fa-money" aria-hidden="true"></i>
-                    083434342982340
+                    {bankAccountData.accountNumber}
                   </span>
                 </div>
-                <div className="col-md-4">$ 13,565.45</div>
+                <div className="col-md-4">
+                  {formatCurrency(bankAccountData.balance)}
+                </div>
               </div>
             </li>
             <li>
@@ -47,16 +62,18 @@ const BankAccountCard = ({ userId }) => {
                   <h6>Live+ Credit Card</h6>
                   <span>
                     <i className="fa fa-credit-card" aria-hidden="true"></i>{" "}
-                    4574-3434-2984-2365
+                    {initialCreditCardState.cardNumber}
                   </span>
                 </div>
-                <div className="col-md-4">- $ 4,5600.67</div>
+                <div className="col-md-4">
+                  {formatCurrency(initialCreditCardState.balance)}
+                </div>
               </div>
             </li>
           </ul>
 
           <div className="form-buttons">
-            <button className="edit-button">Make a transfer</button>
+            <button className="edit-button" onClick={() => navigate(ROUTES.FUND_TRANSFER)}>Make a transfer</button>
           </div>
 
           <hr />

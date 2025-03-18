@@ -16,27 +16,16 @@
  * under the License.
  */
 
-export const ROUTES = {
-  HOME: "/",
-  PERSONAL_BANKING: "/personal-banking",
-  BUSINESS_BANKING: "/business-banking",
-  USER_PROFILE: "/user-profile",
-  REGISTER_ACCOUNT: "/register-account",
-  FUND_TRANSFER: "/fund-transfer",
-  FUND_TRANSFER_VERIFY: "/fund-transfer/verify",
-  NOT_FOUND: "/404"
+/**
+ * Util function to format the amount as a currency string.
+ *
+ * @param {number} amount - Amount to be formatted.
+ * @returns the formatted amount as a string.
+ */
+export const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2
+  }).format(amount);
 };
-
-export const SITE_SECTIONS = {
-  PERSONAL: "personal",
-  BUSINESS: "business"
-}
-
-export const ACCOUNT_TYPES = {
-    PERSONAL: "Personal",
-    BUSINESS: "Business"
-}
-
-export const URL_QUERY_PARAMS = {
-    ACCOUNT_TYPE: "accountType"
-}

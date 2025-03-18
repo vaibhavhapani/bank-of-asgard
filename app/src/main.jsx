@@ -17,13 +17,11 @@
  */
 
 import { AuthProvider } from "@asgardeo/auth-react";
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { environmentConfig } from "./util/environment-util";
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <AuthProvider
       config={{
         signInRedirectURL: `${environmentConfig.APP_BASE_URL}`,
@@ -31,10 +29,9 @@ createRoot(document.getElementById('root')).render(
         clientID: `${environmentConfig.APP_CLIENT_ID}`,
         baseUrl: `${environmentConfig.ASGARDEO_BASE_URL}`,
         resourceServerURLs: [`${environmentConfig.API_BASE_URL}`],
-        scope: ['openid', 'address', 'email', 'phone', 'profile', 'internal_login'],
+        scope: ['openid', 'address', 'email', 'phone', 'profile', 'internal_login']
       }}
     >
       <App />
     </AuthProvider>
-  </StrictMode>,
 );

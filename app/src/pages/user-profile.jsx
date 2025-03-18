@@ -35,7 +35,7 @@ const UserProfilePage = ({ setSiteSection }) => {
       .catch(error => error);
 
   useEffect(() => {
-    if (!state.isAuthenticated) { 
+    if (!state.isAuthenticated) {
       signIn();
     }
   }, []);

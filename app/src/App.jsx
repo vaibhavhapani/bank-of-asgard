@@ -17,14 +17,14 @@
  */
 
 import { useAuthContext } from "@asgardeo/auth-react";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Link,
   NavLink
-} from "react-router-dom";
+} from "react-router";
 import { SnackbarProvider } from "notistack";
 import { ROUTES, SITE_SECTIONS } from "./constants/app-constants";
 import PersonalBankingPage from "./pages/personal-banking";
@@ -35,13 +35,18 @@ import Logo from "./assets/logo.svg";
 import "./assets/css/bootstrap.css";
 import "./assets/css/responsive.css";
 import "./assets/css/style.scss";
+import { BankAccountProvider } from "./context/bank-account-provider";
 
 const App = () => {
   const { state, signIn, signOut } = useAuthContext();
   const [ siteSection, setSiteSection ] = useState("");
 
+  const TransferFundsPage = lazy(() => import("./pages/transfer-funds"));
+  const TransferFundsVerifyPage = lazy(() => import("./pages/transfer-funds-verify"));
+
   return (
     <SnackbarProvider maxSnack={ 3 }>
+    <BankAccountProvider>
     <Router>
       <header className="header_section">
         <div className="header_top">
@@ -170,7 +175,7 @@ const App = () => {
         {/* <Route path={ ROUTES.BUSINESS_BANKING } element={ <BusinessBankingPage setSiteSection={ setSiteSection } /> } /> */}
         <Route path={ ROUTES.REGISTER_ACCOUNT } element={ <RegisterAccountPage setSiteSection={ setSiteSection } /> } />
         { state.isAuthenticated &&
-          <Route path={ ROUTES.USER_PROFILE } element={ <UserProfilePage /> } />
+          <Route path={ ROUTES.USER_PROFILE } element={ <UserProfilePage setSiteSection={ setSiteSection } /> } />
         }
         {/* <Route path="/" element={ <Navigate to={ ROUTES.PERSONAL_BANKING } setSiteSection={ setSiteSection } /> } /> */}
         <Route path="/" element={
@@ -181,6 +186,27 @@ const App = () => {
               <PersonalBankingPage setSiteSection={ setSiteSection } />
             )
         } />
+        {
+          state.isAuthenticated &&
+            <Route
+              path={ROUTES.FUND_TRANSFER}
+              element={
+                <Suspense fallback={<>...</>}>
+                  <TransferFundsPage />
+                </Suspense>
+              }
+            />
+        }
+        {
+          <Route
+              path={ROUTES.FUND_TRANSFER_VERIFY}
+              element={
+                <Suspense fallback={<>...</>}>
+                  <TransferFundsVerifyPage />
+                </Suspense>
+              }
+            />
+        }
         <Route path="*" element={ <NotFound /> } />
       </Routes>
 
@@ -209,7 +235,6 @@ const App = () => {
                   <li>
                     <a href="">
                       Open an everyday account
-                    
                     </a>
                   </li>
                   <li>
@@ -282,6 +307,7 @@ const App = () => {
         </div>
       </section>
     </Router>
+    </BankAccountProvider>
     </SnackbarProvider>
   );
 };

@@ -1273,3 +1273,155 @@ ul.password-policy-indicator {
 }
 
 /* end Password Policy Indicator */
+
+/* Start of the Transfer funds page */
+
+.transfer-funds-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  margin: 0;
+  background-color: #f9f9f9;
+  padding: 8px 0;
+
+  .form-container {
+    width: 360px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .form-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .form-container p {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+  }
+  .form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  .form-container input,
+  .form-container select,
+  .form-container textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  .form-container button {
+    @include hero_btn($primary2, $white, 10px, 60px);
+    width: 100%;
+    text-transform: uppercase;
+    border-radius: 4px;
+
+    &.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    &.secondary {
+      background-color: $primary1;
+      outline-color: $primary1;
+      color: $white;
+      margin-top: 8px;
+
+      &:hover {
+        background-color: transparent;
+        border-color: $primary1;
+        color: $primary1;
+      }
+    }
+  }
+}
+
+/* End of the Transfer funds page */
+
+/* Start of the Transfer funds verification page */
+
+.transfer-funds-verify-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 10vh;
+  height: 90vh;
+  margin: 0;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+
+  .content {
+    width: 400px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+    h5 {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      margin-top: 8px;
+    }
+
+    button {
+      @include hero_btn($primary2, $white, 10px, 60px);
+      text-transform: uppercase;
+      font-weight: bold;
+      outline-color: $primary2;
+      width: 100%;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+  }
+
+  .transfer-success-content {
+    .fa {
+      color: $successColor;
+      font-size: 8em;
+    }
+
+    .transaction-details {
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 16px;
+  
+        .label {
+          font-weight: 600;
+          color: #555;
+        }
+  
+        .value {
+          color: #333;
+        }
+      }
+    }
+  }
+
+  .transfer-pending-content {
+    padding: 10vh 0;
+    span {
+      display: none;
+    }
+  }
+
+  .transfer-error-content {
+    padding: 5vh 40px;
+
+    .fa {
+      color: red;
+      font-size: 8em;
+    }
+  }
+}

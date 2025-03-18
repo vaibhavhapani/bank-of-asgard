@@ -106,6 +106,9 @@ const SignUpForm = ({ accountType }) => {
         onPasswordValidate={(isValid) => {
           setIsNewPasswordValid(isValid);
         }}
+        inputProps={{
+          autoComplete: "new-password",
+        }}
       />
 
       <div className="row">
