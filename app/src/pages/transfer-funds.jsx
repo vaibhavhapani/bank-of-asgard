@@ -41,6 +41,8 @@ const TransferFundsPage = () => {
     amount: "",
   };
 
+  const transferThreshold = environmentConfig.TRANSFER_THRESHOLD;
+
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { bankAccountData } = useContext(BankAccountContext);
@@ -69,8 +71,9 @@ const TransferFundsPage = () => {
         return;
       }
 
-      // If transfer amount is more than 10000, require email OTP verification.
-      if (transferAmount > 10000) {
+      // If transfer amount is more than threshold, require email OTP verification.
+      // Threshold is defined in config.js
+      if (transferAmount > transferThreshold) {
         try {
           const receiverName = receivers.find(
             (receiver) => receiver.value === formData.receiver

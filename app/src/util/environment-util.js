@@ -26,6 +26,7 @@ export const environmentConfig = {
   ASGARDEO_BASE_URL: window.config && window.config.ASGARDEO_BASE_URL,
   APP_CLIENT_ID: window.config && window.config.APP_CLIENT_ID,
   DISABLED_FEATURES: window.config && window.config.DISABLED_FEATURES,
+  TRANSFER_THRESHOLD: window.config && window.config.TRANSFER_THRESHOLD || 10000
 };
 
 /**
