@@ -26,8 +26,8 @@ const PasswordField = ({
   value,
   onChange,
   showPasswordValidation = true,
-  passwordValidationRules,
-  onPasswordValidate,
+  passwordValidationRules = {},
+  onPasswordValidate = () => {},
   inputProps = {},
 }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);

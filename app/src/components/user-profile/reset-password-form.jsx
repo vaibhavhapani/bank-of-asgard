@@ -67,20 +67,29 @@ const ResetPasswordForm = ({ username, onFormClosed }) => {
         .then(() => {
           enqueueSnackbar("Password reset successfully", {
             variant: "success",
-          })
+          });
           handleCancel();
         })
         .catch((error) => {
+          if (!error.response || error.response.status === 401) {
+            enqueueSnackbar("The current password you entered appears to be invalid. Please try again", {
+              variant: "error",
+            });
+            return;
+          }
+
           enqueueSnackbar("Something went wrong while resetting password", {
             variant: "error",
-          }) 
-          console.error("Error resetting password:", error);
-        })
+          });
+        });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="contact_form-container profile-edit">
+    <form
+      onSubmit={handleSubmit}
+      className="contact_form-container profile-edit"
+    >
       <ul className="details-list">
         <li>
           <label>Current Password:</label>
