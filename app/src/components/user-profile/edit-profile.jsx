@@ -19,10 +19,12 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
+import { useSnackbar } from "notistack";
 import CountrySelect from "../country-select";
 import { environmentConfig } from "../../util/environment-util";
 
 const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
+  const { enqueueSnackbar } = useSnackbar();
 
   const { httpRequest } = useAuthContext();
 
@@ -110,12 +112,12 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
       });
 
       if (response.status == 200) {
-        alert("Profile updated successfully");
+        enqueueSnackbar("Profile updated successfully", { variant: "success" });
         onUpdateSuccess();
       }
     } catch (error) {
-      alert("Profile update failed: " + (error.detail || error));
-      console.log(error);
+      enqueueSnackbar("Something went wrong while updating profile", { variant: "error" });
+      console.error(error);
     }
   };
 
