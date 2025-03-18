@@ -1,8 +1,0 @@
-window.config = {
-    API_BASE_URL: "http://localhost:6000",
-    API_SERVICE_URL: "http://localhost:6000",
-    APP_BASE_URL: "http://localhost:5173",
-    ASGARDEO_BASE_URL: "",
-    APP_CLIENT_ID: "",
-    DISABLED_FEATURES: []
-}
