@@ -22,30 +22,40 @@ import UserProfileCard from "./view/user-profile-card";
 import BankAccountCard from "./view/bank-account-card";
 
 const ViewProfile = ({ userInfo, setShowEditForm }) => {
-
   return (
     <>
       <div className="heading_container">
-        <h2>Welcome, { userInfo.givenName }{" "}{ userInfo.familyName }!</h2>
+        <h2>
+          Welcome, {userInfo.givenName} {userInfo.familyName}!
+        </h2>
       </div>
 
-      <div className="row" style={ { marginTop: "25px" } }>
+      <div className="row" style={{ marginTop: "25px" }}>
         <div className="col-md-7">
-          <BankAccountCard userId={ userInfo.userId } />
+          <BankAccountCard userId={userInfo.userId} />
         </div>
-        <div className="col-md-5" style={ { display: "flex", flexDirection: "column" } }>
-          <UserProfileCard userInfo={ userInfo } setShowEditForm={ setShowEditForm } />
+        <div
+          className="col-md-5"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+          <UserProfileCard
+            userInfo={userInfo}
+            setShowEditForm={setShowEditForm}
+          />
 
-          <AccountSecurityCard username={ userInfo.username } accountType={ userInfo.accountType }/>
+          <AccountSecurityCard
+            username={userInfo.username}
+            accountType={userInfo.accountType}
+          />
         </div>
       </div>
     </>
   );
-}
+};
 
 ViewProfile.propTypes = {
   userInfo: PropTypes.object.isRequired,
-  setShowEditForm: PropTypes.func.isRequired
+  setShowEditForm: PropTypes.func.isRequired,
 };
 
 export default ViewProfile;

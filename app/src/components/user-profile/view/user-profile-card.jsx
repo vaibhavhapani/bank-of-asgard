@@ -18,10 +18,7 @@
 
 import PropTypes from "prop-types";
 
-const UserProfileCard = ({
-  userInfo,
-  setShowEditForm
-}) => {
+const UserProfileCard = ({ userInfo, setShowEditForm }) => {
   /**
    * Resolves the user name by dropping the user store domain.
    * @returns {string} - Resolved user name.
@@ -33,7 +30,7 @@ const UserProfileCard = ({
       return usernameParts[1];
     }
     return usernameParts[0];
-  }
+  };
 
   return (
     <div className="detail-box user-profile" style={{ marginTop: "0" }}>
@@ -90,7 +87,7 @@ const UserProfileCard = ({
 
 UserProfileCard.propTypes = {
   userInfo: PropTypes.object.isRequired,
-  setShowEditForm: PropTypes.func.isRequired
+  setShowEditForm: PropTypes.func.isRequired,
 };
 
 export default UserProfileCard;
