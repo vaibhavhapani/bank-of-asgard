@@ -145,7 +145,7 @@ const TransferFundsPage = () => {
   return (
     <div className="transfer-funds-page">
       <div className="form-container">
-        <h2>Godly Money Transfer</h2>
+        <h5>Money Transfer</h5>
         <p>
           Welcome to the divine transfer service. Use this form to send your
           funds to the esteemed characters of Asgard.
@@ -192,7 +192,7 @@ const TransferFundsPage = () => {
             required
           />
 
-          <label htmlFor="amount">Amount</label>
+          <label htmlFor="amount">Amount (USD)</label>
           <input
             type="number"
             id="amount"
