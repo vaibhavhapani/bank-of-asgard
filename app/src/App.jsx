@@ -31,7 +31,6 @@ import PersonalBankingPage from "./pages/personal-banking";
 import RegisterAccountPage from "./pages/register-account";
 import UserProfilePage from "./pages/user-profile";
 import NotFound from "./pages/not-found";
-import Logo from "./assets/logo.svg";
 import "./assets/css/bootstrap.css";
 import "./assets/css/responsive.css";
 import "./assets/css/style.scss";
@@ -103,7 +102,7 @@ const App = () => {
             <nav className="navbar navbar-expand-lg custom_nav-container">
               <Link to="/" className="navbar-brand">
                 <span>
-                  <img src={ Logo } alt="Bank of Asgard" />
+                  <img src="/images/logo.svg" alt="Bank of Asgard" />
                 </span>
               </Link>
               <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
