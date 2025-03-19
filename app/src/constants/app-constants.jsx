@@ -24,7 +24,8 @@ export const ROUTES = {
   REGISTER_ACCOUNT: "/register-account",
   FUND_TRANSFER: "/fund-transfer",
   FUND_TRANSFER_VERIFY: "/fund-transfer/verify",
-  NOT_FOUND: "/404"
+  NOT_FOUND: "/404",
+  IDENTITY_VERIFICATION: "/identity-verification"
 };
 
 export const SITE_SECTIONS = {

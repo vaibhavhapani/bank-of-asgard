@@ -36,6 +36,7 @@ import "./assets/css/bootstrap.css";
 import "./assets/css/responsive.css";
 import "./assets/css/style.scss";
 import { BankAccountProvider } from "./context/bank-account-provider";
+import IdentityVerificationPage from "./pages/identity-verification";
 
 const App = () => {
   const { state, signIn, signOut } = useAuthContext();
@@ -171,6 +172,7 @@ const App = () => {
         </div>
       </header>
 
+      {/* TODO: Routing needs to be fixed with proper router guard and paths. Ex: Home and Profile pages */}
       <Routes>
         {/* <Route path={ ROUTES.BUSINESS_BANKING } element={ <BusinessBankingPage setSiteSection={ setSiteSection } /> } /> */}
         <Route path={ ROUTES.REGISTER_ACCOUNT } element={ <RegisterAccountPage setSiteSection={ setSiteSection } /> } />
@@ -199,13 +201,23 @@ const App = () => {
         }
         {
           <Route
-              path={ROUTES.FUND_TRANSFER_VERIFY}
-              element={
-                <Suspense fallback={<>...</>}>
-                  <TransferFundsVerifyPage />
-                </Suspense>
-              }
-            />
+            path={ROUTES.FUND_TRANSFER_VERIFY}
+            element={
+              <Suspense fallback={<>...</>}>
+                <TransferFundsVerifyPage />
+              </Suspense>
+            }
+          />
+        }
+        {
+          <Route
+            path={ROUTES.IDENTITY_VERIFICATION}
+            element={
+              <Suspense fallback={<>...</>}>
+                <IdentityVerificationPage />
+              </Suspense>
+            }
+          />
         }
         <Route path="*" element={ <NotFound /> } />
       </Routes>

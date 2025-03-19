@@ -21,18 +21,77 @@ import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "../components/user-profile/edit-profile";
 import ViewProfile from "../components/user-profile/view-profile";
-import { ACCOUNT_TYPES, SITE_SECTIONS } from "../constants/app-constants";
+import { ACCOUNT_TYPES, ROUTES, SITE_SECTIONS } from "../constants/app-constants";
 import { environmentConfig } from "../util/environment-util";
+import { completeVerification, getVerificationStatus, initiateVerification } from "../api/identity-verification";
+import { Onfido } from "onfido-sdk-ui";
+import { useSnackbar } from "notistack";
+import { useMemo } from "react";
+import { useNavigate } from "react-router";
 
 const UserProfilePage = ({ setSiteSection }) => {
   const { getDecodedIDToken, refreshAccessToken, state, signIn, httpRequest } = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const [ userInfo, setUserInfo ] = useState(null);
   const [ showEditForm, setShowEditForm ] = useState(false);
+  const [idvClaims, setIdvClaims] = useState([]);
+  const [isIdVStatusLoading, setIsIdVStatusLoading] = useState(true);
+
+  const isIdentityVerified = useMemo(() => {
+    if (idvClaims) {
+      if (idvClaims.length === 0) {
+        return false;
+      }
+
+      if (idvClaims.every((claim) => claim.isVerified === true)) {
+        return true;
+      }
+    }
+    return false;
+  }, [idvClaims]);
+
+  const isIdentityVerificationInProgress = useMemo(() => {
+    if (idvClaims) {
+      if (idvClaims.length === 0) {
+        return false;
+      }
+
+      if (idvClaims.some((claim) => claim.claimMetadata.onfido_workflow_status === "processing")) {
+        return true;
+      }
+    }
+    return false;
+  }, [idvClaims]);
+
   const request = requestConfig =>
     httpRequest(requestConfig)
       .then(response => response)
       .catch(error => error);
+
+  const fetchIdentityVerificationStatus = async () => {
+    setIsIdVStatusLoading(true);
+    try {
+      const response = await getVerificationStatus();
+      setIdvClaims(response);
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar("Something went wrong while getting identity verification status", {
+        variant: "error",
+      })
+    } finally {
+      setIsIdVStatusLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!state.isAuthenticated) {
+      return;
+    }
+
+    fetchIdentityVerificationStatus();
+  }, [state.isAuthenticated]);
 
   useEffect(() => {
     if (!state.isAuthenticated) {
@@ -132,8 +191,78 @@ const UserProfilePage = ({ setSiteSection }) => {
     setShowEditForm(false);
   };
 
+  const handleStartIdentityVerification = async (e) => {
+    e.preventDefault();
+
+    let reInitiate = false;
+
+    if (idvClaims && idvClaims.length > 0) {
+      idvClaims.forEach((claim) => {
+        if (claim.claimMetadata.onfido_workflow_status === "awaiting_input") {
+          reInitiate = true;
+        }
+      });
+    }
+
+    navigate(ROUTES.IDENTITY_VERIFICATION, { state: { reInitiate }})
+  };
+
   if (!userInfo) {
     return;
+  }
+
+  if (isIdVStatusLoading) {
+    return (
+      <div className="verification-pending-container">
+        <div className="content loading-container">
+          <div className="spinner-border text-dark" role="status">
+            <span>Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isIdentityVerificationInProgress) {
+    return (
+      <div className="verification-pending-container">
+        <div className="content">
+          <i className="fa fa-clock-o" aria-hidden="true"></i>
+          <h5>Identity Verification Pending</h5>
+          <p>
+            Your identity verification is currently in progress. Please wait for
+            the verification to complete.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isIdentityVerified) {
+    return (
+      <div className="verification-start-container">
+        <div className="content">
+          <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
+          <h5>Identity Verification is Required</h5>
+          <p>
+            You are required to complete your identity verification before you
+            can access your account.
+          </p>
+          <button
+            className="secondary"
+            onClick={fetchIdentityVerificationStatus}
+          >
+            Refresh Status
+          </button>
+          <button
+            className=""
+            onClick={handleStartIdentityVerification}
+          >
+            Start Verification
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

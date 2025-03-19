@@ -22,5 +22,6 @@ interface Window {
     APP_CLIENT_ID: string;
     DISABLED_FEATURES: string[];
     TRANSFER_THRESHOLD: number;
+    IDENTITY_VERIFICATION_PROVIDER_ID: string;
   }
 }

@@ -1425,3 +1425,128 @@ ul.password-policy-indicator {
     }
   }
 }
+
+/* End of the Transfer funds verification page */
+
+/* Start of the Identity verification page */
+
+.verification-pending-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 90vh;
+  margin: 0;
+  background-color: #f9f9f9;
+
+  .content {
+    width: 400px;
+    padding: 32px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 40px;
+
+    h5 {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      margin-top: 16px;
+    }
+
+    i {
+      font-size: 8em;
+      color: $primary2;
+    }
+  }
+
+  .loading-container {
+    span {
+      display: none;
+    }
+  }
+}
+
+.verification-start-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 90vh;
+  margin: 0;
+  background-color: #f9f9f9;
+
+  .content {
+    width: 500px;
+    padding: 32px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 40px;
+
+    h5 {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      margin-top: 16px;
+    }
+
+    i {
+      font-size: 5em;
+      color: $primary2;
+    }
+
+    button {
+      @include hero_btn($primary2, $white, 10px, 60px);
+      text-transform: uppercase;
+      font-weight: bold;
+      outline-color: $primary2;
+      width: 100%;
+      margin-bottom: 8px;
+      margin-top: 8px;
+
+      &.secondary {
+        background-color: $primary1;
+        outline-color: $primary1;
+        color: $white;
+
+        &:hover {
+          background-color: transparent;
+          border-color: $primary1;
+          color: $primary1;
+        }
+      }
+    }
+  }
+}
+
+.identity-verification-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 90vh;
+  margin: 0;
+  background-color: #f9f9f9;
+  padding: 4px 0;
+
+  .loading-container {
+    width: 500px;
+    padding: 32px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 40px;
+
+    span {
+      display: none;
+    }
+  }
+
+  #onfido-mount {
+    width: 600px;
+  }
+}
