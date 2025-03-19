@@ -62,7 +62,6 @@ const logger = pino({
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.use(express.json());
-app.use(express.static("public"));
 
 // logger middleware.
 app.use((req, res, next) => {
