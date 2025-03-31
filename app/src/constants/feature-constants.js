@@ -17,5 +17,6 @@
  */
 
 export const FEATURE_MAP = {
-    IDENTITY_VERIFICATION: "identity-verification"
+    IDENTITY_VERIFICATION: "identity-verification",
+    ODIN_WALLET: "odin-wallet"
 };

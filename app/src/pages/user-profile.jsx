@@ -22,22 +22,24 @@ import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "../components/user-profile/edit-profile";
 import ViewProfile from "../components/user-profile/view-profile";
 import { ACCOUNT_TYPES, ROUTES, SITE_SECTIONS } from "../constants/app-constants";
-import { environmentConfig } from "../util/environment-util";
-import { completeVerification, getVerificationStatus, initiateVerification } from "../api/identity-verification";
-import { Onfido } from "onfido-sdk-ui";
+import { environmentConfig, isFeatureEnabled } from "../util/environment-util";
+import { getVerificationStatus } from "../api/identity-verification";
 import { useSnackbar } from "notistack";
 import { useMemo } from "react";
 import { useNavigate } from "react-router";
+import { FEATURE_MAP } from "../constants/feature-constants";
 
 const UserProfilePage = ({ setSiteSection }) => {
   const { getDecodedIDToken, refreshAccessToken, state, signIn, httpRequest } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  const [ userInfo, setUserInfo ] = useState(null);
-  const [ showEditForm, setShowEditForm ] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const [showEditForm, setShowEditForm] = useState(false);
   const [idvClaims, setIdvClaims] = useState([]);
   const [isIdVStatusLoading, setIsIdVStatusLoading] = useState(true);
+
+  const isIdentityVerificationEnabled = isFeatureEnabled(FEATURE_MAP.IDENTITY_VERIFICATION);
 
   const isIdentityVerified = useMemo(() => {
     if (idvClaims) {
@@ -53,6 +55,10 @@ const UserProfilePage = ({ setSiteSection }) => {
   }, [idvClaims]);
 
   const isIdentityVerificationInProgress = useMemo(() => {
+    if (!isIdentityVerificationEnabled) {
+      return false;
+    }
+
     if (idvClaims) {
       if (idvClaims.length === 0) {
         return false;
@@ -87,6 +93,10 @@ const UserProfilePage = ({ setSiteSection }) => {
 
   useEffect(() => {
     if (!state.isAuthenticated) {
+      return;
+    }
+
+    if (!isIdentityVerificationEnabled) {
       return;
     }
 
@@ -211,7 +221,7 @@ const UserProfilePage = ({ setSiteSection }) => {
     return;
   }
 
-  if (isIdVStatusLoading) {
+  if (isIdentityVerificationEnabled && isIdVStatusLoading) {
     return (
       <div className="verification-pending-container">
         <div className="content loading-container">
@@ -238,7 +248,7 @@ const UserProfilePage = ({ setSiteSection }) => {
     );
   }
 
-  if (!isIdentityVerified) {
+  if (isIdentityVerificationEnabled && !isIdentityVerified) {
     return (
       <div className="verification-start-container">
         <div className="content">

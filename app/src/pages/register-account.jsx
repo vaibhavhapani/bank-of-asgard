@@ -33,7 +33,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
   const [ showModal, setShowModal ] = useState(false);
 
   const accountType = searchParams.get(URL_QUERY_PARAMS.ACCOUNT_TYPE) || "";
-  const isIdentityVerificationEnabled = isFeatureEnabled(FEATURE_MAP.IDENTITY_VERIFICATION);
+  const isOdinWalletEnabled = isFeatureEnabled(FEATURE_MAP.ODIN_WALLET);
 
   useEffect(() => {
     if (accountType === ACCOUNT_TYPES.BUSINESS) {
@@ -97,7 +97,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                           <div className="col-md-7">
                             <SignUpForm accountType={ accountType } />
                           </div>
-                          { (isIdentityVerificationEnabled && accountType === ACCOUNT_TYPES.PERSONAL) &&
+                          { (isOdinWalletEnabled && accountType === ACCOUNT_TYPES.PERSONAL) &&
                             <div className="col-md-2 mx-auto" style={ { textAlign: "center" } }>
                               <h4>OR</h4>
                             </div>
@@ -106,7 +106,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                       </div>
                     </div>
                   </div>
-                  { (isIdentityVerificationEnabled && accountType === ACCOUNT_TYPES.PERSONAL) && (
+                  { (isOdinWalletEnabled && accountType === ACCOUNT_TYPES.PERSONAL) && (
                     <div className="col-md-4 px-0">
                       <div className="detail-box" style={ { marginTop: "200px" } }>
                         <div className="heading_container ">
