@@ -5,7 +5,7 @@ const BankAccountContext = createContext(null);
 const BankAccountProvider = ({ children }) => {
   const initialAccountState = {
     accountNumber: "083434342982340",
-    balance: 113565.50,
+    balance: 9565.50,
   };
 
   const [ bankAccountData, setBankAccountData ] = useState(initialAccountState);

@@ -102,13 +102,13 @@ const IdentityVerificationPage = () => {
 
   return (
     <div className="identity-verification-page">
-      <div id="onfido-mount"></div>
       {isLoading && (<div className="loading-container">
           <div className="spinner-border text-dark" role="status">
             <span>Loading...</span>
           </div>
         </div>
       )}
+      <div id="onfido-mount"></div>
     </div>
   );
 };

@@ -21,87 +21,25 @@ import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "../components/user-profile/edit-profile";
 import ViewProfile from "../components/user-profile/view-profile";
-import { ACCOUNT_TYPES, ROUTES, SITE_SECTIONS } from "../constants/app-constants";
+import { ACCOUNT_TYPES, SITE_SECTIONS } from "../constants/app-constants";
 import { environmentConfig, isFeatureEnabled } from "../util/environment-util";
-import { getVerificationStatus } from "../api/identity-verification";
-import { useSnackbar } from "notistack";
-import { useMemo } from "react";
-import { useNavigate } from "react-router";
 import { FEATURE_MAP } from "../constants/feature-constants";
+import IdentityVerificationStatus from "../components/identity-verification/identity-verification-status";
 
 const UserProfilePage = ({ setSiteSection }) => {
-  const { getDecodedIDToken, refreshAccessToken, state, signIn, httpRequest } = useAuthContext();
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
+  const { state, signIn, httpRequest } = useAuthContext();
 
   const [userInfo, setUserInfo] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [idvClaims, setIdvClaims] = useState([]);
-  const [isIdVStatusLoading, setIsIdVStatusLoading] = useState(true);
 
-  const isIdentityVerificationEnabled = isFeatureEnabled(FEATURE_MAP.IDENTITY_VERIFICATION);
+  const isIdentityVerificationEnabled = isFeatureEnabled(
+    FEATURE_MAP.IDENTITY_VERIFICATION
+  );
 
-  const isIdentityVerified = useMemo(() => {
-    if (idvClaims) {
-      if (idvClaims.length === 0) {
-        return false;
-      }
-
-      if (idvClaims.every((claim) => claim.isVerified === true)) {
-        return true;
-      }
-    }
-    return false;
-  }, [idvClaims]);
-
-  const isIdentityVerificationInProgress = useMemo(() => {
-    if (!isIdentityVerificationEnabled) {
-      return false;
-    }
-
-    if (idvClaims) {
-      if (idvClaims.length === 0) {
-        return false;
-      }
-
-      if (idvClaims.some((claim) => claim.claimMetadata.onfido_workflow_status === "processing")) {
-        return true;
-      }
-    }
-    return false;
-  }, [idvClaims]);
-
-  const request = requestConfig =>
+  const request = (requestConfig) =>
     httpRequest(requestConfig)
-      .then(response => response)
-      .catch(error => error);
-
-  const fetchIdentityVerificationStatus = async () => {
-    setIsIdVStatusLoading(true);
-    try {
-      const response = await getVerificationStatus();
-      setIdvClaims(response);
-    } catch (error) {
-      console.error(error);
-      enqueueSnackbar("Something went wrong while getting identity verification status", {
-        variant: "error",
-      })
-    } finally {
-      setIsIdVStatusLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!state.isAuthenticated) {
-      return;
-    }
-
-    if (!isIdentityVerificationEnabled) {
-      return;
-    }
-
-    fetchIdentityVerificationStatus();
-  }, [state.isAuthenticated]);
+      .then((response) => response)
+      .catch((error) => error);
 
   useEffect(() => {
     if (!state.isAuthenticated) {
@@ -115,7 +53,7 @@ const UserProfilePage = ({ setSiteSection }) => {
   }, []);
 
   const handleUpdateSuccess = () => {
-    getUserInfo();                // Remove after the fix with refresh token
+    getUserInfo(); // Remove after the fix with refresh token
     setShowEditForm(false);
 
     // updateToken().then(() => {    // Use after the fix with refresh token
@@ -133,11 +71,11 @@ const UserProfilePage = ({ setSiteSection }) => {
       method: "GET",
       url: `${environmentConfig.ASGARDEO_BASE_URL}/scim2/Me`,
     }).then((response) => {
-      console.log(response.data);
-
       if (response.data) {
-
-        if (response.data["urn:scim:schemas:extension:custom:User"]?.accountType === ACCOUNT_TYPES.BUSINESS) {
+        if (
+          response.data["urn:scim:schemas:extension:custom:User"]
+            ?.accountType === ACCOUNT_TYPES.BUSINESS
+        ) {
           setSiteSection(SITE_SECTIONS.BUSINESS);
         } else {
           setSiteSection(SITE_SECTIONS.PERSONAL);
@@ -145,7 +83,10 @@ const UserProfilePage = ({ setSiteSection }) => {
         setUserInfo({
           userId: response.data.id || "",
           username: response.data.userName || "",
-          accountType: response.data["urn:scim:schemas:extension:custom:User"].accountType || "N/A",          email: response.data.emails[0] || "",
+          accountType:
+            response.data["urn:scim:schemas:extension:custom:User"]
+              .accountType || "N/A",
+          email: response.data.emails[0] || "",
           givenName: response.data.name.givenName || "",
           familyName: response.data.name.familyName || "",
           mobile: response.data.phoneNumbers[0].value || "",
@@ -158,128 +99,20 @@ const UserProfilePage = ({ setSiteSection }) => {
     });
   };
 
-  // Use after the fix with the refresh token
-  const getIdToken = () => {
-    getDecodedIDToken().then((decodedIdToken) => {
-      console.log(decodedIdToken);
-
-      if (decodedIdToken?.accountType === ACCOUNT_TYPES.BUSINESS) {
-        setSiteSection(SITE_SECTIONS.BUSINESS);
-      } else {
-        setSiteSection(SITE_SECTIONS.PERSONAL);
-      }
-
-      if (!decodedIdToken) {
-        return;
-      }
-
-      setUserInfo({
-        userId: decodedIdToken.sub || "",
-        username: decodedIdToken.username || "",
-        accountType: decodedIdToken.accountType || "N/A",
-        email: decodedIdToken.email || "",
-        givenName: decodedIdToken.given_name || "",
-        familyName: decodedIdToken.family_name || "",
-        mobile: decodedIdToken.phone_number || "",
-        country: decodedIdToken.address?.country || "",
-        birthdate: decodedIdToken.birthdate || "",
-        picture: decodedIdToken.picture || "",
-      });
-    });
-  };
-
-  // Use after the fix with refresh token
-  const updateToken = async () => {
-    const refresh = await refreshAccessToken();
-
-    if (refresh) {
-      getIdToken();
-    }
-  };
-
   const handleCancelEdit = () => {
     setShowEditForm(false);
-  };
-
-  const handleStartIdentityVerification = async (e) => {
-    e.preventDefault();
-
-    let reInitiate = false;
-
-    if (idvClaims && idvClaims.length > 0) {
-      idvClaims.forEach((claim) => {
-        if (claim.claimMetadata.onfido_workflow_status === "awaiting_input") {
-          reInitiate = true;
-        }
-      });
-    }
-
-    navigate(ROUTES.IDENTITY_VERIFICATION, { state: { reInitiate }})
   };
 
   if (!userInfo) {
     return;
   }
 
-  if (isIdentityVerificationEnabled && isIdVStatusLoading) {
-    return (
-      <div className="verification-pending-container">
-        <div className="content loading-container">
-          <div className="spinner-border text-dark" role="status">
-            <span>Loading...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isIdentityVerificationInProgress) {
-    return (
-      <div className="verification-pending-container">
-        <div className="content">
-          <i className="fa fa-clock-o" aria-hidden="true"></i>
-          <h5>Identity Verification Pending</h5>
-          <p>
-            Your identity verification is currently in progress. Please wait for
-            the verification to complete.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isIdentityVerificationEnabled && !isIdentityVerified) {
-    return (
-      <div className="verification-start-container">
-        <div className="content">
-          <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
-          <h5>Identity Verification is Required</h5>
-          <p>
-            You are required to complete your identity verification before you
-            can access your account.
-          </p>
-          <button
-            className="secondary"
-            onClick={fetchIdentityVerificationStatus}
-          >
-            Refresh Status
-          </button>
-          <button
-            className=""
-            onClick={handleStartIdentityVerification}
-          >
-            Start Verification
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
+      {isIdentityVerificationEnabled && <IdentityVerificationStatus />}
       <section className="about_section layout_padding">
         <div className="container-fluid">
-          { showEditForm && userInfo ? (
+          {showEditForm && userInfo ? (
             <>
               <EditProfile
                 userInfo={userInfo}
@@ -288,7 +121,10 @@ const UserProfilePage = ({ setSiteSection }) => {
               />
             </>
           ) : (
-            <ViewProfile userInfo={ userInfo } setShowEditForm={ setShowEditForm } />
+            <ViewProfile
+              userInfo={userInfo}
+              setShowEditForm={setShowEditForm}
+            />
           )}
         </div>
       </section>

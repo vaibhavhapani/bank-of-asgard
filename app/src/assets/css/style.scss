@@ -1525,10 +1525,40 @@ ul.password-policy-indicator {
   }
 }
 
+.identity-verification-message {
+  padding: 1rem 0;
+  border-bottom: 1px solid $primary1;
+
+  .content-wrapper {
+    display: flex;
+    align-items: center;
+
+    p {
+      margin: 0 1rem;
+    }
+
+    a {
+      color: $primary2;
+      text-decoration: underline;
+      cursor: pointer;transition: color 0.2s ease;
+    }
+
+    a:hover {
+      color: $primary1;
+    }
+
+    i {
+      font-size: 1.4rem;
+      color: $primary2;
+    }
+  }
+}
+
 .identity-verification-page {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   min-height: 90vh;
   margin: 0;
   background-color: #f9f9f9;
