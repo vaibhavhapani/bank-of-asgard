@@ -66,7 +66,7 @@ const IdentityVerificationPage = () => {
         token,
         onComplete: () => {
           completeVerification();
-          navigate("/", { state: { idVerificationInitiated: true } });
+          navigate(ROUTES.HOME, { state: { idVerificationInitiated: true } });
         },
         workflowRunId,
       });
@@ -77,13 +77,19 @@ const IdentityVerificationPage = () => {
         error.response?.status === 400 &&
         error.response?.data?.code === "OIDV-10002"
       ) {
-        enqueueSnackbar("Please verify whether all the required attributes are provided", {
-          variant: "error",
-        });
+        enqueueSnackbar(
+          "Please verify whether all the required attributes are provided",
+          {
+            variant: "error",
+          }
+        );
       } else {
-        enqueueSnackbar("Something went wrong while starting identity verification", {
-          variant: "error",
-        })
+        enqueueSnackbar(
+          "Something went wrong while starting identity verification",
+          {
+            variant: "error",
+          }
+        );
       }
       navigate(ROUTES.HOME);
     } finally {
@@ -102,10 +108,39 @@ const IdentityVerificationPage = () => {
 
   return (
     <div className="identity-verification-page">
-      {isLoading && (<div className="loading-container">
+      {isLoading && (
+        <div className="loading-container">
           <div className="spinner-border text-dark" role="status">
             <span>Loading...</span>
           </div>
+        </div>
+      )}
+      {!isLoading && onfidoInstance && (
+        <div className="onfido-samples">
+          <p>
+            Testing with sample documents? Download the sample documents from
+            the links below.
+          </p>
+          <ul>
+            <li>
+              <a
+                href="https://documentation.onfido.com/images/sample_driving_licence.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Sample driving license
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://documentation.onfido.com/images/sample_photo.png"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Sample photo
+              </a>
+            </li>
+          </ul>
         </div>
       )}
       <div id="onfido-mount"></div>

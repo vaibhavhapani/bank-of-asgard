@@ -1540,7 +1540,8 @@ ul.password-policy-indicator {
     a {
       color: $primary2;
       text-decoration: underline;
-      cursor: pointer;transition: color 0.2s ease;
+      cursor: pointer;
+      transition: color 0.2s ease;
     }
 
     a:hover {
@@ -1576,6 +1577,21 @@ ul.password-policy-indicator {
 
     span {
       display: none;
+    }
+  }
+
+  .onfido-samples {
+    padding: 20px;
+
+    a {
+      color: $primary2;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    a:hover {
+      color: $primary1;
     }
   }
 
