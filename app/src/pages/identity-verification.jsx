@@ -129,7 +129,7 @@ const IdentityVerificationPage = () => {
                 rel="noreferrer"
               >
                 Sample driving license
-              </a>
+              </a> - You can use this for the front and back of your driving license.
             </li>
             <li>
               <a
@@ -138,7 +138,7 @@ const IdentityVerificationPage = () => {
                 rel="noreferrer"
               >
                 Sample photo
-              </a>
+              </a> - Take a photo of this using your mobile phone. And use it as the selfie photo.
             </li>
           </ul>
         </div>
