@@ -50,7 +50,7 @@ export const resetPassword = (username, currentPassword, newPassword) => {
         usernameWithDomain + ":" + encodedPassword
       )}`,
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "http://localhost:5173",
+      "Access-Control-Allow-Origin": environmentConfig.APP_BASE_URL,
     },
     method: "PATCH",
     baseURL: environmentConfig.ASGARDEO_BASE_URL,

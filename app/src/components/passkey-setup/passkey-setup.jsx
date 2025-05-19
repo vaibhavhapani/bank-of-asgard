@@ -109,7 +109,7 @@ const PasskeySetup = () => {
     // Start passkey registration with Asgardeo
     const startPasskeyRegistration = () => {
 
-        const formData = formatFormURLEncoded({ appId: "http://localhost:5173" }); // Format correctly
+        const formData = formatFormURLEncoded({ appId: environmentConfig.APP_BASE_URL }); // Format correctly
 
         request({
             method: "POST",
