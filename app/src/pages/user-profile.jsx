@@ -22,19 +22,17 @@ import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "../components/user-profile/edit-profile";
 import ViewProfile from "../components/user-profile/view-profile";
 import { ACCOUNT_TYPES, SITE_SECTIONS } from "../constants/app-constants";
-import { environmentConfig, isFeatureEnabled } from "../util/environment-util";
-import { FEATURE_MAP } from "../constants/feature-constants";
+import { environmentConfig } from "../util/environment-util";
 import IdentityVerificationStatus from "../components/identity-verification/identity-verification-status";
+import { useContext } from "react";
+import { IdentityVerificationContext } from "../context/identity-verification-provider";
 
 const UserProfilePage = ({ setSiteSection }) => {
   const { state, signIn, httpRequest } = useAuthContext();
+  const { isIdentityVerificationEnabled, reloadIdentityVerificationStatus } = useContext(IdentityVerificationContext);
 
   const [userInfo, setUserInfo] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false);
-
-  const isIdentityVerificationEnabled = isFeatureEnabled(
-    FEATURE_MAP.IDENTITY_VERIFICATION
-  );
 
   const request = (requestConfig) =>
     httpRequest(requestConfig)
@@ -54,6 +52,7 @@ const UserProfilePage = ({ setSiteSection }) => {
 
   const handleUpdateSuccess = () => {
     getUserInfo(); // Remove after the fix with refresh token
+    reloadIdentityVerificationStatus();
     setShowEditForm(false);
 
     // updateToken().then(() => {    // Use after the fix with refresh token

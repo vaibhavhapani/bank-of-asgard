@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { createContext, useState } from "react";
 
 const BankAccountContext = createContext(null);
@@ -22,6 +23,10 @@ const BankAccountProvider = ({ children }) => {
       {children}
     </BankAccountContext.Provider>
   );
+};
+
+BankAccountProvider.propTypes = {
+  children: PropTypes.node,
 };
 
 export { BankAccountContext, BankAccountProvider };

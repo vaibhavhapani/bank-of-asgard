@@ -41,3 +41,10 @@ export const ACCOUNT_TYPES = {
 export const URL_QUERY_PARAMS = {
     ACCOUNT_TYPE: "accountType"
 }
+
+export const IDENTITY_VERIFICATION_STATUS = {
+    NOT_STARTED: "NOT_STARTED",
+    IN_PROGRESS: "IN_PROGRESS",
+    SUCCESS: "SUCCESS",
+    FAILED: "FAILED"
+}

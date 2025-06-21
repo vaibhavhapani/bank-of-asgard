@@ -28,12 +28,16 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useSnackbar } from "notistack";
 import { ROUTES } from "../constants/app-constants";
+import { useContext } from "react";
+import { IdentityVerificationContext } from "../context/identity-verification-provider";
 
 const IdentityVerificationPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const location = useLocation();
   const reInitiate = location.state?.reInitiate === true;
+
+  const { reloadIdentityVerificationStatus } = useContext(IdentityVerificationContext);
 
   const [onfidoInstance, setOnfidoInstance] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,8 +69,30 @@ const IdentityVerificationPage = () => {
         useModal: false,
         token,
         onComplete: () => {
-          completeVerification();
-          navigate(ROUTES.HOME, { state: { idVerificationInitiated: true } });
+          completeVerification()
+            .then(() => {
+              enqueueSnackbar(
+                "Identity verification request is successfully submitted",
+                {
+                  variant: "success",
+                }
+              );
+              reloadIdentityVerificationStatus();
+            })
+            .catch((error) => {
+              console.error(error);
+              enqueueSnackbar(
+                "Something went wrong while completing identity verification. Please try again.",
+                {
+                  variant: "error",
+                }
+              );
+            })
+            .finally(() => {
+              navigate(ROUTES.HOME, {
+                state: { idVerificationInitiated: true },
+              });
+            });
         },
         workflowRunId,
       });
@@ -129,7 +155,8 @@ const IdentityVerificationPage = () => {
                 rel="noreferrer"
               >
                 Sample driving license
-              </a> - You can use this for the front and back of your driving license.
+              </a>{" "}
+              - You can use this for the front and back of your driving license.
             </li>
             <li>
               <a
@@ -138,7 +165,9 @@ const IdentityVerificationPage = () => {
                 rel="noreferrer"
               >
                 Sample photo
-              </a> - Take a photo of this using your mobile phone. And use it as the selfie photo.
+              </a>{" "}
+              - Take a photo of this using your mobile phone. And use it as the
+              selfie photo.
             </li>
           </ul>
         </div>

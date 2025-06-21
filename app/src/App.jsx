@@ -36,6 +36,7 @@ import "./assets/css/responsive.css";
 import "./assets/css/style.scss";
 import { BankAccountProvider } from "./context/bank-account-provider";
 import IdentityVerificationPage from "./pages/identity-verification";
+import { IdentityVerificationProvider } from "./context/identity-verification-provider";
 
 const App = () => {
   const { state, signIn, signOut } = useAuthContext();
@@ -47,6 +48,7 @@ const App = () => {
   return (
     <SnackbarProvider maxSnack={ 3 }>
     <BankAccountProvider>
+    <IdentityVerificationProvider>
     <Router>
       <header className="header_section">
         <div className="header_top">
@@ -318,6 +320,7 @@ const App = () => {
         </div>
       </section>
     </Router>
+    </IdentityVerificationProvider>
     </BankAccountProvider>
     </SnackbarProvider>
   );

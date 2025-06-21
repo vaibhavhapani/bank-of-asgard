@@ -16,9 +16,18 @@
  * under the License.
  */
 
+import Chip from "@mui/material/Chip";
+import { IdentityVerificationContext } from "../../../context/identity-verification-provider";
 import PropTypes from "prop-types";
+import { useContext } from "react";
+import { IDENTITY_VERIFICATION_STATUS } from "../../../constants/app-constants";
 
 const UserProfileCard = ({ userInfo, setShowEditForm }) => {
+  const {
+    isIdVStatusLoading,
+    identityVerificationStatus,
+  } = useContext(IdentityVerificationContext);
+
   /**
    * Resolves the user name by dropping the user store domain.
    * @returns {string} - Resolved user name.
@@ -32,11 +41,28 @@ const UserProfileCard = ({ userInfo, setShowEditForm }) => {
     return usernameParts[0];
   };
 
+  const renderIdVStatusChip = () => {
+    if (isIdVStatusLoading) {
+      return null;
+    }
+
+    switch(identityVerificationStatus) {
+      case IDENTITY_VERIFICATION_STATUS.SUCCESS:
+        return <Chip label="Verified" color="success" />;
+      case IDENTITY_VERIFICATION_STATUS.IN_PROGRESS:
+        return <Chip label="In Progress" color="warning" />;
+      case IDENTITY_VERIFICATION_STATUS.FAILED:
+        return <Chip label="Failed" color="error" />;
+      default:
+        return <Chip label="Not Verified" color="error" />;
+    }
+  };
+
   return (
     <div className="detail-box user-profile" style={{ marginTop: "0" }}>
       <div className="contact_section">
         <div className="contact_form-container profile-edit">
-          <h5>Profile</h5>
+          <h5>Profile { renderIdVStatusChip() }</h5>
           <ul className="details-list">
             {/* TODO: Uncomment the following code block after implementing the profile picture upload feature */}
             {/* <li>

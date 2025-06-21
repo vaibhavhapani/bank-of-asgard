@@ -16,109 +16,44 @@
  * under the License.
  */
 
-import { useSnackbar } from "notistack";
-import { getVerificationStatus } from "../../api/identity-verification";
-import { useState } from "react";
-import { useEffect } from "react";
-import { useAuthContext } from "@asgardeo/auth-react";
-import { useMemo } from "react";
-import { ROUTES } from "../../constants/app-constants";
+import {
+  IDENTITY_VERIFICATION_STATUS,
+  ROUTES,
+} from "../../constants/app-constants";
 import { useNavigate } from "react-router";
-import { environmentConfig } from "../../util/environment-util";
+import { useContext } from "react";
+import { IdentityVerificationContext } from "../../context/identity-verification-provider";
 
 const IdentityVerificationStatus = () => {
-  const { state } = useAuthContext();
-  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const {
+    startIdentityVerification,
+    isIdVStatusLoading,
+    identityVerificationStatus,
+  } = useContext(IdentityVerificationContext);
 
-  const [isIdVStatusLoading, setIsIdVStatusLoading] = useState(true);
-  const [idvClaims, setIdvClaims] = useState([]);
-
-  const verifiableClaims = environmentConfig.IDENTITY_VERIFICATION_CLAIMS || [];
-
-  const isIdentityVerified = useMemo(() => {
-    if (idvClaims) {
-      if (
-        verifiableClaims.every((claimUri) => {
-          return idvClaims.some(
-            (idvClaim) =>
-              idvClaim.uri === claimUri && idvClaim.isVerified === true
-          );
-        })
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }, [idvClaims]);
-
-  const isIdentityVerificationInProgress = useMemo(() => {
-    if (idvClaims) {
-      if (idvClaims.length === 0) {
-        return false;
-      }
-
-      if (
-        idvClaims.some(
-          (claim) => claim.claimMetadata.onfido_workflow_status === "processing"
-        )
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }, [idvClaims]);
-
-  const fetchIdentityVerificationStatus = async () => {
-    setIsIdVStatusLoading(true);
-    try {
-      const response = await getVerificationStatus();
-      setIdvClaims(response);
-    } catch (error) {
-      console.error(error);
-      enqueueSnackbar(
-        "Something went wrong while getting identity verification status",
-        {
-          variant: "error",
-        }
-      );
-    } finally {
-      setIsIdVStatusLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!state.isAuthenticated) {
-      return;
-    }
-
-    fetchIdentityVerificationStatus();
-  }, [state.isAuthenticated]);
-
-  const handleStartIdentityVerification = async (e) => {
+  const handleStartIdentityVerification = (e) => {
     e.preventDefault();
 
-    let reInitiate = false;
-
-    if (idvClaims && idvClaims.length > 0) {
-      idvClaims.forEach((claim) => {
-        if (claim.claimMetadata.onfido_workflow_status === "awaiting_input") {
-          reInitiate = true;
-        }
-      });
-    }
+    const reInitiate = startIdentityVerification();
 
     navigate(ROUTES.IDENTITY_VERIFICATION, { state: { reInitiate } });
   };
 
-  if (isIdVStatusLoading || isIdentityVerified) {
+  if (
+    isIdVStatusLoading ||
+    identityVerificationStatus === IDENTITY_VERIFICATION_STATUS.SUCCESS
+  ) {
     return null;
   }
+
+  console.log(identityVerificationStatus);
 
   return (
     <div className="identity-verification-message">
       <div className="container-fluid content-wrapper">
-        {isIdentityVerificationInProgress && (
+        {identityVerificationStatus ===
+          IDENTITY_VERIFICATION_STATUS.IN_PROGRESS && (
           <>
             <i className="fa fa-clock-o" aria-hidden="true"></i>
             <p>
@@ -128,16 +63,20 @@ const IdentityVerificationStatus = () => {
           </>
         )}
 
-        {!isIdentityVerified && !isIdentityVerificationInProgress && (
-          <>
-            <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
-            <p>
-              In order to perform money transfers higher than $10,000, you need
-              to verify your identity.
-            </p>
-            <a onClick={handleStartIdentityVerification}>Start Verification</a>
-          </>
-        )}
+        {identityVerificationStatus !== IDENTITY_VERIFICATION_STATUS.SUCCESS &&
+          identityVerificationStatus !==
+            IDENTITY_VERIFICATION_STATUS.IN_PROGRESS && (
+            <>
+              <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
+              <p>
+                In order to perform money transfers higher than $10,000, you
+                need to verify your identity.
+              </p>
+              <a onClick={handleStartIdentityVerification}>
+                Start Verification
+              </a>
+            </>
+          )}
       </div>
     </div>
   );
