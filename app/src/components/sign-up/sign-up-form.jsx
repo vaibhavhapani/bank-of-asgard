@@ -18,43 +18,58 @@
 
 import { useAuthContext } from "@asgardeo/auth-react";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import PasswordValidation from "../password-validation";
 import CountrySelect from "../country-select";
+import { environmentConfig } from "../../util/environment-util";
+import { getPasswordPolicy } from "../../api/server-configurations";
+import PasswordField from "../common/password-field";
+import { useSnackbar } from "notistack";
 
 const SignUpForm = ({ accountType }) => {
-
   const { signIn } = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const [ passwordVisible, setPasswordVisible ] = useState(false);
-  const [ signupData, setSignupData ] = useState({
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    country: '',
-    username: '',
-    password: '',
-    email: '',
-    mobile: '',
-    accountType: accountType
+  const [signupData, setSignupData] = useState({
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    country: "",
+    username: "",
+    password: "",
+    email: "",
+    mobile: "",
+    accountType: accountType,
   });
+  const [passwordValidationRules, setPasswordValidationRules] = useState({});
+  const [isNewPasswordValid, setIsNewPasswordValid] = useState(false);
+
+  useEffect(() => {
+    getPasswordPolicy()
+      .then((response) => {
+        setPasswordValidationRules(response);
+      })
+      .catch((error) => {
+        console.error("Error fetching password policy:", error);
+      });
+  }, []);
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_API_ENDPOINT}/signup`, signupData);
-
-      console.log(response.data.message);
+      const response = await axios.post(
+        `${environmentConfig.API_SERVICE_URL}/signup`,
+        signupData
+      );
 
       if (response.status == 200) {
         signIn();
       }
-  
-      console.log('User signed up:', signupData);
     } catch (error) {
-      console.log(error);
-      alert(error.response?.data?.error || "Signup failed");
+      console.error(error);
+      enqueueSnackbar("Something went wrong while creating account", {
+        variant: "error",
+      });
     }
   };
 
@@ -65,7 +80,9 @@ const SignUpForm = ({ accountType }) => {
         type="text"
         placeholder="Enter a username"
         value={signupData.username}
-        onChange={(e) => setSignupData({ ...signupData, username: e.target.value })}
+        onChange={(e) =>
+          setSignupData({ ...signupData, username: e.target.value })
+        }
         required
       />
 
@@ -74,23 +91,29 @@ const SignUpForm = ({ accountType }) => {
         type="email"
         placeholder="Enter email address"
         value={signupData.email}
-        onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+        onChange={(e) =>
+          setSignupData({ ...signupData, email: e.target.value })
+        }
         required
       />
 
       <label htmlFor="password">Password</label>
-      <div className="password-field-wrapper with-icon">
-        <i className={ `icon fa ${ passwordVisible ? "fa-eye" : "fa-eye-slash" }` } onClick={() => setPasswordVisible(!passwordVisible)}></i>
-        <input
-          type={ passwordVisible ? "text" : "password" }
-          className="password-field"
-          placeholder="Enter a password"
-          value={signupData.password}
-          onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-          required
-        />
-        <PasswordValidation password={signupData.password} />
-      </div>
+      <PasswordField
+        name="password"
+        placeholder="Enter a password"
+        value={signupData.password}
+        onChange={(value) =>
+          setSignupData({ ...signupData, password: value })
+        }
+        showPasswordValidation={true}
+        passwordValidationRules={passwordValidationRules}
+        onPasswordValidate={(isValid) => {
+          setIsNewPasswordValid(isValid);
+        }}
+        inputProps={{
+          autoComplete: "new-password",
+        }}
+      />
 
       <div className="row">
         <div className="col-md-6">
@@ -99,7 +122,9 @@ const SignUpForm = ({ accountType }) => {
             type="text"
             placeholder="Enter first name"
             value={signupData.firstName}
-            onChange={(e) => setSignupData({ ...signupData, firstName: e.target.value })}
+            onChange={(e) =>
+              setSignupData({ ...signupData, firstName: e.target.value })
+            }
             required
           />
         </div>
@@ -109,42 +134,51 @@ const SignUpForm = ({ accountType }) => {
             type="text"
             placeholder="Enter last name"
             value={signupData.lastName}
-            onChange={(e) => setSignupData({ ...signupData, lastName: e.target.value })}
+            onChange={(e) =>
+              setSignupData({ ...signupData, lastName: e.target.value })
+            }
             required
           />
         </div>
       </div>
-      
+
       <label htmlFor="dateOfBirth">Date of Birth</label>
       <input
         type="date"
         placeholder="Date of Birth"
         value={signupData.dateOfBirth}
-        onChange={(e) => setSignupData({ ...signupData, dateOfBirth: e.target.value })}
+        onChange={(e) =>
+          setSignupData({ ...signupData, dateOfBirth: e.target.value })
+        }
         required
       />
 
       <label htmlFor="country">Country</label>
       <CountrySelect
         value={signupData.country}
-        onChange={(value) => setSignupData({ ...signupData, country: value?.label || "" })} />
+        onChange={(value) =>
+          setSignupData({ ...signupData, country: value?.label || "" })
+        }
+      />
 
       <label htmlFor="mobile">Mobile Number</label>
       <input
         type="number"
         placeholder="Enter mobile"
         value={signupData.mobile}
-        onChange={(e) => setSignupData({ ...signupData, mobile: e.target.value })}
+        onChange={(e) =>
+          setSignupData({ ...signupData, mobile: e.target.value })
+        }
         required
       />
 
-      <button type="submit">Signup</button>
-    </form>        
+      <button type="submit" className={`btn ${isNewPasswordValid ? "" : "disabled" }`}>Signup</button>
+    </form>
   );
-}
+};
 
 SignUpForm.propTypes = {
-  accountType: PropTypes.object.isRequired
+  accountType: PropTypes.object.isRequired,
 };
 
 export default SignUpForm;

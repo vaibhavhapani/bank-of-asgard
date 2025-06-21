@@ -33,6 +33,10 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      'no-unused-vars': 'warn',
+      "no-console": ["warn", { allow: ["error"] }],
+      "no-trailing-spaces": "warn",
+      "react-hooks/exhaustive-deps": "off"
     },
   },
 ]

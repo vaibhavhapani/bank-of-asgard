@@ -16,26 +16,16 @@
  * under the License.
  */
 
-import PropTypes from "prop-types";
-import PasskeySetup from "../passkey-setup/passkey-setup";
-import TotpSetup from "../totp/totp-setup";
-import { ACCOUNT_TYPES } from "../../constants/app-constants";
-
-const AccountSecurity = ({ accountType }) => {
-
-  return (
-    <>
-      { accountType === ACCOUNT_TYPES.BUSINESS ? (
-        <TotpSetup />
-      ) : (
-        <PasskeySetup />
-      ) }
-    </>
-  );
-}
-
-AccountSecurity.propTypes = {
-  accountType: PropTypes.object.isRequired
+/**
+ * Util function to format the amount as a currency string.
+ *
+ * @param {number} amount - Amount to be formatted.
+ * @returns the formatted amount as a string.
+ */
+export const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2
+  }).format(amount);
 };
-
-export default AccountSecurity;

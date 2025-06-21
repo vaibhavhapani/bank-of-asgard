@@ -22,19 +22,25 @@ import { useAuthContext } from "@asgardeo/auth-react";
 import EditProfile from "../components/user-profile/edit-profile";
 import ViewProfile from "../components/user-profile/view-profile";
 import { ACCOUNT_TYPES, SITE_SECTIONS } from "../constants/app-constants";
+import { environmentConfig } from "../util/environment-util";
+import IdentityVerificationStatus from "../components/identity-verification/identity-verification-status";
+import { useContext } from "react";
+import { IdentityVerificationContext } from "../context/identity-verification-provider";
 
 const UserProfilePage = ({ setSiteSection }) => {
-  const { getDecodedIDToken, refreshAccessToken, state, signIn, httpRequest } = useAuthContext();
+  const { state, signIn, httpRequest } = useAuthContext();
+  const { isIdentityVerificationEnabled, reloadIdentityVerificationStatus } = useContext(IdentityVerificationContext);
 
-  const [ userInfo, setUserInfo ] = useState(null);
-  const [ showEditForm, setShowEditForm ] = useState(false);
-  const request = requestConfig =>
+  const [userInfo, setUserInfo] = useState(null);
+  const [showEditForm, setShowEditForm] = useState(false);
+
+  const request = (requestConfig) =>
     httpRequest(requestConfig)
-      .then(response => response)
-      .catch(error => error);
+      .then((response) => response)
+      .catch((error) => error);
 
   useEffect(() => {
-    if (!state.isAuthenticated) { 
+    if (!state.isAuthenticated) {
       signIn();
     }
   }, []);
@@ -45,7 +51,8 @@ const UserProfilePage = ({ setSiteSection }) => {
   }, []);
 
   const handleUpdateSuccess = () => {
-    getUserInfo();                // Remove after the fix with refresh token
+    getUserInfo(); // Remove after the fix with refresh token
+    reloadIdentityVerificationStatus();
     setShowEditForm(false);
 
     // updateToken().then(() => {    // Use after the fix with refresh token
@@ -61,13 +68,13 @@ const UserProfilePage = ({ setSiteSection }) => {
         "Content-Type": "application/scim+json",
       },
       method: "GET",
-      url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`,
+      url: `${environmentConfig.ASGARDEO_BASE_URL}/scim2/Me`,
     }).then((response) => {
-      console.log(response.data);
-
       if (response.data) {
-
-        if (response.data["urn:scim:schemas:extension:custom:User"]?.accountType === ACCOUNT_TYPES.BUSINESS) {
+        if (
+          response.data["urn:scim:schemas:extension:custom:User"]
+            ?.accountType === ACCOUNT_TYPES.BUSINESS
+        ) {
           setSiteSection(SITE_SECTIONS.BUSINESS);
         } else {
           setSiteSection(SITE_SECTIONS.PERSONAL);
@@ -75,7 +82,10 @@ const UserProfilePage = ({ setSiteSection }) => {
         setUserInfo({
           userId: response.data.id || "",
           username: response.data.userName || "",
-          accountType: response.data["urn:scim:schemas:extension:custom:User"].accountType || "N/A",          email: response.data.emails[0] || "",
+          accountType:
+            response.data["urn:scim:schemas:extension:custom:User"]
+              .accountType || "N/A",
+          email: response.data.emails[0] || "",
           givenName: response.data.name.givenName || "",
           familyName: response.data.name.familyName || "",
           mobile: response.data.phoneNumbers[0].value || "",
@@ -88,45 +98,6 @@ const UserProfilePage = ({ setSiteSection }) => {
     });
   };
 
-  // Use after the fix with the refresh token
-  const getIdToken = () => {
-    getDecodedIDToken().then((decodedIdToken) => {
-      console.log(decodedIdToken);
-
-      if (decodedIdToken?.accountType === ACCOUNT_TYPES.BUSINESS) {
-        setSiteSection(SITE_SECTIONS.BUSINESS);
-      } else {
-        setSiteSection(SITE_SECTIONS.PERSONAL);
-      }
-
-      if (!decodedIdToken) {
-        return;
-      }
-
-      setUserInfo({
-        userId: decodedIdToken.sub || "",
-        username: decodedIdToken.username || "",
-        accountType: decodedIdToken.accountType || "N/A",
-        email: decodedIdToken.email || "",
-        givenName: decodedIdToken.given_name || "",
-        familyName: decodedIdToken.family_name || "",
-        mobile: decodedIdToken.phone_number || "",
-        country: decodedIdToken.address?.country || "",
-        birthdate: decodedIdToken.birthdate || "",
-        picture: decodedIdToken.picture || "",
-      });
-    });
-  };
-
-  // Use after the fix with refresh token
-  const updateToken = async () => {
-    const refresh = await refreshAccessToken();
-
-    if (refresh) {
-      getIdToken();
-    }
-  };
-
   const handleCancelEdit = () => {
     setShowEditForm(false);
   };
@@ -137,9 +108,10 @@ const UserProfilePage = ({ setSiteSection }) => {
 
   return (
     <>
+      {isIdentityVerificationEnabled && <IdentityVerificationStatus />}
       <section className="about_section layout_padding">
         <div className="container-fluid">
-          { showEditForm && userInfo ? (
+          {showEditForm && userInfo ? (
             <>
               <EditProfile
                 userInfo={userInfo}
@@ -148,7 +120,10 @@ const UserProfilePage = ({ setSiteSection }) => {
               />
             </>
           ) : (
-            <ViewProfile userInfo={ userInfo } setShowEditForm={ setShowEditForm } />
+            <ViewProfile
+              userInfo={userInfo}
+              setShowEditForm={setShowEditForm}
+            />
           )}
         </div>
       </section>

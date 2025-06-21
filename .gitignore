@@ -12,10 +12,11 @@ dist
 dist-ssr
 *.local
 .env
+**/public/config.js
 package-lock.json
 
 # Editor directories and files
-.vscode/*
+.vscode
 !.vscode/extensions.json
 .idea
 .DS_Store
@@ -25,4 +26,3 @@ package-lock.json
 *.sln
 *.sw?
 /.vite
-

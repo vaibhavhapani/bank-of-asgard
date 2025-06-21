@@ -22,7 +22,10 @@ export const ROUTES = {
   BUSINESS_BANKING: "/business-banking",
   USER_PROFILE: "/user-profile",
   REGISTER_ACCOUNT: "/register-account",
-  NOT_FOUND: "/404"
+  FUND_TRANSFER: "/fund-transfer",
+  FUND_TRANSFER_VERIFY: "/fund-transfer/verify",
+  NOT_FOUND: "/404",
+  IDENTITY_VERIFICATION: "/identity-verification"
 };
 
 export const SITE_SECTIONS = {
@@ -37,4 +40,11 @@ export const ACCOUNT_TYPES = {
 
 export const URL_QUERY_PARAMS = {
     ACCOUNT_TYPE: "accountType"
+}
+
+export const IDENTITY_VERIFICATION_STATUS = {
+    NOT_STARTED: "NOT_STARTED",
+    IN_PROGRESS: "IN_PROGRESS",
+    SUCCESS: "SUCCESS",
+    FAILED: "FAILED"
 }

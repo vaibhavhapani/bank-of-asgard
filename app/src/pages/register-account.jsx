@@ -17,13 +17,15 @@
  */
 
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router";
 import PropTypes from "prop-types";
 import SignUpForm from "../components/sign-up/sign-up-form";
 import EverydayBanking from "../assets/images/A_women_laying_on_a_soft_with_a_headset_and_holdin_028d291b-58ee-4de5-8c57-2a84033209ac.png";
 import GoGlobal from "../assets/images/A_business_women_in_a_city_walking_portrait_lookin_5e59fd5e-a8dd-43e0-b4ea-5a926d089913.png";
 import GatacaImage from "../assets/images/asgard_wallet_custom_qr.png";
 import { ACCOUNT_TYPES, ROUTES, SITE_SECTIONS, URL_QUERY_PARAMS } from "../constants/app-constants";
+import { isFeatureEnabled } from "../util/environment-util";
+import { FEATURE_MAP } from "../constants/feature-constants";
 
 const RegisterAccountPage = ({ setSiteSection }) => {
 
@@ -31,6 +33,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
   const [ showModal, setShowModal ] = useState(false);
 
   const accountType = searchParams.get(URL_QUERY_PARAMS.ACCOUNT_TYPE) || "";
+  const isOdinWalletEnabled = isFeatureEnabled(FEATURE_MAP.ODIN_WALLET);
 
   useEffect(() => {
     if (accountType === ACCOUNT_TYPES.BUSINESS) {
@@ -94,7 +97,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                           <div className="col-md-7">
                             <SignUpForm accountType={ accountType } />
                           </div>
-                          { (accountType === ACCOUNT_TYPES.PERSONAL) &&
+                          { (isOdinWalletEnabled && accountType === ACCOUNT_TYPES.PERSONAL) &&
                             <div className="col-md-2 mx-auto" style={ { textAlign: "center" } }>
                               <h4>OR</h4>
                             </div>
@@ -103,7 +106,7 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                       </div>
                     </div>
                   </div>
-                  { (accountType === ACCOUNT_TYPES.PERSONAL) && (
+                  { (isOdinWalletEnabled && accountType === ACCOUNT_TYPES.PERSONAL) && (
                     <div className="col-md-4 px-0">
                       <div className="detail-box" style={ { marginTop: "200px" } }>
                         <div className="heading_container ">
@@ -174,8 +177,8 @@ const RegisterAccountPage = ({ setSiteSection }) => {
         </div>
       </section>
 
-      <div id="exampleModalLive" className="modal fade show" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLiveLabel" style={{ display: showModal ? "block" : "none", zIndex: showModal ? "100000" : "-1" }}>
-        <div className="modal" tabIndex="-1" role="dialog" style={{ display: showModal ? "block" : "none" }}>
+      <div id="exampleModalLive" className="modal fade show" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLiveLabel" style={{ display: showModal ? "block" : "none", zIndex: showModal ? "100000" : "-1" }}>
+        <div className="modal" tabIndex={-1} role="dialog" style={{ display: showModal ? "block" : "none" }}>
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">

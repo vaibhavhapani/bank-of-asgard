@@ -19,6 +19,7 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "@asgardeo/auth-react";
 import { QRCodeCanvas } from "qrcode.react";
+import { environmentConfig } from "../../util/environment-util";
 
 const TotpSetup = () => {
     const { httpRequest } = useAuthContext();
@@ -43,7 +44,7 @@ const TotpSetup = () => {
         try {
             const response = await request({
                 method: "GET",
-                url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`,
+                url: `${environmentConfig.ASGARDEO_BASE_URL}/scim2/Me`,
                 headers: { "Content-Type": "application/json" },
             });
             console.log(response.data);
@@ -71,7 +72,7 @@ const TotpSetup = () => {
         try {
             const response = await request({
                 method: "POST",
-                url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v1/me/totp`,
+                url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v1/me/totp`,
                 headers: { "accept": "application/json" },
                 data: { "action": "INIT" }
             });
@@ -93,7 +94,7 @@ const TotpSetup = () => {
         try {
             const response = await request({
                 method: "POST",
-                url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v1/me/totp`,
+                url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v1/me/totp`,
                 headers: { "Content-Type": "application/json" },
                 data: { action: "VIEW" },
             });
@@ -119,7 +120,7 @@ const TotpSetup = () => {
 
             const response = await request({
                 method: "POST",
-                url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v1/me/totp`,
+                url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v1/me/totp`,
                 headers: { "Content-Type": "application/json" },
                 data: { action: "VALIDATE", verificationCode: otpCode },
             });

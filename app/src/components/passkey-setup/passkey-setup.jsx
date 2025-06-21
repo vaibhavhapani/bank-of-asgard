@@ -18,6 +18,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthContext } from "@asgardeo/auth-react";
+import { environmentConfig } from "../../util/environment-util";
 
 const PasskeySetup = () => {
     const { httpRequest } = useAuthContext();
@@ -37,7 +38,7 @@ const PasskeySetup = () => {
     const fetchPasskeys = () => {
         request({
             method: "GET",
-            url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn`,
+            url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v2/me/webauthn`,
             headers: { "Content-Type": "application/json" },
         })
             .then((response) => {
@@ -84,7 +85,6 @@ const PasskeySetup = () => {
             let arr = [];
             for (let i of pubKeyCred)
                 arr.push(publicKeyCredentialToJSON(i));
-                console.log(i);
             return arr
         }
 
@@ -109,11 +109,11 @@ const PasskeySetup = () => {
     // Start passkey registration with Asgardeo
     const startPasskeyRegistration = () => {
 
-        const formData = formatFormURLEncoded({ appId: "http://localhost:5173" }); // Format correctly
+        const formData = formatFormURLEncoded({ appId: environmentConfig.APP_BASE_URL }); // Format correctly
 
         request({
             method: "POST",
-            url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/start-usernameless-registration`,
+            url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/start-usernameless-registration`,
             headers: {
                 "accept": "application/json",
                 'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
@@ -178,7 +178,7 @@ const PasskeySetup = () => {
                 console.log(finalPay);
                 return request({
                     method: "POST",
-                    url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/finish-registration`,
+                    url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/finish-registration`,
                     headers: { "Content-Type": "application/json" },
                     data: finalPay,
                 }).then(() => credential.id);
@@ -194,7 +194,7 @@ const PasskeySetup = () => {
                 // Update passkey display name with PATCH request
                 return request({
                     method: "PATCH",
-                    url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/${credentialId}`,
+                    url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v2/me/webauthn/${credentialId}`,
                     headers: { "Content-Type": "application/json" },
                     data: [
                         {
@@ -215,6 +215,7 @@ const PasskeySetup = () => {
 
     return (
         <div>
+            <h6>Passkeys</h6>
             <button onClick={startPasskeyRegistration} className="secondary">Register a New Passkey</button>
 
             {passkeys.length === 0 ? (

@@ -17,23 +17,21 @@
  */
 
 import { AuthProvider } from "@asgardeo/auth-react";
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import { environmentConfig } from "./util/environment-util";
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <AuthProvider
       config={{
-        signInRedirectURL: `${import.meta.env.VITE_REACT_APP_CLIENT_BASE_URL}`,
-        signOutRedirectURL: `${import.meta.env.VITE_REACT_APP_CLIENT_BASE_URL}`,
-        clientID: `${import.meta.env.VITE_REACT_APP_CLIENT_ID}`,
-        baseUrl: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}`,
-        resourceServerURLs: [`${import.meta.env.VITE_REACT_APP_API_ENDPOINT}`],
-        scope: ['openid', 'address', 'email', 'phone', 'profile', 'internal_login'],
+        signInRedirectURL: `${environmentConfig.APP_BASE_URL}`,
+        signOutRedirectURL: `${environmentConfig.APP_BASE_URL}`,
+        clientID: `${environmentConfig.APP_CLIENT_ID}`,
+        baseUrl: `${environmentConfig.ASGARDEO_BASE_URL}`,
+        resourceServerURLs: [`${environmentConfig.API_BASE_URL}`],
+        scope: ['openid', 'address', 'email', 'phone', 'profile', 'internal_login']
       }}
     >
       <App />
     </AuthProvider>
-  </StrictMode>,
 );

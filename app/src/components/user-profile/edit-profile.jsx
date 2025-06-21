@@ -19,22 +19,22 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useAuthContext } from "@asgardeo/auth-react";
+import { useSnackbar } from "notistack";
 import CountrySelect from "../country-select";
-import PasswordValidation from "../password-validation";
+import { environmentConfig } from "../../util/environment-util";
 
 const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
+  const { enqueueSnackbar } = useSnackbar();
 
   const { httpRequest } = useAuthContext();
 
-  const [ passwordVisible, setPasswordVisible ] = useState(false);
   const [ formData, setFormData ] = useState({
     givenName: "",
     familyName: "",
     dob: "",
     email: "",
     mobile: "",
-    country: "",
-    password: ""
+    country: ""
   });
 
   const request = requestConfig =>
@@ -50,8 +50,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         dob: userInfo.birthdate || "",
         email: userInfo.email || "",
         mobile: userInfo.mobile || "",
-        country: userInfo.country || "",
-        password: ""
+        country: userInfo.country || ""
       });
     }
   }, [ userInfo ]);
@@ -78,17 +77,13 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
       if (formData.mobile.trim() !== "") {
         valuePayload.phoneNumbers = [{ type: "mobile", value: formData.mobile }];
       }
-    
+
       if (formData.dob.trim() !== "") {
         valuePayload["urn:scim:wso2:schema"] = { dateOfBirth: formData.dob };
       }
 
-      if (formData.password.trim() !== "") {
-        valuePayload.password = formData.password;
-      }
-
       if (formData.country.trim() !== "") {
-        valuePayload["urn:scim:wso2:schema"] = { country: formData.country };      
+        valuePayload["urn:scim:wso2:schema"] = { country: formData.country };
       }
 
       if (Object.keys(valuePayload).length > 0) {
@@ -97,7 +92,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
 
       // If no fields were updated, return early
       if (operations.length === 0) {
-        alert("No changes made.");
+        enqueueSnackbar("No fields were updated", { variant: "info" });
         return;
       }
 
@@ -113,16 +108,16 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
         },
         method: "PATCH",
         data: payload,
-        url: `${import.meta.env.VITE_REACT_APP_ASGARDEO_BASE_URL}/scim2/Me`
+        url: `${environmentConfig.ASGARDEO_BASE_URL}/scim2/Me`
       });
-    
+
       if (response.status == 200) {
-        alert("Profile updated successfully");
+        enqueueSnackbar("Profile updated successfully", { variant: "success" });
         onUpdateSuccess();
       }
     } catch (error) {
-      alert("Profile update failed: " + (error.detail || error));
-      console.log(error);
+      enqueueSnackbar("Something went wrong while updating profile", { variant: "error" });
+      console.error(error);
     }
   };
 
@@ -168,21 +163,6 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
                         <CountrySelect
                           value={formData.country}
                           onChange={(value) => setFormData({ ...formData, country: value.label })} />
-                      </li>
-                      <li>
-                        <label>Password:</label>
-                        <div className="password-field-wrapper with-icon">
-                          <i className={ `icon fa ${ passwordVisible ? "fa-eye" : "fa-eye-slash" }` } onClick={() => setPasswordVisible(!passwordVisible)}></i>
-                          <input
-                            type={ passwordVisible ? "text" : "password" }
-                            className="password-field"
-                            name="password"
-                            placeholder="New Password (Optional)"
-                            value={formData.password}
-                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                          />
-                          <PasswordValidation password={formData.password} />
-                        </div>
                       </li>
                     </ul>
 
