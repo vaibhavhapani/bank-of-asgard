@@ -4,17 +4,19 @@
 
 1. Register an organization with Asgardeo.
 2. Create a [custom attribute](https://wso2.com/asgardeo/docs/guides/users/attributes/manage-attributes/) with the name `accountType` and add it to the Profile scope. Additionally, include the country attribute in the profile scope too.
-3. Create a SPA application.
+3. Create another [custom attribute](https://wso2.com/asgardeo/docs/guides/users/attributes/manage-attributes/) with the name `isFirstLogin`.
+4. Enable the [Attribute Update Verification](https://wso2.com/asgardeo/docs/guides/users/attributes/user-attribute-change-verification/) for user email.
+5. Create a SPA application.
   * Enable the `Code` and `Refresh Grant` types
   * Add authorize redirect URL: `http://localhost:5173` and allowed origin: `http://localhost:5173`
   * Add the `country` and `accountType` to Profile scope navigating to `User Attributes & Stores` -> `Attributes` -> `OpenId Connect` -> `Scopes` -> `Profile` -> `New Attribute`.
   * Enable the following scopes and attributes within the client application created.  
     * `Profile - Country, First Name, Last Name, Username, Birth Date, AccountType; Email - email;  Phone - telephone; Address - country.`
-4. Enable the following authenticators within the client application:
+6. Enable the following authenticators within the client application:
   * `Identifier First` - First Step
   * `Username and Password`, `Passkey` - Second Step
   * `Totp` and `Email OTP` - Third Step
-5. Configure the following conditional authentication script (Replace the `<NODE_SERVER_BASE_PATH>` with server URL):
+7. Configure the following conditional authentication script (Replace the `<NODE_SERVER_BASE_PATH>` with server URL):
 ```js
 var moneyTransferThres = 10000;
 var riskEndpoint = "<NODE_SERVER_BASE_PATH>/risk"
@@ -171,19 +173,21 @@ var onLoginRequest = function(context) {
 };
 
 ```
-6. Create a standard web application and enable the following grant types:
+8. Create a standard web application and enable the following grant types:
   `Code`, `Client Credentials`
-7. Add the Authorized redirect URLs and allowed origins:
+9. Add the Authorized redirect URLs and allowed origins:
 redirect url: `https://localhost:5003`, allowed origin: `https://localhost:5003 http://localhost:5173`
 
-8. Enable API Authorization access for SCIM2 Users API with the scopes:
+10. Enable API Authorization access for SCIM2 Users API with the scopes:
 ```
 internal_user_mgt_create internal_user_mgt_list internal_user_mgt_view internal_user_mgt_delete internal_user_mgt_update
 ```
-9. Navigate to Connections -> Passkey Setup -> Add the Trusted Origins: `http://localhost:5173` and enable `Allow Passkey usernameless authentication` option. 
+11. Navigate to Connections -> Passkey Setup -> Add the Trusted Origins: `http://localhost:5173` and enable `Allow Passkey usernameless authentication` option.
 
- 10. Navigate to root directory and run `npm i`.
- 11. Create a copy of `app/public/config.example.js` inside the `app/public/` folder. And name it as `config.js`. Update the config values accordingly.
- 12. Navigate to `App_home/app` and execute `npm start` to run the application.
- 13. Navigate to `App_home/server` and execute `nodemon server.js` to run the server.
- 14. Test the application from registration of a personal and corporate account types.
+12. Configure [Onfido identity verification](https://wso2.com/asgardeo/docs/guides/identity-verification/add-identity-verification-with-onfido/) for your organization.
+
+13. Navigate to root directory and run `npm i`.
+14. Create a copy of `app/public/config.example.js` inside the `app/public/` folder. And name it as `config.js`. Update the [config values](docs/config-properties.md) accordingly.
+15. Navigate to `App_home/app` and execute `npm start` to run the application.
+16. Navigate to `App_home/server` and execute `nodemon server.js` to run the server.
+17. Test the application from registration of a personal and corporate account types.
