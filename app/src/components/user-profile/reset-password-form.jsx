@@ -78,6 +78,13 @@ const ResetPasswordForm = ({ username, onFormClosed }) => {
             return;
           }
 
+          if (error?.response?.status === 400) {
+            enqueueSnackbar("This password has been used in recent history. Please choose a different password.", {
+              variant: "error",
+            });
+            return;
+          }
+
           enqueueSnackbar("Something went wrong while resetting password", {
             variant: "error",
           });
