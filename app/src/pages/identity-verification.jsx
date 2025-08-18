@@ -17,6 +17,7 @@
  */
 
 import { useLocation } from "react-router";
+import { useAsgardeo } from "@asgardeo/react";
 import {
   completeVerification,
   initiateVerification,
@@ -32,6 +33,7 @@ import { useContext } from "react";
 import { IdentityVerificationContext } from "../context/identity-verification-provider";
 
 const IdentityVerificationPage = () => {
+  const { http } = useAsgardeo();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,9 +50,9 @@ const IdentityVerificationPage = () => {
       let response;
 
       if (reInitiate) {
-        response = await reinitiateVerification();
+        response = await reinitiateVerification(http);
       } else {
-        response = await initiateVerification();
+        response = await initiateVerification(http);
       }
 
       const token = response?.claims?.[0]?.claimMetadata?.sdk_token;
@@ -69,7 +71,7 @@ const IdentityVerificationPage = () => {
         useModal: false,
         token,
         onComplete: () => {
-          completeVerification()
+          completeVerification(http)
             .then(() => {
               enqueueSnackbar(
                 "Identity verification request is successfully submitted",

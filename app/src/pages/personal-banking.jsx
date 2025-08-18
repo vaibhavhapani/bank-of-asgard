@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import { useEffect } from "react";
 import { Link } from "react-router";
 import PropTypes from "prop-types";
@@ -30,7 +30,7 @@ import { ACCOUNT_TYPES, SITE_SECTIONS, ROUTES, URL_QUERY_PARAMS } from "../const
 
 const PersonalBankingPage = ({ setSiteSection }) => {
 
-  const { state } = useAuthContext();
+  const { isSignedIn } = useAsgardeo();
 
   useEffect(() => {
     setSiteSection(SITE_SECTIONS.PERSONAL);
@@ -102,7 +102,7 @@ const PersonalBankingPage = ({ setSiteSection }) => {
                     Step into a world of endless opportunity when shopping and banking online.
                     We&apos;re here to help you with smart and safe banking.
                   </p>
-                  { state.isAuthenticated ?
+                  { isSignedIn ?
                     (
                       <Link to={ ROUTES.PERSONAL_BANKING }>
                         View your account
@@ -129,7 +129,7 @@ const PersonalBankingPage = ({ setSiteSection }) => {
                     We&apos;re supporting smarter business by building future focused insights, 
                     and easier to use products and services that facilitate new ways to grow
                   </p>
-                  { state.isAuthenticated ?
+                  { isSignedIn ?
                     (
                       <Link to={ ROUTES.PERSONAL_BANKING }>
                         View your business account

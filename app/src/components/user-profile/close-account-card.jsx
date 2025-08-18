@@ -18,13 +18,13 @@
 
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import { useSnackbar } from "notistack";
 import Modal from "../common/modal";
 import { closeAccount } from "../../api/profile";
 
 const CloseAccountCard = ({ userId }) => {
-  const { signOut } = useAuthContext();
+  const { signOut } = useAsgardeo();
   const { enqueueSnackbar } = useSnackbar();
 
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);

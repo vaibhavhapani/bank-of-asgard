@@ -18,7 +18,7 @@
 
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import { useSnackbar } from "notistack";
 import CountrySelect from "../country-select";
 import { environmentConfig } from "../../util/environment-util";
@@ -26,7 +26,7 @@ import { environmentConfig } from "../../util/environment-util";
 const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
   const { enqueueSnackbar } = useSnackbar();
 
-  const { httpRequest } = useAuthContext();
+  const { isSignedIn, http } = useAsgardeo();
 
   const [ formData, setFormData ] = useState({
     givenName: "",
@@ -38,7 +38,7 @@ const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
   });
 
   const request = requestConfig =>
-    httpRequest(requestConfig)
+    http.request(requestConfig)
       .then(response => response)
       .catch(error => error);
 

@@ -17,7 +17,7 @@
  */
 
 import { useState } from "react";
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import { useEffect } from "react";
 import { useLocation } from "react-router";
 import { useContext } from "react";
@@ -30,7 +30,7 @@ const TransferFundsVerifyPage = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
 
-  const { state, signIn, updateConfig } = useAuthContext();
+  const { isSignedIn, signIn, updateConfig } = useAsgardeo();
   const { bankAccountData, updateBalance } = useContext(BankAccountContext);
 
   const [isTransferInprogress, setIsTransferInprogress] = useState(true);
@@ -41,7 +41,7 @@ const TransferFundsVerifyPage = () => {
   const { amount, receiver, description } = stateParam || {};
 
   useEffect(() => {
-    if (!state.isAuthenticated) {
+    if (!isSignedIn) {
       updateConfig({
         signInRedirectURL: window.location.origin + window.location.pathname,
       }).then(() => {
@@ -56,7 +56,7 @@ const TransferFundsVerifyPage = () => {
         setIsTransferInprogress(false);
       }, 5000);
     }
-  }, [state.isAuthenticated]);
+  }, [isSignedIn]);
 
   const generateTransactionId = (length = 10) => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -85,7 +85,7 @@ const TransferFundsVerifyPage = () => {
     );
   }
 
-  if (!state.isAuthenticated || isTransferInprogress) {
+  if (!isSignedIn || isTransferInprogress) {
     return (
       <div className="transfer-funds-verify-page">
         <div className="content transfer-pending-content">

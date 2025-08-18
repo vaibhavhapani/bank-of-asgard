@@ -1,7 +1,7 @@
 import { FEATURE_MAP } from "../constants/feature-constants";
 import { createContext, useState } from "react";
 import { environmentConfig, isFeatureEnabled } from "../util/environment-util";
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import { useSnackbar } from "notistack";
 import { useEffect } from "react";
 import { getVerificationStatus } from "../api/identity-verification";
@@ -17,7 +17,7 @@ const IdentityVerificationProvider = ({ children }) => {
 
   const verifiableClaims = environmentConfig.IDENTITY_VERIFICATION_CLAIMS || [];
 
-  const { state } = useAuthContext();
+  const { isSignedIn, http } = useAsgardeo();
   const { enqueueSnackbar } = useSnackbar();
 
   const [isIdVStatusLoading, setIsIdVStatusLoading] = useState(true);
@@ -26,7 +26,7 @@ const IdentityVerificationProvider = ({ children }) => {
   const fetchIdentityVerificationStatus = async () => {
     setIsIdVStatusLoading(true);
     try {
-      const response = await getVerificationStatus();
+      const response = await getVerificationStatus(http);
       setIdvClaims(response);
     } catch (error) {
       console.error(error);
@@ -42,12 +42,12 @@ const IdentityVerificationProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!isIdentityVerificationEnabled || !state.isAuthenticated) {
+    if (!isIdentityVerificationEnabled || !isSignedIn) {
       return;
     }
 
     fetchIdentityVerificationStatus();
-  }, [state.isAuthenticated]);
+  }, [isSignedIn]);
 
   const identityVerificationStatus = useMemo(() => {
     if (idvClaims) {
