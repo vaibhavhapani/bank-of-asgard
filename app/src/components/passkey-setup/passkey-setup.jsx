@@ -21,7 +21,7 @@ import { useAsgardeo } from "@asgardeo/react";
 import { environmentConfig } from "../../util/environment-util";
 
 const PasskeySetup = () => {
-    const {isSignedIn, http } = useAsgardeo();
+    const { isSignedIn, http } = useAsgardeo();
     const [passkeys, setPasskeys] = useState([]);
     const [error, setError] = useState(null);
 

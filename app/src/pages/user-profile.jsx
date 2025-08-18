@@ -28,7 +28,7 @@ import { useContext } from "react";
 import { IdentityVerificationContext } from "../context/identity-verification-provider";
 
 const UserProfilePage = ({ setSiteSection }) => {
-  const {isSignedIn, state, signIn, http } = useAsgardeo();
+  const { isSignedIn, signIn, http } = useAsgardeo();
   const { isIdentityVerificationEnabled, reloadIdentityVerificationStatus } = useContext(IdentityVerificationContext);
 
   const [userInfo, setUserInfo] = useState(null);

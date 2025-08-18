@@ -18,9 +18,6 @@
 import { environmentConfig } from "../util/environment-util";
 import { transformValidationRules } from "../util/password-validation-util";
 
-/**
- * Get an axios instance.
- */
 export const getPasswordPolicy = (http) => {
   const requestConfig = {
     method: "GET",

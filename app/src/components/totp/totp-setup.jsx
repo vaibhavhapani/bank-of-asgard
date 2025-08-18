@@ -22,7 +22,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import { environmentConfig } from "../../util/environment-util";
 
 const TotpSetup = () => {
-    const {isSignedIn, http } = useAsgardeo();
+    const { isSignedIn, http } = useAsgardeo();
     const [qrCodeUrl, setQrCodeUrl] = useState(null);
     const [decodedQrCodeUrl, setDecodedQrCodeUrl] = useState(null);
     const [error, setError] = useState(null);

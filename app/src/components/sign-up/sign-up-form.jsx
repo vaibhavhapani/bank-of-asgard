@@ -27,7 +27,7 @@ import PasswordField from "../common/password-field";
 import { useSnackbar } from "notistack";
 
 const SignUpForm = ({ accountType }) => {
-  const {isSignedIn, signIn, http } = useAsgardeo();
+  const { isSignedIn, signIn, http } = useAsgardeo();
   const { enqueueSnackbar } = useSnackbar();
 
   const [signupData, setSignupData] = useState({

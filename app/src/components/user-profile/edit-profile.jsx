@@ -26,7 +26,7 @@ import { environmentConfig } from "../../util/environment-util";
 const EditProfile = ({ userInfo, onUpdateSuccess, onCancel }) => {
   const { enqueueSnackbar } = useSnackbar();
 
-  const {isSignedIn, http } = useAsgardeo();
+  const { isSignedIn, http } = useAsgardeo();
 
   const [ formData, setFormData ] = useState({
     givenName: "",
