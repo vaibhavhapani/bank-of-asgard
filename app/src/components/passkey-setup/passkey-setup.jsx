@@ -17,16 +17,16 @@
  */
 
 import { useState, useEffect } from "react";
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import { environmentConfig } from "../../util/environment-util";
 
 const PasskeySetup = () => {
-    const { httpRequest } = useAuthContext();
+    const {isSignedIn, http } = useAsgardeo();
     const [passkeys, setPasskeys] = useState([]);
     const [error, setError] = useState(null);
 
     const request = requestConfig =>
-        httpRequest(requestConfig)
+        http.request(requestConfig)
             .then(response => response)
             .catch(error => error);
 

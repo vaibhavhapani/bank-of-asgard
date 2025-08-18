@@ -16,22 +16,16 @@
  * under the License.
  */
 
-import { AuthProvider } from "@asgardeo/auth-react";
+import { AsgardeoProvider } from "@asgardeo/react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { environmentConfig } from "./util/environment-util";
 
 createRoot(document.getElementById('root')).render(
-    <AuthProvider
-      config={{
-        signInRedirectURL: `${environmentConfig.APP_BASE_URL}`,
-        signOutRedirectURL: `${environmentConfig.APP_BASE_URL}`,
-        clientID: `${environmentConfig.APP_CLIENT_ID}`,
-        baseUrl: `${environmentConfig.ASGARDEO_BASE_URL}`,
-        resourceServerURLs: [`${environmentConfig.API_BASE_URL}`],
-        scope: ['openid', 'address', 'email', 'phone', 'profile', 'internal_login']
-      }}
+    <AsgardeoProvider
+      clientId={`${environmentConfig.APP_CLIENT_ID}`}
+      baseUrl={`${environmentConfig.ASGARDEO_BASE_URL}`}
     >
       <App />
-    </AuthProvider>
+    </AsgardeoProvider>
 );

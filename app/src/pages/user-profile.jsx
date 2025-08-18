@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import EditProfile from "../components/user-profile/edit-profile";
 import ViewProfile from "../components/user-profile/view-profile";
 import { ACCOUNT_TYPES, SITE_SECTIONS } from "../constants/app-constants";
@@ -28,19 +28,19 @@ import { useContext } from "react";
 import { IdentityVerificationContext } from "../context/identity-verification-provider";
 
 const UserProfilePage = ({ setSiteSection }) => {
-  const { state, signIn, httpRequest } = useAuthContext();
+  const {isSignedIn, state, signIn, http } = useAsgardeo();
   const { isIdentityVerificationEnabled, reloadIdentityVerificationStatus } = useContext(IdentityVerificationContext);
 
   const [userInfo, setUserInfo] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false);
 
   const request = (requestConfig) =>
-    httpRequest(requestConfig)
+    http.request(requestConfig)
       .then((response) => response)
       .catch((error) => error);
 
   useEffect(() => {
-    if (!state.isAuthenticated) {
+    if (!isSignedIn) {
       signIn();
     }
   }, []);

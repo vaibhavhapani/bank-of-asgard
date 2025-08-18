@@ -15,13 +15,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import { AsgardeoSPAClient } from "@asgardeo/auth-react";
 import { environmentConfig } from "../util/environment-util";
-
-const spaClient = AsgardeoSPAClient.getInstance();
-
-export const getVerificationStatus = async () => {
+export const getVerificationStatus = async (http) => {
   const requestConfig = {
       url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v1/me/idv/claims`,
       method: "GET",
@@ -30,7 +25,7 @@ export const getVerificationStatus = async () => {
       }
   }
 
-  return spaClient.httpRequest(requestConfig)
+  return http.request(requestConfig)
       .then((response) => {
           return response.data;
       })
@@ -39,15 +34,15 @@ export const getVerificationStatus = async () => {
       });
 }
 
-export const initiateVerification = async () => {
+export const initiateVerification = async (http) => {
   return updateVerificationStatus("INITIATED");
 }
 
-export const completeVerification = async () => {
+export const completeVerification = async (http) => {
   return updateVerificationStatus("COMPLETED");
 }
 
-export const reinitiateVerification = async () => {
+export const reinitiateVerification = async (http) => {
   return updateVerificationStatus("REINITIATED");
 }
 
@@ -71,7 +66,7 @@ const updateVerificationStatus = async (status) => {
       }
   }
 
-  return spaClient.httpRequest(requestConfig)
+  return http.request(requestConfig)
       .then((response) => {
           return response.data;
       })

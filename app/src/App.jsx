@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import { lazy, Suspense, useState } from "react";
 import {
   BrowserRouter as Router,
@@ -39,7 +39,7 @@ import IdentityVerificationPage from "./pages/identity-verification";
 import { IdentityVerificationProvider } from "./context/identity-verification-provider";
 
 const App = () => {
-  const { state, signIn, signOut } = useAuthContext();
+  const { isSignedIn, signIn, signOut } = useAsgardeo();
   const [ siteSection, setSiteSection ] = useState("");
 
   const TransferFundsPage = lazy(() => import("./pages/transfer-funds"));
@@ -69,7 +69,7 @@ const App = () => {
                 </NavLink> */}
               </span>
               <span>
-                { state.isAuthenticated ?
+                { isSignedIn ?
                   (
                     <>
                         {/* <span className="login_details">Welcome, { state.username }!</span> */}
@@ -177,12 +177,12 @@ const App = () => {
       <Routes>
         {/* <Route path={ ROUTES.BUSINESS_BANKING } element={ <BusinessBankingPage setSiteSection={ setSiteSection } /> } /> */}
         <Route path={ ROUTES.REGISTER_ACCOUNT } element={ <RegisterAccountPage setSiteSection={ setSiteSection } /> } />
-        { state.isAuthenticated &&
+        { isSignedIn &&
           <Route path={ ROUTES.USER_PROFILE } element={ <UserProfilePage setSiteSection={ setSiteSection } /> } />
         }
         {/* <Route path="/" element={ <Navigate to={ ROUTES.PERSONAL_BANKING } setSiteSection={ setSiteSection } /> } /> */}
         <Route path="/" element={
-          state.isAuthenticated ?
+          isSignedIn ?
             (
               <UserProfilePage setSiteSection={ setSiteSection } />
             ) : (
@@ -190,7 +190,7 @@ const App = () => {
             )
         } />
         {
-          state.isAuthenticated &&
+          isSignedIn &&
             <Route
               path={ROUTES.FUND_TRANSFER}
               element={
