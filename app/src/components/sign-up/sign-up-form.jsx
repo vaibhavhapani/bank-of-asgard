@@ -45,7 +45,7 @@ const SignUpForm = ({ accountType }) => {
   const [isNewPasswordValid, setIsNewPasswordValid] = useState(false);
 
   useEffect(() => {
-    getPasswordPolicy(http)
+    getPasswordPolicy()
       .then((response) => {
         setPasswordValidationRules(response);
       })

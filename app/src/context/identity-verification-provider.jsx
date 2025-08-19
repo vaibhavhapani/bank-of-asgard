@@ -26,7 +26,7 @@ const IdentityVerificationProvider = ({ children }) => {
   const fetchIdentityVerificationStatus = async () => {
     setIsIdVStatusLoading(true);
     try {
-      const response = await getVerificationStatus(http);
+      const response = await getVerificationStatus();
       setIdvClaims(response);
     } catch (error) {
       console.error(error);
