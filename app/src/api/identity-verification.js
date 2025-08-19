@@ -16,7 +16,9 @@
  * under the License.
  */
 import { environmentConfig } from "../util/environment-util";
-export const getVerificationStatus = async (http) => {
+import { http } from '@asgardeo/react';
+
+export const getVerificationStatus = async () => {
   const requestConfig = {
       url: `${environmentConfig.ASGARDEO_BASE_URL}/api/users/v1/me/idv/claims`,
       method: "GET",
@@ -34,15 +36,15 @@ export const getVerificationStatus = async (http) => {
       });
 }
 
-export const initiateVerification = async (http) => {
+export const initiateVerification = async () => {
   return updateVerificationStatus("INITIATED");
 }
 
-export const completeVerification = async (http) => {
+export const completeVerification = async () => {
   return updateVerificationStatus("COMPLETED");
 }
 
-export const reinitiateVerification = async (http) => {
+export const reinitiateVerification = async () => {
   return updateVerificationStatus("REINITIATED");
 }
 

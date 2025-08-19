@@ -17,8 +17,9 @@
  */
 import { environmentConfig } from "../util/environment-util";
 import { transformValidationRules } from "../util/password-validation-util";
+import { http } from '@asgardeo/react';
 
-export const getPasswordPolicy = (http) => {
+export const getPasswordPolicy = () => {
   const requestConfig = {
     method: "GET",
     url: `${environmentConfig.ASGARDEO_BASE_URL}/api/server/v1/validation-rules`,

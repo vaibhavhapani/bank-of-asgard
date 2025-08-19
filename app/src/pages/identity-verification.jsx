@@ -50,9 +50,9 @@ const IdentityVerificationPage = () => {
       let response;
 
       if (reInitiate) {
-        response = await reinitiateVerification(http);
+        response = await reinitiateVerification();
       } else {
-        response = await initiateVerification(http);
+        response = await initiateVerification();
       }
 
       const token = response?.claims?.[0]?.claimMetadata?.sdk_token;
@@ -71,7 +71,7 @@ const IdentityVerificationPage = () => {
         useModal: false,
         token,
         onComplete: () => {
-          completeVerification(http)
+          completeVerification()
             .then(() => {
               enqueueSnackbar(
                 "Identity verification request is successfully submitted",
