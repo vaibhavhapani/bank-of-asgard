@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { useAsgardeo } from "@asgardeo/react";
+import { useAsgardeo, SignedIn, SignOutButton, SignedOut, SignInButton } from "@asgardeo/react";
 import { lazy, Suspense, useState } from "react";
 import {
   BrowserRouter as Router,
@@ -69,32 +69,18 @@ const App = () => {
                 </NavLink> */}
               </span>
               <span>
-                { isSignedIn ?
-                  (
-                    <>
-                        {/* <span className="login_details">Welcome, { state.username }!</span> */}
-                        {/* <Link to={ ROUTES.USER_PROFILE }>
-                          <span>
-                            My Banking
-                          </span>
-                        </Link> */}
-                        <button className="login_link" onClick={ () => signOut() }>
-                            Logout
-                        </button>
-                    </>
-                  ) : (
-                    <>
-                      <Link to={ ROUTES.REGISTER_ACCOUNT } className="register_link">
-                        <span>
-                          Open an account
-                        </span>
-                      </Link>
-                      <button className="login_link" onClick={ () => signIn() }>
-                          Login
-                      </button>
-                    </>
-                  )
-                }
+                <SignedIn>
+                  <SignOutButton className="login_link">Logout</SignOutButton>
+                </SignedIn>
+
+                <SignedOut>
+                  <Link to={ ROUTES.REGISTER_ACCOUNT } className="register_link">
+                    <span>
+                        Open an account
+                    </span>
+                  </Link>
+                  <SignInButton className="login_link">Login</SignInButton>
+                </SignedOut>
               </span>
             </div>
           </div>

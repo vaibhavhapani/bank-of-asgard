@@ -25,6 +25,22 @@ createRoot(document.getElementById('root')).render(
     <AsgardeoProvider
       clientId={`${environmentConfig.APP_CLIENT_ID}`}
       baseUrl={`${environmentConfig.ASGARDEO_BASE_URL}`}
+      preferences={{
+        theme: {
+          overrides: {
+            borderRadius: {
+              small: '0',
+              medium: '0',
+              large: '0'
+            },
+            colors: {
+              primary: {
+                main: 'var(--primary-2)'
+              }
+            }
+          }
+        }
+      }}
     >
       <App />
     </AsgardeoProvider>

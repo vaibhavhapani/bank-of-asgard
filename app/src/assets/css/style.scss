@@ -9,6 +9,10 @@ $verifyButtonTextColor: $white;
 $dangerolor: #6b0606;
 $successColor: #1e7e34;
 
+:root {
+  --primary-2: #{$primary2};
+}
+
 // import fonts
 
 // fontAwesome
@@ -139,10 +143,10 @@ button {
 .login_link, .login_link:hover, .login_link:focus {
   color: $white;
   background-color: $primary2;
-  outline: 1px;
-  border: none;
+  outline: 1px !important;
+  border: none !important;
   margin-left: 20px;
-  padding: 4px 20px;
+  padding: 4px 20px !important;
   display: inline-block;
   border-radius: 0;
 }
