@@ -17,6 +17,7 @@
  */
 
 import { useLocation } from "react-router";
+import { useAsgardeo } from "@asgardeo/react";
 import {
   completeVerification,
   initiateVerification,
@@ -32,6 +33,7 @@ import { useContext } from "react";
 import { IdentityVerificationContext } from "../context/identity-verification-provider";
 
 const IdentityVerificationPage = () => {
+  const { http } = useAsgardeo();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const location = useLocation();

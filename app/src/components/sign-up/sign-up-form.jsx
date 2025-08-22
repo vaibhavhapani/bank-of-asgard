@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -27,7 +27,7 @@ import PasswordField from "../common/password-field";
 import { useSnackbar } from "notistack";
 
 const SignUpForm = ({ accountType }) => {
-  const { signIn } = useAuthContext();
+  const { isSignedIn, signIn, http } = useAsgardeo();
   const { enqueueSnackbar } = useSnackbar();
 
   const [signupData, setSignupData] = useState({

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo, SignedIn, SignOutButton, SignedOut, SignInButton } from "@asgardeo/react";
 import { lazy, Suspense, useState } from "react";
 import {
   BrowserRouter as Router,
@@ -39,7 +39,7 @@ import IdentityVerificationPage from "./pages/identity-verification";
 import { IdentityVerificationProvider } from "./context/identity-verification-provider";
 
 const App = () => {
-  const { state, signIn, signOut } = useAuthContext();
+  const { isSignedIn, signIn, signOut } = useAsgardeo();
   const [ siteSection, setSiteSection ] = useState("");
 
   const TransferFundsPage = lazy(() => import("./pages/transfer-funds"));
@@ -69,32 +69,18 @@ const App = () => {
                 </NavLink> */}
               </span>
               <span>
-                { state.isAuthenticated ?
-                  (
-                    <>
-                        {/* <span className="login_details">Welcome, { state.username }!</span> */}
-                        {/* <Link to={ ROUTES.USER_PROFILE }>
-                          <span>
-                            My Banking
-                          </span>
-                        </Link> */}
-                        <button className="login_link" onClick={ () => signOut() }>
-                            Logout
-                        </button>
-                    </>
-                  ) : (
-                    <>
-                      <Link to={ ROUTES.REGISTER_ACCOUNT } className="register_link">
-                        <span>
-                          Open an account
-                        </span>
-                      </Link>
-                      <button className="login_link" onClick={ () => signIn() }>
-                          Login
-                      </button>
-                    </>
-                  )
-                }
+                <SignedIn>
+                  <SignOutButton className="login_link">Logout</SignOutButton>
+                </SignedIn>
+
+                <SignedOut>
+                  <Link to={ ROUTES.REGISTER_ACCOUNT } className="register_link">
+                    <span>
+                        Open an account
+                    </span>
+                  </Link>
+                  <SignInButton className="login_link">Login</SignInButton>
+                </SignedOut>
               </span>
             </div>
           </div>
@@ -177,12 +163,12 @@ const App = () => {
       <Routes>
         {/* <Route path={ ROUTES.BUSINESS_BANKING } element={ <BusinessBankingPage setSiteSection={ setSiteSection } /> } /> */}
         <Route path={ ROUTES.REGISTER_ACCOUNT } element={ <RegisterAccountPage setSiteSection={ setSiteSection } /> } />
-        { state.isAuthenticated &&
+        { isSignedIn &&
           <Route path={ ROUTES.USER_PROFILE } element={ <UserProfilePage setSiteSection={ setSiteSection } /> } />
         }
         {/* <Route path="/" element={ <Navigate to={ ROUTES.PERSONAL_BANKING } setSiteSection={ setSiteSection } /> } /> */}
         <Route path="/" element={
-          state.isAuthenticated ?
+          isSignedIn ?
             (
               <UserProfilePage setSiteSection={ setSiteSection } />
             ) : (
@@ -190,7 +176,7 @@ const App = () => {
             )
         } />
         {
-          state.isAuthenticated &&
+          isSignedIn &&
             <Route
               path={ROUTES.FUND_TRANSFER}
               element={

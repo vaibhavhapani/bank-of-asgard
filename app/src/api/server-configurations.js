@@ -15,15 +15,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import { AsgardeoSPAClient } from "@asgardeo/auth-react";
 import { environmentConfig } from "../util/environment-util";
 import { transformValidationRules } from "../util/password-validation-util";
-
-/**
- * Get an axios instance.
- */
-const spaClient = AsgardeoSPAClient.getInstance();
+import { http } from '@asgardeo/react';
 
 export const getPasswordPolicy = () => {
   const requestConfig = {
@@ -31,8 +25,7 @@ export const getPasswordPolicy = () => {
     url: `${environmentConfig.ASGARDEO_BASE_URL}/api/server/v1/validation-rules`,
   };
 
-  return spaClient
-    .httpRequest(requestConfig)
+  return http.request(requestConfig)
     .then((response) => {
       const data = response.data;
 

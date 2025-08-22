@@ -17,12 +17,12 @@
  */
 
 import { useState, useEffect } from "react";
-import { useAuthContext } from "@asgardeo/auth-react";
+import { useAsgardeo } from "@asgardeo/react";
 import { QRCodeCanvas } from "qrcode.react";
 import { environmentConfig } from "../../util/environment-util";
 
 const TotpSetup = () => {
-    const { httpRequest } = useAuthContext();
+    const { isSignedIn, http } = useAsgardeo();
     const [qrCodeUrl, setQrCodeUrl] = useState(null);
     const [decodedQrCodeUrl, setDecodedQrCodeUrl] = useState(null);
     const [error, setError] = useState(null);
@@ -32,7 +32,7 @@ const TotpSetup = () => {
     const [totpEnabled, setTotpEnabled] = useState(false);
 
     const request = requestConfig =>
-        httpRequest(requestConfig)
+        http.request(requestConfig)
             .then(response => response)
             .catch(error => error);
 
