@@ -6,8 +6,8 @@ This file contains runtime environment-specific settings used by the frontend ap
 
 | Key                               | Description                                                                 |
 |-----------------------------------|-----------------------------------------------------------------------------|
-| `API_BASE_URL`                    | Base URL for initiating API requests (e.g., via an API Gateway or proxy). Example: `https://api.example.io` |
-| `API_SERVICE_URL`                 | Full endpoint to reach backend services directly. Typically includes path/versioning. Example: `https://api.example.io/default/server/v1.0` |
+| `API_BASE_URL`                    | Base URL for initiating API requests (e.g., via an API Gateway or proxy). Example: `https://api.example.io`. For the local setup, this is the URL where the backend server is hosted. |
+| `API_SERVICE_URL`                 | Full endpoint to reach backend services directly. Typically includes path/versioning. Example: `https://api.example.io/default/server/v1.0`. For the local setup, use the server URL without path/versioning. |
 | `APP_BASE_URL`                    | Base URL where the frontend app is hosted.                                 |
 | `ASGARDEO_BASE_URL`               | Asgardeo tenant URL for authentication. |
 | `APP_CLIENT_ID`                   | OAuth/OpenID client ID for the app.                         |

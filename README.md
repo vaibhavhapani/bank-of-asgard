@@ -186,8 +186,10 @@ internal_user_mgt_create internal_user_mgt_list internal_user_mgt_view internal_
 
 12. Configure [Onfido identity verification](https://wso2.com/asgardeo/docs/guides/identity-verification/add-identity-verification-with-onfido/) for your organization.
 
-13. Navigate to root directory and run `npm i`.
-14. Create a copy of `app/public/config.example.js` inside the `app/public/` folder. And name it as `config.js`. Update the [config values](docs/config-properties.md) accordingly.
-15. Navigate to `App_home/app` and execute `npm start` to run the application.
-16. Navigate to `App_home/server` and execute `nodemon server.js` to run the server.
-17. Test the application from registration of a personal and corporate account types.
+13. Create a copy of `app/public/config.example.js` inside the `app/public/` folder. And name it as `config.js`. Update the [config values](docs/config-properties.md) accordingly.
+14. Navigate to `App_home/app` and run `npm i`.
+15. From within the `App_home/app` directory, execute `npm start` to run the application.
+16. Create a copy of `server/.env.example` inside the `server/` folder. And name it as `.env`. Update the according to the commented instructions.
+17. Navigate to `App_home/server` and run `npm i`.
+18. From within the `App_home/server` directory, execute `nodemon server.js` to run the server.
+19. Test the application from registration of a personal and corporate account types.
