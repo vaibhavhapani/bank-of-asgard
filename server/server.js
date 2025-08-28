@@ -16,31 +16,15 @@
  * under the License.
  */
 
-import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import axios from "axios";
-import https from "https";
 import pino from "pino";
 
-dotenv.config();
+import { getAccessToken } from "./auth.js";
+import { addUserToAdminRole, createOrganization, getAdminRoleIdInOrganization, getUserIdInOrganization, isBusinessNameAvailable } from "./business.js"
+import { agent, ASGARDEO_BASE_URL_SCIM2, GEO_API_KEY, HOST, PORT, USER_STORE_NAME, VITE_REACT_APP_CLIENT_BASE_URL } from "./config.js";
 
-const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || "localhost";
-const ASGARDEO_BASE_URL = process.env.ASGARDEO_BASE_URL;
-const CLIENT_ID = process.env.SERVER_APP_CLIENT_ID;
-const CLIENT_SECRET = process.env.SERVER_APP_CLIENT_SECRET;
-const TOKEN_ENDPOINT = process.env.ASGARDEO_TOKEN_ENDPOINT;
-const GEO_API_KEY = process.env.GEO_API_KEY;
-const ASGARDEO_BASE_URL_SCIM2 = ASGARDEO_BASE_URL + "/scim2";
-const VITE_REACT_APP_CLIENT_BASE_URL =
-  process.env.VITE_REACT_APP_CLIENT_BASE_URL;
-const userStoreName = process.env.USER_STORE_NAME || "PRIMARY";
-
-// Added to compress self signed cert validation
-const agent = new https.Agent({
-  rejectUnauthorized: false, // Disable SSL certificate validation
-});
 const corsOptions = {
   origin: [VITE_REACT_APP_CLIENT_BASE_URL],
   allowedHeaders: [
@@ -74,23 +58,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// In-memory storage for token data
-let tokenData = {
-  access_token: null,
-  scope: null,
-  token_type: null,
-  expires_in: null,
-  expires_at: null, // expiration time to request new token
-};
-
-// In-memory storage for organization token data
-let orgTokenCache = {};
-
-const getAuthHeader = () => {
-  const authString = `${CLIENT_ID}:${CLIENT_SECRET}`;
-  return "Basic " + Buffer.from(authString).toString("base64");
-};
-
 app.get("/health", (req, res) => {
   res.json({ status: "OK" });
 });
@@ -116,7 +83,7 @@ async function createUser(userData) {
     `${ASGARDEO_BASE_URL_SCIM2}/Users`,
     {
       schemas: [],
-      userName: `${userStoreName}/${username}`,
+      userName: `${USER_STORE_NAME}/${username}`,
       password: password,
       emails: [
         {
@@ -153,134 +120,6 @@ async function createUser(userData) {
   );
   return response;
 };
-
-async function isBusinessNameAvailable(businessName) {
-
-  console.log(`Checking if business name ${businessName} is available`)
-  const token = await getAccessToken();
-
-  const response = await axios.post(
-    `${ASGARDEO_BASE_URL}/api/server/v1/organizations/check-name`,
-    { name: businessName },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      httpsAgent: agent,
-    }
-  );
-
-  return response.data.available;
-}
-
-async function createOrganization(businessName, creatorId, creatorUsername) {
-
-  const token = await getAccessToken();
-
-  const response = await axios.post(
-    `${ASGARDEO_BASE_URL}/api/server/v1/organizations`,
-    {
-      name: businessName,
-      attributes: [
-        { key: "creator.id", value: creatorId },
-        { key: "creator.username", value: creatorUsername },
-      ],
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      httpsAgent: agent,
-    }
-  );
-
-  return response;
-}
-
-async function getUserIdInOrganization(organizationId, username) {
-
-  const token = await getOrganizationToken(organizationId);
-
-  const response = await axios.get(
-    `${ASGARDEO_BASE_URL}/o/scim2/Users`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      params: {
-          filter: `userName eq ${username}`,
-        },
-      httpsAgent: agent,
-    }
-  );
-
-  const resources = response.data.Resources || [];
-  if (resources.length === 0) {
-    throw new Error("User not found in organization");
-  }
-  return resources[0].id;
-}
-
-async function getAdminRoleIdInOrganization(organizationId) {
-
-  const token = await getOrganizationToken(organizationId);
-
-  const response = await axios.get(
-    `${ASGARDEO_BASE_URL}/o/scim2/v2/Roles`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      params: {
-          filter: `displayName eq Business Administrator`,
-        },
-      httpsAgent: agent,
-    }
-  );
-  const resources = response.data.Resources || [];
-  if (resources.length === 0) {
-    throw new Error("Admin role not found in organization");
-  }
-  return resources[0].id;
-}
-
-async function addUserToAdminRole(organizationId, roleId, userId) {
-  const token = await getOrganizationToken(organizationId);
-
-  const response = await axios.patch(
-    `${ASGARDEO_BASE_URL}/o/scim2/v2/Roles/${roleId}`,
-    {
-      Operations: [
-        {
-          op: "add",
-          path: "users",
-          value: [
-            {
-              value: userId,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      httpsAgent: agent, // Attach the custom agents
-    }
-  );
-
-  return response.data;
-}
 
 app.post("/signup", async (req, res) => {
   try {
@@ -323,125 +162,6 @@ app.post("/business-signup", async (req, res) => {
   }
 });
 
-// Get a new token if expired or not available
-const getAccessToken = async () => {
-  const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-
-  if (
-    tokenData.access_token &&
-    tokenData.expires_at &&
-    currentTime < tokenData.expires_at
-  ) {
-    console.log(
-      `Using cached access token. Expires in ${
-        tokenData.expires_at - currentTime
-      } seconds.`
-    );
-    return tokenData.access_token;
-  }
-
-  console.log("Fetching new access token... ");
-
-  try {
-    const response = await axios.post(
-      TOKEN_ENDPOINT,
-      "grant_type=client_credentials&scope=internal_user_mgt_create internal_user_mgt_delete internal_user_mgt_update internal_user_mgt_view internal_organization_create internal_organization_view internal_organization_update internal_organization_delete",
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: getAuthHeader(),
-        },
-        httpsAgent: agent, // Attach the custom agent
-      }
-    );
-
-    const issuedAt = Math.floor(Date.now() / 1000); // Current timestamp in seconds
-    const expiresIn = response.data.expires_in; // Token validity duration in seconds
-
-    // Store the new token data with exact expiration time
-    tokenData = {
-      access_token: response.data.access_token,
-      scope: response.data.scope,
-      token_type: response.data.token_type,
-      expires_in: expiresIn,
-      expires_at: issuedAt + expiresIn, // Exact expiration timestamp
-    };
-
-    console.log(
-      `New access token received. Expires at ${new Date(
-        tokenData.expires_at * 1000
-      ).toISOString()}`
-    );
-    return tokenData.access_token;
-  } catch (error) {
-    console.log("Error fetching token:", error);
-    throw new Error("Failed to get access token");
-  }
-};
-
-const getOrganizationToken = async (switchingOrganizationId) => {
-  
-  const currentTime = Math.floor(Date.now() / 1000);
-  if (
-    orgTokenCache[switchingOrganizationId] &&
-    orgTokenCache[switchingOrganizationId].access_token &&
-    orgTokenCache[switchingOrganizationId].expires_at &&
-    currentTime < orgTokenCache[switchingOrganizationId].expires_at
-  ) {
-    console.log(
-      `Using cached token for org ${switchingOrganizationId}. Expires in ${
-        orgTokenCache[switchingOrganizationId].expires_at - currentTime
-      } seconds.`
-    );
-    return orgTokenCache[switchingOrganizationId].access_token;
-  }
-
-  try {
-    const rootToken = await getAccessToken();
-
-    console.log(`Fetching new switch token for organization ${switchingOrganizationId}... `);
-
-    const params = new URLSearchParams();
-    params.append("grant_type", "organization_switch");
-    params.append("token", rootToken);
-    params.append("switching_organization", switchingOrganizationId);
-    params.append(
-      "scope",
-      "internal_org_role_mgt_view internal_org_role_mgt_update internal_org_user_mgt_create internal_org_user_mgt_list internal_org_user_mgt_view"
-    );
-
-    const response = await axios.post(
-      TOKEN_ENDPOINT,
-      params.toString(),
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: getAuthHeader(),
-        },
-        httpsAgent: agent,
-      }
-    );
-
-    const expiresIn = response.data.expires_in; // in seconds
-    const issuedAt = Math.floor(Date.now() / 1000);
-
-    orgTokenCache[switchingOrganizationId] = {
-      access_token: response.data.access_token,
-      expires_at: issuedAt + expiresIn,
-    };
-
-    console.log(
-      `New token cached for org ${switchingOrganizationId}. Expires at ${new Date(
-        orgTokenCache[switchingOrganizationId].expires_at * 1000
-      ).toISOString()}`
-    );
-
-      return response.data.access_token;
-  } catch (error) {
-    console.log("Error fetching organization token:", error);
-    throw new Error("Failed to get organization token");
-  }
-};
 
 
 // IP geolocation request
