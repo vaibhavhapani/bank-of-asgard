@@ -83,6 +83,9 @@ let tokenData = {
   expires_at: null, // expiration time to request new token
 };
 
+// In-memory storage for organization token data
+let orgTokenCache = {};
+
 const getAuthHeader = () => {
   const authString = `${CLIENT_ID}:${CLIENT_SECRET}`;
   return "Basic " + Buffer.from(authString).toString("base64");
@@ -92,64 +95,231 @@ app.get("/health", (req, res) => {
   res.json({ status: "OK" });
 });
 
+async function createUser(userData) {
+  const {
+    username,
+    password,
+    email,
+    firstName,
+    lastName,
+    country,
+    accountType,
+    businessName,
+    dateOfBirth,
+    mobile,
+  } = userData;
+  console.log(`Creating ${accountType} user`)
+
+  const token = await getAccessToken();
+
+  const response = await axios.post(
+    `${ASGARDEO_BASE_URL_SCIM2}/Users`,
+    {
+      schemas: [],
+      userName: `${userStoreName}/${username}`,
+      password: password,
+      emails: [
+        {
+          value: email,
+          primary: true,
+        },
+      ],
+      name: {
+        givenName: firstName,
+        familyName: lastName,
+      },
+      "urn:scim:wso2:schema": {
+        country: country,
+        dateOfBirth: dateOfBirth,
+      },
+      phoneNumbers: [
+        {
+          type: "mobile",
+          value: mobile,
+        },
+      ],
+      "urn:scim:schemas:extension:custom:User": {
+        accountType: accountType,
+        ...(businessName ? { businessName } : {}), 
+      },
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      httpsAgent: agent, // Attach the custom agents
+    }
+  );
+  return response;
+};
+
+async function isBusinessNameAvailable(businessName) {
+
+  console.log(`Checking if business name ${businessName} is available`)
+  const token = await getAccessToken();
+
+  const response = await axios.post(
+    `${ASGARDEO_BASE_URL}/api/server/v1/organizations/check-name`,
+    { name: businessName },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      httpsAgent: agent,
+    }
+  );
+
+  return response.data.available;
+}
+
+async function createOrganization(businessName, creatorId, creatorUsername) {
+
+  const token = await getAccessToken();
+
+  const response = await axios.post(
+    `${ASGARDEO_BASE_URL}/api/server/v1/organizations`,
+    {
+      name: businessName,
+      attributes: [
+        { key: "creator.id", value: creatorId },
+        { key: "creator.username", value: creatorUsername },
+      ],
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      httpsAgent: agent,
+    }
+  );
+
+  return response;
+}
+
+async function getUserIdInOrganization(organizationId, username) {
+
+  const token = await getOrganizationToken(organizationId);
+
+  const response = await axios.get(
+    `${ASGARDEO_BASE_URL}/o/scim2/Users`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      params: {
+          filter: `userName eq ${username}`,
+        },
+      httpsAgent: agent,
+    }
+  );
+
+  const resources = response.data.Resources || [];
+  if (resources.length === 0) {
+    throw new Error("User not found in organization");
+  }
+  return resources[0].id;
+}
+
+async function getAdminRoleIdInOrganization(organizationId) {
+
+  const token = await getOrganizationToken(organizationId);
+
+  const response = await axios.get(
+    `${ASGARDEO_BASE_URL}/o/scim2/v2/Roles`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      params: {
+          filter: `displayName eq Business Administrator`,
+        },
+      httpsAgent: agent,
+    }
+  );
+  const resources = response.data.Resources || [];
+  if (resources.length === 0) {
+    throw new Error("Admin role not found in organization");
+  }
+  return resources[0].id;
+}
+
+async function addUserToAdminRole(organizationId, roleId, userId) {
+  const token = await getOrganizationToken(organizationId);
+
+  const response = await axios.patch(
+    `${ASGARDEO_BASE_URL}/o/scim2/v2/Roles/${roleId}`,
+    {
+      Operations: [
+        {
+          op: "add",
+          path: "users",
+          value: [
+            {
+              value: userId,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      httpsAgent: agent, // Attach the custom agents
+    }
+  );
+
+  return response.data;
+}
+
 app.post("/signup", async (req, res) => {
   try {
-    const {
-      username,
-      password,
-      email,
-      firstName,
-      lastName,
-      country,
-      accountType,
-      dateOfBirth,
-      mobile,
-    } = req.body;
-
-    const token = await getAccessToken();
-
-    const response = await axios.post(
-      `${ASGARDEO_BASE_URL_SCIM2}/Users`,
-      {
-        schemas: [],
-        userName: `${userStoreName}/${username}`,
-        password: password,
-        emails: [
-          {
-            value: email,
-            primary: true,
-          },
-        ],
-        name: {
-          givenName: firstName,
-          familyName: lastName,
-        },
-        "urn:scim:wso2:schema": {
-          country: country,
-          dateOfBirth: dateOfBirth,
-        },
-        phoneNumbers: [
-          {
-            type: "mobile",
-            value: mobile,
-          },
-        ],
-        "urn:scim:schemas:extension:custom:User": {
-          accountType: accountType,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        httpsAgent: agent, // Attach the custom agents
-      }
-    );
+    const response = await createUser(req.body);
     res.json({ message: "User registered successfully", data: response.data });
   } catch (error) {
     console.log("SCIM2 API Error:", error.detail || error.message);
     res.status(400).json({ error: error.detail || "Signup failed" });
+  }
+});
+
+app.post("/business-signup", async (req, res) => {
+  try {
+    const { businessName } = req.body;
+    const { username } = req.body;
+
+    const available = await isBusinessNameAvailable(businessName);
+    if (!available) {
+      return res.status(400).json({ error: "Business name is already taken" });
+    }
+
+    const userResponse = await createUser(req.body);
+    // Return a response and asynchronously continue with the remaining operations
+    res.json({
+      message: "Business user registered successfully",
+      user: userResponse.data
+    });
+
+    const creatorId = userResponse.data.id;
+    const orgResponse = await createOrganization(businessName, creatorId, username);
+    const organizationId = orgResponse.data.id;
+    
+    const orgUserId = await getUserIdInOrganization(organizationId, username);
+    const adminRoleId = await getAdminRoleIdInOrganization(organizationId);
+    addUserToAdminRole(organizationId, adminRoleId, orgUserId);
+  } catch (error) {
+    console.log(error)
+    console.error("Business signup error:", error.message);
+    res.status(400).json({ error: "Business signup failed" });
   }
 });
 
@@ -175,7 +345,7 @@ const getAccessToken = async () => {
   try {
     const response = await axios.post(
       TOKEN_ENDPOINT,
-      "grant_type=client_credentials&scope=internal_user_mgt_create internal_user_mgt_delete internal_user_mgt_update internal_user_mgt_view",
+      "grant_type=client_credentials&scope=internal_user_mgt_create internal_user_mgt_delete internal_user_mgt_update internal_user_mgt_view internal_organization_create internal_organization_view internal_organization_update internal_organization_delete",
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -208,6 +378,71 @@ const getAccessToken = async () => {
     throw new Error("Failed to get access token");
   }
 };
+
+const getOrganizationToken = async (switchingOrganizationId) => {
+  
+  const currentTime = Math.floor(Date.now() / 1000);
+  if (
+    orgTokenCache[switchingOrganizationId] &&
+    orgTokenCache[switchingOrganizationId].access_token &&
+    orgTokenCache[switchingOrganizationId].expires_at &&
+    currentTime < orgTokenCache[switchingOrganizationId].expires_at
+  ) {
+    console.log(
+      `Using cached token for org ${switchingOrganizationId}. Expires in ${
+        orgTokenCache[switchingOrganizationId].expires_at - currentTime
+      } seconds.`
+    );
+    return orgTokenCache[switchingOrganizationId].access_token;
+  }
+
+  try {
+    const rootToken = await getAccessToken();
+
+    console.log(`Fetching new switch token for organization ${switchingOrganizationId}... `);
+
+    const params = new URLSearchParams();
+    params.append("grant_type", "organization_switch");
+    params.append("token", rootToken);
+    params.append("switching_organization", switchingOrganizationId);
+    params.append(
+      "scope",
+      "internal_org_role_mgt_view internal_org_role_mgt_update internal_org_user_mgt_create internal_org_user_mgt_list internal_org_user_mgt_view"
+    );
+
+    const response = await axios.post(
+      TOKEN_ENDPOINT,
+      params.toString(),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: getAuthHeader(),
+        },
+        httpsAgent: agent,
+      }
+    );
+
+    const expiresIn = response.data.expires_in; // in seconds
+    const issuedAt = Math.floor(Date.now() / 1000);
+
+    orgTokenCache[switchingOrganizationId] = {
+      access_token: response.data.access_token,
+      expires_at: issuedAt + expiresIn,
+    };
+
+    console.log(
+      `New token cached for org ${switchingOrganizationId}. Expires at ${new Date(
+        orgTokenCache[switchingOrganizationId].expires_at * 1000
+      ).toISOString()}`
+    );
+
+      return response.data.access_token;
+  } catch (error) {
+    console.log("Error fetching organization token:", error);
+    throw new Error("Failed to get organization token");
+  }
+};
+
 
 // IP geolocation request
 app.post("/risk", async (req, res) => {

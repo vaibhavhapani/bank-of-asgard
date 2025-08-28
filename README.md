@@ -3,7 +3,9 @@
 # Instructions to use the application
 
 1. Register an organization with Asgardeo.
-2. Create a [custom attribute](https://wso2.com/asgardeo/docs/guides/users/attributes/manage-attributes/) with the name `accountType` and add it to the Profile scope. Additionally, include the country attribute in the profile scope too.
+2. Create the following [custom attributes](https://wso2.com/asgardeo/docs/guides/users/attributes/manage-attributes/)
+  - with the name `accountType` and add it to the Profile scope. Additionally, include the country attribute in the profile scope too.
+  - `businessName`
 3. Create another [custom attribute](https://wso2.com/asgardeo/docs/guides/users/attributes/manage-attributes/) with the name `isFirstLogin`.
 4. Enable the [Attribute Update Verification](https://wso2.com/asgardeo/docs/guides/users/attributes/user-attribute-change-verification/) for user email.
 5. Create a SPA application.
@@ -173,23 +175,43 @@ var onLoginRequest = function(context) {
 };
 
 ```
-8. Create a standard web application and enable the following grant types:
-  `Code`, `Client Credentials`
-9. Add the Authorized redirect URLs and allowed origins:
+8. Create a standard web application.
+9. Navigate to the "Shared Access" tab and share the application with all organizations.
+10. Enable the following grant types:
+  `Code`, `Client Credentials`, `Organization Switch`
+  Note that the organization switch grant type is available only after shared access is enabled.
+11. Add the Authorized redirect URLs and allowed origins:
 redirect url: `https://localhost:5003`, allowed origin: `https://localhost:5003 http://localhost:5173`
 
-10. Enable API Authorization access for SCIM2 Users API with the scopes:
-```
-internal_user_mgt_create internal_user_mgt_list internal_user_mgt_view internal_user_mgt_delete internal_user_mgt_update
-```
-11. Navigate to Connections -> Passkey Setup -> Add the Trusted Origins: `http://localhost:5173` and enable `Allow Passkey usernameless authentication` option.
+12. Enable API Authorization access for the following API resources:
+  - Management APIs: 
+    - SCIM2 Users API with the scopes:
+      ```
+      internal_user_mgt_create internal_user_mgt_list internal_user_mgt_view internal_user_mgt_delete internal_user_mgt_update
+      ```
+    - Organization Management API with the scopes:
+      ```
+      internal_organization_create internal_organization_view internal_organization_update internal_organization_delete
+      ```
+  - Organization APIs:
+    - SCIM2 Users API with the scopes:
+      ```
+      internal_org_user_mgt_update internal_org_user_mgt_delete internal_org_user_mgt_list internal_org_user_mgt_create 
+      ```
+    - SCIM2 Roles API with the scopes:
+      ```
+      internal_org_user_mgt_view internal_org_role_mgt_delete internal_org_role_mgt_create internal_org_role_mgt_update internal_org_role_mgt_view
+      ```
 
-12. Configure [Onfido identity verification](https://wso2.com/asgardeo/docs/guides/identity-verification/add-identity-verification-with-onfido/) for your organization.
+13. Navigate to the Roles tab and create an application role named `Business Administrator` with the permissions for the SCIM2 Users and SCIM2 Roles organization APIs.
+14. Navigate to Connections -> Passkey Setup -> Add the Trusted Origins: `http://localhost:5173` and enable `Allow Passkey usernameless authentication` option.
 
-13. Create a copy of `app/public/config.example.js` inside the `app/public/` folder. And name it as `config.js`. Update the [config values](docs/config-properties.md) accordingly.
-14. Navigate to `App_home/app` and run `npm i`.
-15. From within the `App_home/app` directory, execute `npm start` to run the application.
-16. Create a copy of `server/.env.example` inside the `server/` folder. And name it as `.env`. Update the according to the commented instructions.
-17. Navigate to `App_home/server` and run `npm i`.
-18. From within the `App_home/server` directory, execute `nodemon server.js` to run the server.
-19. Test the application from registration of a personal and corporate account types.
+15. Configure [Onfido identity verification](https://wso2.com/asgardeo/docs/guides/identity-verification/add-identity-verification-with-onfido/) for your organization.
+
+16. Create a copy of `app/public/config.example.js` inside the `app/public/` folder. And name it as `config.js`. Update the [config values](docs/config-properties.md) accordingly.
+17. Navigate to `App_home/app` and run `npm i`.
+18. From within the `App_home/app` directory, execute `npm start` to run the application.
+19. Create a copy of `server/.env.example` inside the `server/` folder. And name it as `.env`. Update the according to the commented instructions.
+20. Navigate to `App_home/server` and run `npm i`.
+21. From within the `App_home/server` directory, execute `nodemon server.js` to run the server.
+22. Test the application from registration of a personal and corporate account types.
