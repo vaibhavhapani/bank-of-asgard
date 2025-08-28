@@ -3,9 +3,7 @@
 # Instructions to use the application
 
 1. Register an organization with Asgardeo.
-2. Create the following [custom attributes](https://wso2.com/asgardeo/docs/guides/users/attributes/manage-attributes/)
-  - with the name `accountType` and add it to the Profile scope. Additionally, include the country attribute in the profile scope too.
-  - `businessName`
+2. Create [custom attributes](https://wso2.com/asgardeo/docs/guides/users/attributes/manage-attributes/) named `accountType` and `businessName`. Add the accountType and country attributes to the profile scope.
 3. Create another [custom attribute](https://wso2.com/asgardeo/docs/guides/users/attributes/manage-attributes/) with the name `isFirstLogin`.
 4. Enable the [Attribute Update Verification](https://wso2.com/asgardeo/docs/guides/users/attributes/user-attribute-change-verification/) for user email.
 5. Create a SPA application.
