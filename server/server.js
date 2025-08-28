@@ -16,31 +16,15 @@
  * under the License.
  */
 
-import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import axios from "axios";
-import https from "https";
 import pino from "pino";
 
-dotenv.config();
+import { getAccessToken } from "./auth.js";
+import { addUserToAdminRole, createOrganization, getAdminRoleIdInOrganization, getUserIdInOrganization, isBusinessNameAvailable } from "./business.js"
+import { agent, ASGARDEO_BASE_URL_SCIM2, GEO_API_KEY, HOST, PORT, USER_STORE_NAME, VITE_REACT_APP_CLIENT_BASE_URL } from "./config.js";
 
-const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || "localhost";
-const ASGARDEO_BASE_URL = process.env.ASGARDEO_BASE_URL;
-const CLIENT_ID = process.env.SERVER_APP_CLIENT_ID;
-const CLIENT_SECRET = process.env.SERVER_APP_CLIENT_SECRET;
-const TOKEN_ENDPOINT = process.env.ASGARDEO_TOKEN_ENDPOINT;
-const GEO_API_KEY = process.env.GEO_API_KEY;
-const ASGARDEO_BASE_URL_SCIM2 = ASGARDEO_BASE_URL + "/scim2";
-const VITE_REACT_APP_CLIENT_BASE_URL =
-  process.env.VITE_REACT_APP_CLIENT_BASE_URL;
-const userStoreName = process.env.USER_STORE_NAME || "PRIMARY";
-
-// Added to compress self signed cert validation
-const agent = new https.Agent({
-  rejectUnauthorized: false, // Disable SSL certificate validation
-});
 const corsOptions = {
   origin: [VITE_REACT_APP_CLIENT_BASE_URL],
   allowedHeaders: [
@@ -74,78 +58,72 @@ app.use((req, res, next) => {
   next();
 });
 
-// In-memory storage for token data
-let tokenData = {
-  access_token: null,
-  scope: null,
-  token_type: null,
-  expires_in: null,
-  expires_at: null, // expiration time to request new token
-};
-
-const getAuthHeader = () => {
-  const authString = `${CLIENT_ID}:${CLIENT_SECRET}`;
-  return "Basic " + Buffer.from(authString).toString("base64");
-};
-
 app.get("/health", (req, res) => {
   res.json({ status: "OK" });
 });
 
+async function createUser(userData) {
+  const {
+    username,
+    password,
+    email,
+    firstName,
+    lastName,
+    country,
+    accountType,
+    businessName,
+    dateOfBirth,
+    mobile,
+  } = userData;
+  console.log(`Creating ${accountType} user`)
+
+  const token = await getAccessToken();
+
+  const response = await axios.post(
+    `${ASGARDEO_BASE_URL_SCIM2}/Users`,
+    {
+      schemas: [],
+      userName: `${USER_STORE_NAME}/${username}`,
+      password: password,
+      emails: [
+        {
+          value: email,
+          primary: true,
+        },
+      ],
+      name: {
+        givenName: firstName,
+        familyName: lastName,
+      },
+      "urn:scim:wso2:schema": {
+        country: country,
+        dateOfBirth: dateOfBirth,
+      },
+      phoneNumbers: [
+        {
+          type: "mobile",
+          value: mobile,
+        },
+      ],
+      "urn:scim:schemas:extension:custom:User": {
+        accountType: accountType,
+        ...(businessName ? { businessName } : {}), 
+      },
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      httpsAgent: agent, // Attach the custom agents
+    }
+  );
+  return response;
+};
+
 app.post("/signup", async (req, res) => {
   try {
-    const {
-      username,
-      password,
-      email,
-      firstName,
-      lastName,
-      country,
-      accountType,
-      dateOfBirth,
-      mobile,
-    } = req.body;
-
-    const token = await getAccessToken();
-
-    const response = await axios.post(
-      `${ASGARDEO_BASE_URL_SCIM2}/Users`,
-      {
-        schemas: [],
-        userName: `${userStoreName}/${username}`,
-        password: password,
-        emails: [
-          {
-            value: email,
-            primary: true,
-          },
-        ],
-        name: {
-          givenName: firstName,
-          familyName: lastName,
-        },
-        "urn:scim:wso2:schema": {
-          country: country,
-          dateOfBirth: dateOfBirth,
-        },
-        phoneNumbers: [
-          {
-            type: "mobile",
-            value: mobile,
-          },
-        ],
-        "urn:scim:schemas:extension:custom:User": {
-          accountType: accountType,
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        httpsAgent: agent, // Attach the custom agents
-      }
-    );
+    const response = await createUser(req.body);
     res.json({ message: "User registered successfully", data: response.data });
   } catch (error) {
     console.log("SCIM2 API Error:", error.detail || error.message);
@@ -153,61 +131,38 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// Get a new token if expired or not available
-const getAccessToken = async () => {
-  const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-
-  if (
-    tokenData.access_token &&
-    tokenData.expires_at &&
-    currentTime < tokenData.expires_at
-  ) {
-    console.log(
-      `Using cached access token. Expires in ${
-        tokenData.expires_at - currentTime
-      } seconds.`
-    );
-    return tokenData.access_token;
-  }
-
-  console.log("Fetching new access token... ");
-
+app.post("/business-signup", async (req, res) => {
   try {
-    const response = await axios.post(
-      TOKEN_ENDPOINT,
-      "grant_type=client_credentials&scope=internal_user_mgt_create internal_user_mgt_delete internal_user_mgt_update internal_user_mgt_view",
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: getAuthHeader(),
-        },
-        httpsAgent: agent, // Attach the custom agent
-      }
-    );
+    const { businessName } = req.body;
+    const { username } = req.body;
 
-    const issuedAt = Math.floor(Date.now() / 1000); // Current timestamp in seconds
-    const expiresIn = response.data.expires_in; // Token validity duration in seconds
+    const available = await isBusinessNameAvailable(businessName);
+    if (!available) {
+      return res.status(400).json({ error: "Business name is already taken" });
+    }
 
-    // Store the new token data with exact expiration time
-    tokenData = {
-      access_token: response.data.access_token,
-      scope: response.data.scope,
-      token_type: response.data.token_type,
-      expires_in: expiresIn,
-      expires_at: issuedAt + expiresIn, // Exact expiration timestamp
-    };
+    const userResponse = await createUser(req.body);
+    // Return a response and asynchronously continue with the remaining operations
+    res.json({
+      message: "Business user registered successfully",
+      user: userResponse.data
+    });
 
-    console.log(
-      `New access token received. Expires at ${new Date(
-        tokenData.expires_at * 1000
-      ).toISOString()}`
-    );
-    return tokenData.access_token;
+    const creatorId = userResponse.data.id;
+    const orgResponse = await createOrganization(businessName, creatorId, username);
+    const organizationId = orgResponse.data.id;
+    
+    const orgUserId = await getUserIdInOrganization(organizationId, username);
+    const adminRoleId = await getAdminRoleIdInOrganization(organizationId);
+    addUserToAdminRole(organizationId, adminRoleId, orgUserId);
   } catch (error) {
-    console.log("Error fetching token:", error);
-    throw new Error("Failed to get access token");
+    console.log(error)
+    console.error("Business signup error:", error.message);
+    res.status(400).json({ error: "Business signup failed" });
   }
-};
+});
+
+
 
 // IP geolocation request
 app.post("/risk", async (req, res) => {

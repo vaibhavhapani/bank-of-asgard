@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import PropTypes from "prop-types";
 import SignUpForm from "../components/sign-up/sign-up-form";
+import BusinessSignUpForm from "../components/sign-up/business-sign-up-form";
 import EverydayBanking from "../assets/images/A_women_laying_on_a_soft_with_a_headset_and_holdin_028d291b-58ee-4de5-8c57-2a84033209ac.png";
 import GoGlobal from "../assets/images/A_business_women_in_a_city_walking_portrait_lookin_5e59fd5e-a8dd-43e0-b4ea-5a926d089913.png";
 import GatacaImage from "../assets/images/asgard_wallet_custom_qr.png";
@@ -95,7 +96,12 @@ const RegisterAccountPage = ({ setSiteSection }) => {
                       <div className="container">
                         <div className="row">
                           <div className="col-md-7">
-                            <SignUpForm accountType={ accountType } />
+                            { (accountType === ACCOUNT_TYPES.PERSONAL) ?
+                              (<SignUpForm accountType={ accountType } />)
+                              :(
+                              <BusinessSignUpForm accountType={ accountType }/>
+                              )
+                            }
                           </div>
                           { (isOdinWalletEnabled && accountType === ACCOUNT_TYPES.PERSONAL) &&
                             <div className="col-md-2 mx-auto" style={ { textAlign: "center" } }>

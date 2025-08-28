@@ -26,21 +26,30 @@ import { getPasswordPolicy } from "../../api/server-configurations";
 import PasswordField from "../common/password-field";
 import { useSnackbar } from "notistack";
 
-const SignUpForm = ({ accountType }) => {
+const SignUpForm = ({ accountType, extraFields = [], endpoint = "signup" }) => {
   const { isSignedIn, signIn, http } = useAsgardeo();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [signupData, setSignupData] = useState({
-    firstName: "",
-    lastName: "",
-    dateOfBirth: "",
-    country: "",
-    username: "",
-    password: "",
-    email: "",
-    mobile: "",
-    accountType: accountType,
+  const [signupData, setSignupData] = useState(() => {
+    const initial = {
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      country: "",
+      username: "",
+      password: "",
+      email: "",
+      mobile: "",
+      accountType: accountType,
+    };
+
+    extraFields.forEach(field => {
+      initial[field.name] = "";
+    });
+
+    return initial;
   });
+
   const [passwordValidationRules, setPasswordValidationRules] = useState({});
   const [isNewPasswordValid, setIsNewPasswordValid] = useState(false);
 
@@ -58,7 +67,7 @@ const SignUpForm = ({ accountType }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${environmentConfig.API_SERVICE_URL}/signup`,
+        `${environmentConfig.API_SERVICE_URL}/${endpoint}`,
         signupData
       );
 
@@ -172,6 +181,22 @@ const SignUpForm = ({ accountType }) => {
         required
       />
 
+      {extraFields.map(field => (
+        <div key={field.name} className={field.className || ""}>
+          <label htmlFor={field.name}>{field.label}</label>
+          <input
+            type={field.type || "text"}
+            placeholder={field.placeholder}
+            value={signupData[field.name]}
+            onChange={(e) =>
+              setSignupData({ ...signupData, [field.name]: e.target.value })
+            }
+            required={field.required || false}
+          />
+        </div>
+      ))}
+
+
       <button type="submit" className={`btn ${isNewPasswordValid ? "" : "disabled" }`}>Signup</button>
     </form>
   );
@@ -179,6 +204,17 @@ const SignUpForm = ({ accountType }) => {
 
 SignUpForm.propTypes = {
   accountType: PropTypes.object.isRequired,
+  extraFields: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      label: PropTypes.string,
+      placeholder: PropTypes.string,
+      type: PropTypes.string,
+      required: PropTypes.bool,
+      className: PropTypes.string,
+    })
+  ),
+  endpoint: PropTypes.string,
 };
 
 export default SignUpForm;
