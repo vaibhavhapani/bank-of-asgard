@@ -81,13 +81,6 @@ paths:
       summary: Close or delete a user account
       description: |
         Deletes a user account specified by the query parameter `userId` by invoking the SCIM2 API.
-      parameters:
-        - in: query
-          name: userId
-          required: true
-          schema:
-            type: string
-          description: The ID of the user to be deleted.
       responses:
         '200':
           description: Account removed successfully

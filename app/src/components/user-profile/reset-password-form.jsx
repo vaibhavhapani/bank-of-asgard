@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { useAsgardeo } from "@asgardeo/react";
 import PropTypes from "prop-types";
 import { useSnackbar } from "notistack";
 import { getPasswordPolicy } from "../../api/server-configurations";
@@ -7,6 +8,7 @@ import { resetPassword } from "../../api/profile";
 
 const ResetPasswordForm = ({ username, onFormClosed }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const { signOut } = useAsgardeo();
 
   const initialFormData = {
     currentPassword: "",
@@ -69,6 +71,7 @@ const ResetPasswordForm = ({ username, onFormClosed }) => {
             variant: "success",
           });
           handleCancel();
+          signOut();
         })
         .catch((error) => {
           if (!error.response || error.response.status === 401) {

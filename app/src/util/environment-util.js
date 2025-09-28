@@ -24,6 +24,7 @@ export const environmentConfig = {
   API_SERVICE_URL: window.config && window.config.API_SERVICE_URL,
   APP_BASE_URL: window.config && window.config.APP_BASE_URL,
   ASGARDEO_BASE_URL: window.config && window.config.ASGARDEO_BASE_URL,
+  ORGANIZATION_NAME: window.config && window.config.ORGANIZATION_NAME,
   APP_CLIENT_ID: window.config && window.config.APP_CLIENT_ID,
   DISABLED_FEATURES: window.config && window.config.DISABLED_FEATURES,
   TRANSFER_THRESHOLD: window.config && window.config.TRANSFER_THRESHOLD || 10000,
