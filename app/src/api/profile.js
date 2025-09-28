@@ -19,8 +19,10 @@
 import { environmentConfig } from "../util/environment-util";
 import { axiosClient } from "./axios-client";
 
-export const closeAccount = (userId) => {
-  return axiosClient.delete(`/close-account?userId=${userId}`);
+export const closeAccount = (token) => {
+  return axiosClient.delete(`/close-account`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
 };
 
 export const resetPassword = (username, currentPassword, newPassword) => {

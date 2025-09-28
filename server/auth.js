@@ -156,3 +156,27 @@ export const getOrganizationToken = async (switchingOrganizationId) => {
     throw new Error("Failed to get organization token");
   }
 };
+
+function unauthorized(res, code, desc) {
+  res.set(
+    'WWW-Authenticate',
+    `Bearer realm="api", error="${code}", error_description="${desc}"`
+  );
+  return res.status(401).json({ error: desc });
+}
+
+export function requireBearer(req, res, next) {
+  const auth = req.get('authorization'); // case-insensitive
+  if (!auth) {
+    return unauthorized(res, 'invalid_request', 'Missing Authorization header');
+  }
+
+  const parts = auth.trim().split(/\s+/);
+  if (parts.length !== 2 || !/^Bearer$/i.test(parts[0])) {
+    return unauthorized(res, 'invalid_request', 'Malformed Authorization header');
+  }
+
+  req.token = parts[1];
+  next();
+}
+
