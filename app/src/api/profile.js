@@ -32,7 +32,7 @@ export const resetPassword = (username, currentPassword, newPassword) => {
     ...encoder.encode(currentPassword)
   );
   const tenantDomain =
-    environmentConfig.ASGARDEO_BASE_URL.split("/").slice(-1)[0];
+    environmentConfig.ORGANIZATION_NAME;
   const usernameWithDomain = [username, "@", tenantDomain].join("");
 
   const requestConfig = {
