@@ -30,7 +30,7 @@ const TransferFundsVerifyPage = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
 
-  const { isSignedIn, signIn, updateConfig } = useAsgardeo();
+  const { isSignedIn, signIn, reInitialize } = useAsgardeo();
   const { bankAccountData, updateBalance } = useContext(BankAccountContext);
 
   const [isTransferInprogress, setIsTransferInprogress] = useState(true);
@@ -42,8 +42,8 @@ const TransferFundsVerifyPage = () => {
 
   useEffect(() => {
     if (!isSignedIn) {
-      updateConfig({
-        signInRedirectURL: window.location.origin + window.location.pathname,
+      reInitialize({
+        afterSignInUrl: window.location.origin + window.location.pathname,
       }).then(() => {
         signIn({
           callOnlyOnRedirect: true,
