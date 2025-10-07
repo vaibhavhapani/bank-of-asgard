@@ -21,7 +21,7 @@ import cors from "cors";
 import axios from "axios";
 import pino from "pino";
 
-import { getAccessToken } from "./auth.js";
+import { getAccessToken, requireBearer } from "./auth.js";
 import { addUserToAdminRole, createOrganization, getAdminRoleIdInOrganization, getUserIdInOrganization, isBusinessNameAvailable } from "./business.js"
 import { agent, ASGARDEO_BASE_URL_SCIM2, GEO_API_KEY, HOST, PORT, USER_STORE_NAME, VITE_REACT_APP_CLIENT_BASE_URL } from "./config.js";
 
@@ -191,13 +191,26 @@ app.post("/risk", async (req, res) => {
   }
 });
 
-app.delete("/close-account", async (req, res) => {
+app.delete("/close-account", requireBearer, async (req, res) => {
   try {
-    const userId = req.query.userId;
     const token = await getAccessToken();
+    const userAccessToken = req.token;
+
+    const me = await axios.get(`${ASGARDEO_BASE_URL_SCIM2}/Me`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken}`,
+        Accept: "application/scim+json"
+      },
+      httpsAgent: agent
+    });
+
+    const scimId = me.data?.id;
+    if (!scimId) {
+      return res.status(500).json({ error: "Could not resolve SCIM user id" });
+    }
 
     const response = await axios.delete(
-      `${ASGARDEO_BASE_URL_SCIM2}/Users/${userId}`,
+      `${ASGARDEO_BASE_URL_SCIM2}/Users/${scimId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

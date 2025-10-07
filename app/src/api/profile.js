@@ -19,8 +19,10 @@
 import { environmentConfig } from "../util/environment-util";
 import { axiosClient } from "./axios-client";
 
-export const closeAccount = (userId) => {
-  return axiosClient.delete(`/close-account?userId=${userId}`);
+export const closeAccount = (token) => {
+  return axiosClient.delete(`/close-account`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
 };
 
 export const closeBusinessAccount = (userId, businessName) => {
@@ -34,7 +36,7 @@ export const resetPassword = (username, currentPassword, newPassword) => {
     ...encoder.encode(currentPassword)
   );
   const tenantDomain =
-    environmentConfig.ASGARDEO_BASE_URL.split("/").slice(-1)[0];
+    environmentConfig.ORGANIZATION_NAME;
   const usernameWithDomain = [username, "@", tenantDomain].join("");
 
   const requestConfig = {

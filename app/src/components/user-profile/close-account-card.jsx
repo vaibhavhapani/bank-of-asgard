@@ -17,14 +17,13 @@
  */
 
 import { useState } from "react";
-import PropTypes from "prop-types";
 import { useAsgardeo } from "@asgardeo/react";
 import { useSnackbar } from "notistack";
 import Modal from "../common/modal";
 import { closeAccount } from "../../api/profile";
 
-const CloseAccountCard = ({ userId }) => {
-  const { signOut } = useAsgardeo();
+const CloseAccountCard = () => {
+  const { signOut, getAccessToken } = useAsgardeo();
   const { enqueueSnackbar } = useSnackbar();
 
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
@@ -33,7 +32,8 @@ const CloseAccountCard = ({ userId }) => {
   const handleAccountClose = async () => {
     try {
       setIsConfirmationOpen(false);
-      const response = await closeAccount(userId);
+      const token = await getAccessToken();
+      const response = await closeAccount(token);
 
       if (response.status == 200) {
         setIsSuccessModalOpen(true);
@@ -92,10 +92,6 @@ const CloseAccountCard = ({ userId }) => {
       />
     </>
   );
-};
-
-CloseAccountCard.propTypes = {
-  userId: PropTypes.string.isRequired,
 };
 
 export default CloseAccountCard;
