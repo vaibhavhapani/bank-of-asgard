@@ -99,9 +99,9 @@ const BankAccountCard = ({ userInfo }) => {
           </ul>
 
           {userInfo.accountType === ACCOUNT_TYPES.BUSINESS ? (
-            <CloseBusinessAccountCard userId={userInfo.userId} businessName={userInfo.businessName} />
+            <CloseBusinessAccountCard businessName={userInfo.businessName} />
           ) : (
-            <CloseAccountCard userId={userInfo.userId} />
+            <CloseAccountCard />
           )}
         </div>
       </div>

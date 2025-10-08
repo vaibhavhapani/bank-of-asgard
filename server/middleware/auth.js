@@ -17,7 +17,7 @@
  */
 
 import axios from "axios";
-import { agent, CLIENT_ID, CLIENT_SECRET, TOKEN_ENDPOINT } from "./config.js";
+import { agent, CLIENT_ID, CLIENT_SECRET, TOKEN_ENDPOINT } from "../config.js";
 
 // In-memory storage for token data
 let tokenData = {

@@ -23,7 +23,7 @@ import { useSnackbar } from "notistack";
 import Modal from "../common/modal";
 import { closeBusinessAccount } from "../../api/profile";
 
-const CloseBusinessAccountCard = ({ userId, businessName }) => {
+const CloseBusinessAccountCard = ({ businessName }) => {
   const { signOut } = useAsgardeo();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -33,7 +33,7 @@ const CloseBusinessAccountCard = ({ userId, businessName }) => {
   const handleAccountClose = async () => {
     try {
       setIsConfirmationOpen(false);
-      const response = await closeBusinessAccount(userId, businessName);
+      const response = await closeBusinessAccount(businessName);
 
       if (response.status == 200) {
         setIsSuccessModalOpen(true);
@@ -95,7 +95,6 @@ const CloseBusinessAccountCard = ({ userId, businessName }) => {
 };
 
 CloseBusinessAccountCard.propTypes = {
-  userId: PropTypes.string.isRequired,
   businessName: PropTypes.string.isRequired
 };
 
