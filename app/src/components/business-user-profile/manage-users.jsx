@@ -48,7 +48,7 @@ const ManageUsers = () => {
         <div>
           <button
           onClick={() => setOpenView(true)}
-            className="edit-button secondary"
+            className="secondary"
           >
             View Users
           </button>

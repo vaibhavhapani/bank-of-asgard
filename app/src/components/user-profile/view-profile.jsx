@@ -20,7 +20,6 @@ import PropTypes from "prop-types";
 import AccountSecurityCard from "./account-security-card";
 import UserProfileCard from "./view/user-profile-card";
 import BankAccountCard from "./view/bank-account-card";
-import BusinessProfileCard from "../../components/business-user-profile/business-profile-card";
 
 const ViewProfile = ({ userInfo, setShowEditForm }) => {
   return (

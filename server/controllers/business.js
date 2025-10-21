@@ -20,8 +20,6 @@ import axios from "axios";
 import { getAccessToken, getOrganizationToken } from "../middleware/auth.js";
 import { agent, ASGARDEO_BASE_URL } from "../config.js";
 
-// TODO: Format into folders
-
 export async function isBusinessNameAvailable(businessName) {
 
   const token = await getAccessToken();

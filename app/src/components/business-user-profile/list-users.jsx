@@ -23,12 +23,22 @@ import { useEffect } from 'react';
 import { environmentConfig } from '../../util/environment-util';
 import { useUser } from '@asgardeo/react';
 import { useHttpSwitch } from '../../sdk/httpSwitch';
-import { Box, IconButton, Menu, MenuItem, TextField } from '@mui/material';
+import { Box, CircularProgress, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import CountrySelect from '../../components/country-select';
+import { enqueueSnackbar } from 'notistack';
 
 const ListUsers = () => {
+
   const { profile } = useUser();
+  const [rows, setRows] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [editingUser, setEditingUser] = React.useState(null);
+  const paginationModel = { page: 0, pageSize: 5 };
+  const [deletingUserId, setDeletingUserId] = React.useState(null);
+  const [assigningRoleUserId, setAssigningRoleUserId] = React.useState(null);
+
   const columns = [
     { field: 'id', headerName: 'ID', width: 280, sortable: false },
     { field: 'username', headerName: 'Username', width: 220 },
@@ -38,53 +48,82 @@ const ListUsers = () => {
     {
       field: "assignRole",
       headerName: "Assign Role",
-      width: 120,
+      width: 140,
       sortable: false,
       renderCell: (params) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span>{params.row.role}</span>
-          <IconButton
-            aria-label="assign-role"
-            color="secondary"
-            size="small"
-            onClick={(event) => {
-              setAnchorEl(event.currentTarget);
-              setSelectedUser(params.row);
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            height: "100%",
+            gap: 1,
+          }}
+        >
+          <Select
+            value={params.row.role || ""}
+            onChange={(e) => handleRoleSelect(e.target.value, params.row)}
+            disabled={assigningRoleUserId === params.row.id}
+            variant="standard"
+            sx={{
+              "& .MuiSelect-select": {
+                paddingY: 0,
+                display: "flex",
+                alignItems: "center",
+                fontSize: "0.875rem",
+                height: "100%",
+              },
+              fontSize: "0.875rem",
+              background: "transparent",
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  "& .MuiMenuItem-root": {
+                    fontSize: "0.875rem",
+                    minHeight: "32px",
+                  },
+                },
+              },
             }}
           >
-          <EditIcon />
-          </IconButton>
-        </div>
-      ),
-    },
-    {
-      field: "edit",
-      headerName: "Edit",
-      width: 100,
-      sortable: false,
-      renderCell: (params) => (
-        <IconButton
-          aria-label="edit"
-          color="primary"
-          onClick={() => setEditingRow(params.row)}
-        >
-          <EditIcon />
-        </IconButton>
+            <MenuItem value="Member">Member</MenuItem>
+            <MenuItem value="Manager">Manager</MenuItem>
+            <MenuItem value="Auditor">Auditor</MenuItem>
+          </Select>
+
+          {assigningRoleUserId === params.row.id && (
+            <CircularProgress size={20} />
+          )}
+        </Box>
       ),
     },
     {
       field: "actions",
-      headerName: "Delete",
+      headerName: "Actions",
       width: 100,
       sortable: false,
       renderCell: (params) => (
+        <>
+        <IconButton
+          aria-label="edit"
+          color="primary"
+          onClick={() => setEditingUser(params.row)}
+        >
+          <EditIcon />
+        </IconButton>
         <IconButton
           aria-label="delete"
           color="error"
           onClick={() => handleDelete(params.row.id)}
+          disabled={deletingUserId === params.row.id}
         >
-          <DeleteIcon />
+          {deletingUserId === params.row.id ? (
+            <CircularProgress size={20} />
+          ) : (
+            <DeleteIcon />
+          )}
         </IconButton>
+        </>
       ),
     },
   ];
@@ -104,12 +143,16 @@ const ListUsers = () => {
         givenName: user.name?.givenName ?? "",
         familyName: user.name?.familyName ?? "",
         email: user.emails?.[0] ?? "",
-        role: user.roles?.[0]?.display ?? "Member"
+        role: user.roles?.[0]?.display ?? "",
+        dateOfBirth: user["urn:scim:wso2:schema"].dateOfBirth ?? "",
+        country: user["urn:scim:wso2:schema"].country ?? "",
+        mobile: user.phoneNumbers?.[0]?.value ?? ""
       }));
   }
 
   const httpSwitch = useHttpSwitch();
-    useEffect(() => {
+
+  useEffect(() => {
     const requestConfig = {
       headers: {
         Accept: "application/scim+json",
@@ -130,57 +173,92 @@ const ListUsers = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleDelete = (userId) => {
-  const requestConfig = {
-    method: "DELETE",
-    url: `${environmentConfig.ASGARDEO_BASE_URL}/o/scim2/Users/${userId}`,
-    headers: {
-      Accept: "*/*",
-      "Content-Type": "application/scim+json",
-    },
+  const handleDelete = async (userId) => {
+
+    try {
+      setDeletingUserId(userId);
+      const requestConfig = {
+        method: "DELETE",
+        url: `${environmentConfig.ASGARDEO_BASE_URL}/o/scim2/Users/${userId}`,
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/scim+json",
+        },
+      };
+      const response = await httpSwitch.request(requestConfig);
+      if (response.status === 204) {
+        enqueueSnackbar("User deleted successfully", { variant: "success" });
+        setRows((prevRows) => prevRows.filter((row) => row.id !== userId));
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      enqueueSnackbar("Failed to delete user", { variant: "error" });
+    } finally {
+      setDeletingUserId(null);
+    }
   };
 
-  httpSwitch
-    .request(requestConfig)
-    .then(() => {
-      setRows((prevRows) => prevRows.filter((row) => row.id !== userId));
-    })
-    .catch((error) => {
-      console.error("Error deleting user:", error);
-    });
-};
+  const handleSave = async (updatedUser) => {
 
-  const handleSave = (updatedUser) => {
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.id === updatedUser.id ? updatedUser : row
+    const patchValue = {
+      name: {
+        givenName: updatedUser.givenName,
+        familyName: updatedUser.familyName,
+      },
+      emails: [updatedUser.email],
+      "urn:scim:wso2:schema": {
+        dateOfBirth: updatedUser.dateOfBirth,
+        country: updatedUser.country,
+      },
+      phoneNumbers: [{ type: "mobile", value: updatedUser.mobile }],
+    };
+    if (updatedUser.password && updatedUser.password.trim() !== "") {
+      patchValue.password = updatedUser.password;
+    }
+
+    const requestConfig = {
+      method: "PATCH",
+      url: `${environmentConfig.ASGARDEO_BASE_URL}/o/scim2/Users/${updatedUser.id}`,
+      headers: {
+        Accept: "application/scim+json",
+        "Content-Type": "application/scim+json",
+      },
+      data: {
+        schemas: ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
+        Operations: [
+          {
+            op: "replace",
+            value: patchValue,
+          },
+        ],
+      },
+    };
+
+    try {
+    const response = await httpSwitch.request(requestConfig);
+      setRows((prevRows) =>
+        prevRows.map((row) =>
+          row.id === updatedUser.id ? updatedUser : row
+        )
+      );
+      if (response.status === 200) {
+        enqueueSnackbar("User updated successfully", { variant: "success" });
+      }
+      setEditingUser(null);
+      } catch (error) {
+        console.error("Error updating user:", error);
+        enqueueSnackbar("Error updating user", { variant: "error" });
+      }
+  };
+
+  const handleRoleSelect = async (newRoleName, selectedUser) => {
+
+    setAssigningRoleUserId(selectedUser.id);
+    setRows((prev) =>
+      prev.map((row) =>
+        row.id === selectedUser.id ? { ...row, role: newRoleName } : row
       )
     );
-    setEditingRow(null);
-  };
-
-const getRoleIdByName = async (roleName) => {
-  const requestConfig = {
-    method: "GET",
-    url: `${environmentConfig.ASGARDEO_BASE_URL}/o/scim2/v2/Roles?filter=displayName eq ${encodeURIComponent(roleName)}`,
-    headers: {
-      Accept: "application/scim+json",
-    },
-  };
-
-  try {
-    const response = await httpSwitch.request(requestConfig);
-    const resources = response.data?.Resources || [];
-    return resources.length > 0 ? resources[0].id : null;
-  } catch (error) {
-    console.error("Error fetching role ID:", error);
-    return null;
-  }
-};
-
-const handleRoleSelect = async (newRoleName) => {
-  if (!selectedUser) return;
-
   try {
     const currentRoleId = await getRoleIdByName(selectedUser.role);
     const newRoleId = await getRoleIdByName(newRoleName);
@@ -229,75 +307,115 @@ const handleRoleSelect = async (newRoleName) => {
       }
     });
 
-    setRows((prev) =>
-      prev.map((row) =>
-        row.id === selectedUser.id ? { ...row, role: newRoleName } : row
-      )
-    );
-
   } catch (error) {
     console.error("Error switching role:", error);
   } finally {
-    setAnchorEl(null);
-    setSelectedUser(null);
+    setAssigningRoleUserId(null);
   }
 };
 
+  const getRoleIdByName = async (roleName) => {
+    const requestConfig = {
+      method: "GET",
+      url: `${environmentConfig.ASGARDEO_BASE_URL}/o/scim2/v2/Roles?filter=displayName eq ${encodeURIComponent(roleName)}`,
+      headers: {
+        Accept: "application/scim+json",
+      },
+    };
 
-  const [rows, setRows] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [editingRow, setEditingRow] = React.useState(null);
+    try {
+      const response = await httpSwitch.request(requestConfig);
+      const resources = response.data?.Resources || [];
+      return resources.length > 0 ? resources[0].id : null;
+    } catch (error) {
+      console.error("Error fetching role ID:", error);
+      return null;
+    }
+  };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedUser, setSelectedUser] = React.useState(null);
-
-  const open = Boolean(anchorEl);
-
-  const paginationModel = { page: 0, pageSize: 5 };
-
-  if (editingRow) {
+  if (editingUser) {
     return (
       <Paper sx={{ p: 3 }}>
-        <h2>Edit User</h2>
         <Box component="form" sx={{ display: "grid", gap: 2, maxWidth: 400 }}>
           <TextField
             label="Username"
-            value={editingRow.username}
-            onChange={(e) =>
-              setEditingRow({ ...editingRow, username: e.target.value })
-            }
+            value={editingUser.username}
+            slotProps={{
+              input: { readOnly: true },
+            }}
+            sx={{
+              "& .MuiInputBase-input[readonly]": {
+                backgroundColor: (theme) => theme.palette.action.disabledBackground
+              },
+            }}
           />
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              label="First Name"
+              value={editingUser.givenName}
+              onChange={(e) =>
+                setEditingUser({ ...editingUser, givenName: e.target.value })
+              }
+            />
+            <TextField
+              label="Last Name"
+              value={editingUser.familyName}
+              onChange={(e) =>
+                setEditingUser({ ...editingUser, familyName: e.target.value })
+              }
+            />
+          </Box>
           <TextField
-            label="First Name"
-            value={editingRow.givenName}
+            label="Date of Birth"
+            type="date"
+            value={editingUser.dateOfBirth || ""}
             onChange={(e) =>
-              setEditingRow({ ...editingRow, givenName: e.target.value })
+              setEditingUser({ ...editingUser, dateOfBirth: e.target.value })
             }
           />
-          <TextField
-            label="Last Name"
-            value={editingRow.familyName}
-            onChange={(e) =>
-              setEditingRow({ ...editingRow, familyName: e.target.value })
-            }
-          />
+
           <TextField
             label="Email"
-            value={editingRow.email}
+            value={editingUser.email}
             onChange={(e) =>
-              setEditingRow({ ...editingRow, email: e.target.value })
+              setEditingUser({ ...editingUser, email: e.target.value })
+            }
+          />
+          <CountrySelect
+            label = "Country"
+            value={editingUser.country}
+            onChange={(e) =>
+              setEditingUser({ ...editingUser, country: e.label })
+            }
+          />
+          <TextField
+            label="Mobile Number"
+            type="tel"
+            value={editingUser.mobile}
+            onChange={(e) =>
+              setEditingUser({ ...editingUser, mobile: e.target.value })
+            }
+          />
+          <TextField
+            label="Password"
+            type="password"
+            value={editingUser.password || ""}
+            onChange={(e) =>
+              setEditingUser({ ...editingUser, password: e.target.value })
             }
           />
           <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
             <button
-              color="primary"
               className="gold-button"
-              onClick={() => handleSave(editingRow)}
+              onClick={(e) => {
+                e.preventDefault();
+                handleSave(editingUser)
+              }}
             >
               Save
             </button>
             <button
-            onClick={() => setEditingRow(null)}>
+            onClick={() => setEditingUser(null)} className="black-button">
               Back
             </button>
           </Box>
@@ -318,16 +436,6 @@ const handleRoleSelect = async (newRoleName) => {
         className="user-data"
         disableColumnMenu
       />
-
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => setAnchorEl(null)}
-      >
-        <MenuItem onClick={() => handleRoleSelect("Manager")}>Manager</MenuItem>
-        <MenuItem onClick={() => handleRoleSelect("Member")}>Member</MenuItem>
-        <MenuItem onClick={() => handleRoleSelect("Admin")}>Admin</MenuItem>
-      </Menu>
     </Paper>
   );
 }

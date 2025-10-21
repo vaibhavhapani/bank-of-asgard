@@ -51,7 +51,7 @@ redirect url: `https://localhost:5003`, allowed origin: `https://localhost:5003 
       internal_org_user_mgt_view internal_org_role_mgt_delete internal_org_role_mgt_create internal_org_role_mgt_update internal_org_role_mgt_view
       ```
 
-13. Navigate to the Roles tab and create an application role named `Business Administrator` with the permissions for the SCIM2 Users and SCIM2 Roles organization APIs.
+13. Navigate to the Roles tab and create an application role named `Business Administrator` with the permissions for the SCIM2 Users and SCIM2 Roles organization APIs. Also, create roles `Manager`, `Auditor` and `Member`.
 14. Navigate to Connections -> Passkey Setup -> Add the Trusted Origins: `http://localhost:5173` and enable `Allow Passkey usernameless authentication` option.
 
 15. Configure [Onfido identity verification](https://wso2.com/asgardeo/docs/guides/identity-verification/add-identity-verification-with-onfido/) for your organization.

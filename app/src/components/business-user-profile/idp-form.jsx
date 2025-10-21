@@ -274,7 +274,7 @@ const IDPForm = ({ organizationId, onIdpAdded, fetchAppConfig, getAppId, onCance
           )}
 
           <div className="form-buttons">
-            <button type="submit" style={{ marginTop: "15px" }} className="gold-button" disabled={loading}>
+            <button type="submit" style={{ marginTop: "15px", marginBottom: "10px" }} className="gold-button" disabled={loading}>
               {loading ? "Creating..." : `Create ${provider} IDP`}
             </button>
             <button type="button" className="black-button" onClick={onCancel}>Cancel</button>

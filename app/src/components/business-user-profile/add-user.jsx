@@ -61,6 +61,24 @@ const AddUser = ({ onCancel }) => {
       });
   }, []);
 
+  const getRoleIdByName = async (roleName) => {
+    const requestConfig = {
+      method: "GET",
+      url: `${environmentConfig.ASGARDEO_BASE_URL}/o/scim2/v2/Roles?filter=displayName eq ${encodeURIComponent(roleName)}`,
+      headers: {
+        Accept: "application/scim+json",
+      },
+    };
+
+    try {
+      const response = await httpSwitch.request(requestConfig);
+      const resources = response.data?.Resources || [];
+      return resources.length > 0 ? resources[0].id : null;
+    } catch (error) {
+      console.error("Error fetching role ID:", error);
+      return null;
+    }
+  };
 
   const handleSubmit = async (e) => {
 
@@ -118,8 +136,28 @@ const AddUser = ({ onCancel }) => {
       });
 
       if (response.status === 201) {
+        const newRoleId = await getRoleIdByName("Member");
+        await httpSwitch.request({
+            method: "PATCH",
+            url: `${environmentConfig.ASGARDEO_BASE_URL}/o/scim2/v2/Roles/${newRoleId}`,
+            headers: {
+              Accept: "application/scim+json",
+              "Content-Type": "application/scim+json",
+            },
+            data: {
+              schemas: ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
+              Operations: [
+                {
+                  op: "add",
+                  path: "users",
+                  value: [{ value: response.data.id }]
+                }
+              ]
+            }
+          });
         enqueueSnackbar("User created successfully", { variant: "success" });
       }
+      onCancel();
     } catch (error) {
       enqueueSnackbar("Something went wrong while creating user", { variant: "error" });
       console.error(error);
@@ -169,7 +207,7 @@ const AddUser = ({ onCancel }) => {
                 onChange={(value) => setFormData({ ...formData, country: value.label })} />
             </li>
             <li>
-              <label>Mobile:</label>
+              <label>Mobile Number:</label>
               <input type="tel" name="mobile" placeholder="Phone Number" value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value })} required />
             </li>
             <li>

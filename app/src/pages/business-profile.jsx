@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, OrganizationSwitcher, useAsgardeo, useOrganization, UserProfile, useUser } from "@asgardeo/react";
+import { useAsgardeo, useOrganization, useUser } from "@asgardeo/react";
 import EditProfile from "../components/user-profile/edit-profile";
 import ViewProfile from "../components/user-profile/view-profile";
 import { ACCOUNT_TYPES, SITE_SECTIONS } from "../constants/app-constants";
@@ -83,8 +83,6 @@ const BusinessProfilePage = ({ setSiteSection }) => {
   }, []);
 
   const getUserInfo = () => {
-    // eslint-disable-next-line no-console
-    console.log("Wello");
     request({
       headers: {
         Accept: "application/json",
@@ -93,8 +91,6 @@ const BusinessProfilePage = ({ setSiteSection }) => {
       method: "GET",
       url: `${environmentConfig.ASGARDEO_BASE_URL}/scim2/Me`,
     }).then((response) => {
-        // eslint-disable-next-line no-console
-        console.log(response);
       if (response.data) {
         if (
           response.data["urn:scim:schemas:extension:custom:User"]
@@ -143,13 +139,11 @@ const BusinessProfilePage = ({ setSiteSection }) => {
           ) : (
             <>
               {showEditForm && userInfo ? (
-                  <>
-                    <EditProfile
-                        userInfo={userInfo}
-                        onUpdateSuccess={handleUpdateSuccess}
-                        onCancel={handleCancelEdit}
-                    />
-                  </>
+                <EditProfile
+                    userInfo={userInfo}
+                    onUpdateSuccess={handleUpdateSuccess}
+                    onCancel={handleCancelEdit}
+                />
               ) : (
                 <ViewProfile
                 userInfo={userInfo}

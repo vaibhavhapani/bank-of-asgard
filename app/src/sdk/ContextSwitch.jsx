@@ -1,23 +1,19 @@
 import { useEffect, useState, } from 'react';
 import { environmentConfig } from "../util/environment-util";
 import PropTypes from 'prop-types';
-import { useAsgardeo, useOrganization } from '@asgardeo/react';
+import { useAsgardeo } from '@asgardeo/react';
 import { SwitchTokenContext } from './SwitchTokenContext';
 
 
 const ContextSwitch = ({ organizationId, children, fallback = null, scopes = "openid profile internal_login" }) => {
 
   const asgardeo = useAsgardeo();
-  const { myOrganizations, currentOrganization, switchOrganization } = useOrganization();
   const { isSignedIn, getAccessToken, exchangeToken } = asgardeo;
   const [ switchToken, setSwitchToken ] = useState("");
-  const [refreshToken, setRefreshToken] = useState(null);
-  const [expiresIn, setExpiresIn] = useState(null);
+  const [ refreshToken, setRefreshToken ] = useState(null);
+  const [ expiresIn, setExpiresIn ] = useState(null);
 
   useEffect(() => {
-      // if (currentOrganization.id != organizationId || !switchToken || switchToken == "") {
-      //     handleTokenSwitch();
-      // }
       if (!switchToken || switchToken == "") {
           handleTokenSwitch();
       }
@@ -45,7 +41,6 @@ const ContextSwitch = ({ organizationId, children, fallback = null, scopes = "op
       data: {
         client_id: `${environmentConfig.APP_CLIENT_ID}`,
         grant_type: 'organization_switch',
-        // scope: 'openid internal_org_role_mgt_delete internal_org_role_mgt_create internal_org_role_mgt_update internal_org_role_mgt_view',
         scope: `${scopes}`,
         switching_organization: organizationId,
         token: loggedInTokenResponse,

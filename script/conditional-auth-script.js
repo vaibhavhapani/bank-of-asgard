@@ -1,10 +1,11 @@
 var moneyTransferThres = 10000;
 var riskEndpoint = "<NODE_SERVER_BASE_PATH>/risk"
+var enrolUserInAuthenticationFlow = "false";
+var loginType = "";
 
 var onLoginRequest = function(context) {
 
     var isMoneyTransfer = context.request.params.action && context.request.params.action[0] === "money-transfer";
-
     if (isMoneyTransfer) {
         Log.info("Custom param:" + context.request.params.action[0]);
         Log.info("Custom param:" + context.request.params.transfer_amount[0]);
@@ -21,6 +22,11 @@ var onLoginRequest = function(context) {
 
     } else {
 
+        var loginTypeParam = context.request.params.loginType;
+
+        if (loginTypeParam != null) {
+            loginType = String(loginTypeParam[0] || "");
+        }
         executeStep(1, {
             onSuccess: function(context) {
                 var user = context.steps[1].subject;
@@ -35,6 +41,12 @@ var onLoginRequest = function(context) {
                     country: country,
                 };
                 if (accountType === "Personal") {
+                    if (loginType != "" && loginType != accountType) {
+                        fail({
+                            'errorCode': 'login_failed',
+                            'errorMessage': 'User not found.',
+                        });
+                    }
                     httpPost(riskEndpoint, requestPayload, {
                         "Accept": "application/json"
                     }, {
@@ -110,6 +122,11 @@ var onLoginRequest = function(context) {
                     } else {
                         Log.info("Preferred claim not available and in 3rd step");
                         executeStep(3, {
+                            authenticatorParams: {
+                                common: {
+                                    'enrolUserInAuthenticationFlow': enrolUserInAuthenticationFlow
+                                }
+                            },
                             authenticationOptions: [{
                                 authenticator: 'totp'
                             }, {
@@ -135,6 +152,39 @@ var onLoginRequest = function(context) {
                                 }
                             }
                         });
+                    }
+                } else {
+
+                    var username = user.username;
+                    var organizationName = null;
+
+                    if (loginType != "" && loginType === 'Business' && username && username.indexOf("@") > -1) {
+                        var domain = username.split("@")[1];
+                        organizationName = domain.split(".")[0];
+
+                        executeStep(2, {
+                            authenticatorParams: {
+                                local: {
+                                    OrganizationAuthenticator: {
+                                        org: organizationName
+                                    }
+
+                                }
+                            },
+                            authenticationOptions: [{
+                                idp: "SSO"
+                            }]
+                        }, {
+                            onSuccess: function(context) {
+                                isDefault = false;
+                            }
+                        });
+                    } else {
+                        executeStep(2, {
+                            authenticationOptions: [{
+                                authenticator: 'BasicAuthenticator'
+                            }]
+                        }, {});
                     }
                 }
             },
