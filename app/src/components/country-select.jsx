@@ -448,7 +448,7 @@ const countries = [
     { code: 'ZW', label: 'Zimbabwe', phone: '263' },
 ];
 
-const CountrySelect = ({ value, onChange }) => {
+const CountrySelect = ({ value, onChange, label = "" }) => {
     const [ selectedCountry, setSelectedCountry ] = useState(null);
 
     useEffect(() => {
@@ -498,6 +498,7 @@ const CountrySelect = ({ value, onChange }) => {
             renderInput={(params) => (
                 <TextField
                     {...params}
+                    label={label}
                     placeholder="Choose a country"
                     slotProps={{
                         htmlInput: {
@@ -514,7 +515,8 @@ const CountrySelect = ({ value, onChange }) => {
 CountrySelect.propTypes = {
     onChange: PropTypes.object.isRequired,
     value: PropTypes.object.isOptional,
-    key: PropTypes.object.isRequired
+    key: PropTypes.object.isRequired,
+    label: PropTypes.string
 };
 
 export default CountrySelect;

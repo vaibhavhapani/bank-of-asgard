@@ -32,7 +32,7 @@ const ViewProfile = ({ userInfo, setShowEditForm }) => {
 
       <div className="row" style={{ marginTop: "25px" }}>
         <div className="col-md-7">
-          <BankAccountCard userId={userInfo.userId} />
+          <BankAccountCard userInfo={userInfo} />
         </div>
         <div
           className="col-md-5"

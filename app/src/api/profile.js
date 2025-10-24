@@ -25,6 +25,10 @@ export const closeAccount = (token) => {
   })
 };
 
+export const closeBusinessAccount = (businessName) => {
+  return axiosClient.delete(`/close-business-account?businessName=${businessName}`);
+};
+
 export const resetPassword = (username, currentPassword, newPassword) => {
   // In case the password contains non-ascii characters, converting to valid ascii format.
   const encoder = new TextEncoder();
